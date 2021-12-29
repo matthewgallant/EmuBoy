@@ -15,7 +15,10 @@ int main(int argc, char* args[]) {
 
 	// Initialize cartridge
 	Cartridge cartridge;
-	std::vector<std::string> cartridgeContents = cartridge.getCartridgeContents();
+	std::vector<uint8_t> cartridgeContents = cartridge.getCartridgeContents();
+
+	// Print rom hex for debugging
+	debugRom(cartridgeContents);
 	
 	// Create virtual cpu
     CPU cpu;

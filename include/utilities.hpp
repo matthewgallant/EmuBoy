@@ -1,3 +1,3 @@
 #pragma once
 
-void debugRom();
+void debugRom(std::vector<uint8_t> romData);

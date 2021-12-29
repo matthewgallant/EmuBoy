@@ -9,23 +9,11 @@ Cartridge::Cartridge() {
     std::cout << "Hello from the Cartridge" << std::endl;
 }
 
-std::vector<std::string> Cartridge::getCartridgeContents() {
-
-	// Create vector for hex values
-	std::vector<std::string> hexValues;
+std::vector<uint8_t> Cartridge::getCartridgeContents() {
     
-    // Read rom file from ROM env var
-    unsigned char romContents;
-	std::ifstream romFile(std::getenv("ROM"), std::ios::binary);
-	romFile >> std::noskipws;
+	// Read rom file and create a vector with all of the data
+	std::ifstream romStream(std::getenv("ROM"), std::ios::in | std::ios::binary);
+	std::vector<uint8_t> romContents((std::istreambuf_iterator<char>(romStream)), std::istreambuf_iterator<char>());
 
-    // Go through file and add hex pairs to vector
-	while (romFile >> romContents) {		
-		std::stringstream hexValueRaw;
-		hexValueRaw << std::hex << std::setw(2) << std::setfill('0') << (int)romContents;
-		std::string hexValueString = hexValueRaw.str();
-		hexValues.push_back(hexValueString);
-	}
-
-	return hexValues;
+	return romContents;
 }
