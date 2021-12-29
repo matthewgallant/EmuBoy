@@ -1,4 +1,6 @@
 #include <iostream>
+#include <vector>
+#include <string>
 
 #include "cpu.hpp"
 #include "cartridge.hpp"
@@ -11,10 +13,9 @@ int main(int argc, char* args[]) {
 		return -1;
 	}
 
-	debugRom();
-
 	// Initialize cartridge
 	Cartridge cartridge;
+	std::vector<std::string> cartridgeContents = cartridge.getCartridgeContents();
 	
 	// Create virtual cpu
     CPU cpu;
