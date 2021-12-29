@@ -1,5 +1,13 @@
-#pragma once
 
+// EmuBoy
+// File: RegisterFile.hpp
+// Authors: Jacob Mealey & Matt Gallant
+// See LICENSE.md for license info
+// Description:
+//      the purpose of this file is to provide an
+//      abstraction representation of the Gameboys
+//      register file. 
+#pragma once
 #include <cstdint>
 
 // regsiter lookup values are taken from:
@@ -15,11 +23,11 @@
 #define REG_A   7
 
 // double register lookup values
-#define REG_BC 0
-#define REG_DE 1
-#define REG_HL 2
-#define REG_SP 3
-#define REG_AF 3
+#define REG_BC  0
+#define REG_DE  1
+#define REG_HL  2
+#define REG_SP  3
+#define REG_AF  3
 
 // Initial register values
 #define INIT_AF 0x01B0
@@ -62,11 +70,11 @@ class RegisterFile {
             }
         };
 
+        // Beginning of general purpose regs.
         struct SplitRegister AF;
         struct SplitRegister BC;
         struct SplitRegister DE;
         struct SplitRegister HL;
-        
         // SP -> stack pointer
         uint16_t SP;
         // PC -> program counter

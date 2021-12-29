@@ -1,5 +1,12 @@
-#include "RegisterFile.hpp"
 
+// EmuBoy
+// File: RegisterFile.cpp
+// Authors: Jacob Mealey & Matt Gallant
+// See LICENSE.md for license info
+// Description:
+//      the purpose of this file is to implement functions 
+//      as described in include/RegisterFile.hpp
+#include "RegisterFile.hpp"
 RegisterFile::RegisterFile(){
     this->AF = INIT_AF;
     this->BC = INIT_BC;
@@ -42,6 +49,7 @@ uint8_t RegisterFile::writeReg(uint8_t sr, uint8_t val) {
     return val;
 }
 
+
 uint16_t RegisterFile::writeReg(uint8_t sr, uint16_t val, bool is_SP) {
     switch(sr) {
         case REG_BC:
@@ -63,7 +71,9 @@ uint16_t RegisterFile::writeReg(uint8_t sr, uint16_t val, bool is_SP) {
     return val;
 }
 
-
+// readReg takes two variables, sr and is_16_bit. 
+// depending on whether you say something is 16-it 
+// the function will use two different lookup tables
 uint16_t RegisterFile::readReg(uint8_t sr, bool is_16_bit) { 
     if(is_16_bit){
         switch(sr){
