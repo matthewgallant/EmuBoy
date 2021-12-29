@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "cpu.hpp"
+#include "cartridge.hpp"
 #include "utilities.hpp"
 
 int main(int argc, char* args[]) {
@@ -11,6 +12,9 @@ int main(int argc, char* args[]) {
 	}
 
 	debugRom();
+
+	// Initialize cartridge
+	Cartridge cartridge;
 	
 	// Create virtual cpu
     CPU cpu;
