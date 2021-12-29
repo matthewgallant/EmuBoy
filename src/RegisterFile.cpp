@@ -62,3 +62,41 @@ uint16_t RegisterFile::writeReg(uint8_t sr, uint16_t val, bool is_SP) {
     }
     return val;
 }
+
+
+uint16_t RegisterFile::readReg(uint8_t sr, bool is_16_bit) { 
+    if(is_16_bit){
+        switch(sr){
+            case REG_BC:
+                return ((uint16_t) this->BC.r1 << 8) | this->BC.r2;
+            case REG_DE:
+                return ((uint16_t) this->DE.r1 << 8) | this->DE.r2;
+            case REG_HL:
+                return ((uint16_t) this->HL.r1 << 8) | this->HL.r2;
+            case REG_AF: // OR REG_SP
+                return ((uint16_t) this->AF.r1 << 8) | this->AF.r2;
+            default:
+                return 0;   
+        }
+    } else {
+        switch(sr) {
+            case REG_B:
+                return this->BC.r1;
+            case REG_C:
+                return this->BC.r2;
+            case REG_D:
+                return this->DE.r1;
+            case REG_E:
+                return this->DE.r2;
+            case REG_H:
+                return this->HL.r1;
+            case REG_L:
+                return this->HL.r2; 
+            case REG_A:
+                return this->AF.r1;
+            default:
+                return 0;
+        }
+    }
+    return 0;
+}
