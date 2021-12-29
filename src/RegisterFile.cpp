@@ -1,11 +1,11 @@
 #include "RegisterFile.hpp"
 
 RegisterFile::RegisterFile(){
-    this->AF = 0;
-    this->BC = 0;
-    this->DE = 0;
-    this->HL = 0;
-    this->SP = 0;
+    this->AF = INIT_AF;
+    this->BC = INIT_BC;
+    this->DE = INIT_DE;
+    this->HL = INIT_HL;
+    this->SP = INIT_SP;
     this->PC = 0;
 }
 

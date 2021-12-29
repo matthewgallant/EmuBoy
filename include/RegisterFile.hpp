@@ -21,6 +21,13 @@
 #define REG_SP 3
 #define REG_AF 3
 
+// Initial register values
+#define INIT_AF 0x01B0
+#define INIT_BC 0x0013
+#define INIT_DE 0x00D8
+#define INIT_HL 0x014D
+#define INIT_SP 0xFFFE
+
 
 // RegisterFile
 // 
