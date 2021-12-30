@@ -4,6 +4,11 @@
 
 #include "utilities.hpp"
 
+/**
+ * Outputs a vector of rom data in a format similar to hexdump
+ * 
+ * @param romData A vector of rom data
+ */
 void debugRom(std::vector<uint8_t> romData) {
 	int lineItems = 0;
 	for(auto i: romData) {
