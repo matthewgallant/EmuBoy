@@ -3,6 +3,7 @@
 #include <string>
 
 #include "cpu.hpp"
+#include "memory.hpp"
 #include "cartridge.hpp"
 #include "utilities.hpp"
 
@@ -20,6 +21,10 @@ int main(int argc, char* args[]) {
 
 	// Print rom hex for debugging
 	debugRom(cartridgeContents);
+
+	// Create virtual memory
+	Memory memory;
+	memory.loadRomData(cartridgeContents);
 	
 	// Create virtual cpu
     CPU cpu;
