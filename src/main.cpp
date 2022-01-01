@@ -9,7 +9,6 @@
 #include "utilities.hpp"
 
 int main(int argc, char* args[]) {
-
 	// Get file from environment
 	if (!std::getenv("ROM")) {
 		std::cout << "No ROM found in path. Please set 'ROM' in your path to your ROM file." << std::endl;
