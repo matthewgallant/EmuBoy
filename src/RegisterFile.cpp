@@ -53,13 +53,17 @@ uint8_t RegisterFile::writeReg(uint8_t sr, uint8_t val) {
 uint16_t RegisterFile::writeReg(uint8_t sr, uint16_t val, bool is_SP) {
     switch(sr) {
         case REG_BC:
-            this->BC = val;
+            std::cout << "writeReg val: " << val << std::endl;
+            this->BC.r1 = val >> 8;
+            this->BC.r2 = val & 0xFF;
             break;
         case REG_DE:
-            this->DE = val;
+            this->DE.r1 = val >> 8;
+            this->DE.r1 = val & 0xFF;
             break;
         case REG_HL:
-            this->HL = val;
+            this->HL.r1 = val >> 8;
+            this->HL.r1 = val & 0xFF;
             break;
         case REG_AF: // OR REG_SP
             if(is_SP) this->SP = val;

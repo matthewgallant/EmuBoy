@@ -9,6 +9,7 @@
 //      register file. 
 #pragma once
 #include <cstdint>
+#include <iostream>
 
 // regsiter lookup values are taken from:
 // http://www.z80.info/decoding.htm
@@ -62,12 +63,6 @@ class RegisterFile {
         struct SplitRegister{
             uint8_t r1;
             uint8_t r2;
-            SplitRegister operator=(uint16_t val) {
-                SplitRegister sr;
-                sr.r1 = (uint8_t) (val >> 8) & 0xFF;
-                sr.r2 = (uint8_t) (val & 0xFF);
-                return sr;
-            }
         };
 
         // Beginning of general purpose regs.
