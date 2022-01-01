@@ -54,6 +54,8 @@ class RegisterFile {
         uint8_t writeReg(uint8_t sr, uint8_t val);
         uint16_t writeReg(uint8_t sr, uint16_t val, bool is_SP);
         uint16_t readReg(uint8_t sr, bool is_16_bit);
+        uint16_t setPC(uint16_t pc);
+        uint16_t getPC();
     private:
         // each register has a name like A or B and are 
         // organised in to 16-bit pairs as seen below.

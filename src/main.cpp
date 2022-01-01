@@ -28,6 +28,11 @@ int main(int argc, char* args[]) {
 	
 	// Create virtual cpu
     CPU cpu;
+	cpu.setMemory(&memory);
+
+	while(true) {
+		cpu.step();
+	}
 
 	// Safely quit program
 	return 0;
