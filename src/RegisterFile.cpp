@@ -8,11 +8,11 @@
 //      as described in include/RegisterFile.hpp
 #include "RegisterFile.hpp"
 RegisterFile::RegisterFile(){
-    this->AF = INIT_AF;
-    this->BC = INIT_BC;
-    this->DE = INIT_DE;
-    this->HL = INIT_HL;
-    this->SP = INIT_SP;
+    writeReg(REG_AF, INIT_AF, false);
+    writeReg(REG_BC, INIT_BC, false);
+    writeReg(REG_DE, INIT_DE, false);
+    writeReg(REG_HL, INIT_HL, false);
+    writeReg(REG_SP, INIT_SP, true);
     this->PC = 0;
 }
 
@@ -67,7 +67,7 @@ uint16_t RegisterFile::writeReg(uint8_t sr, uint16_t val, bool is_SP) {
             break;
         case REG_AF: // OR REG_SP
             if(is_SP) this->SP = val;
-            else this->AF = val;
+            else writeReg(REG_AF, val);
             break;
         default:
             break;
