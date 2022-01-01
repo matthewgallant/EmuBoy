@@ -8,6 +8,8 @@
 #include "cartridge.hpp"
 #include "utilities.hpp"
 
+#define DEBUG 1
+
 int main(int argc, char* args[]) {
 	// Get file from environment
 	if (!std::getenv("ROM")) {
