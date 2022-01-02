@@ -427,133 +427,133 @@ void CPU::execute(uint8_t ins){
             break;
         } case 0xBF: { // CP A, A
             break;
-        } case 0xC0: {
+        } case 0xC0: { // RET NZ
             break;
-        } case 0xC1: {
+        } case 0xC1: { // POP BC
             break;
-        } case 0xC2: {
+        } case 0xC2: { // JP NZ, u16
             break;
-        } case 0xC3: {
+        } case 0xC3: { // JP u16
             break;
-        } case 0xC4: {
+        } case 0xC4: { // CALL NZ, u16
             break;
-        } case 0xC5: {
+        } case 0xC5: { // PUSH BC
             break;
-        } case 0xC6: {
+        } case 0xC6: { // ADD A, u8
             break;
-        } case 0xC7: {
+        } case 0xC7: { // RST 00h
             break;
-        } case 0xC8: {
+        } case 0xC8: { // RET Z
             break;
-        } case 0xC9: {
+        } case 0xC9: { // RET
             break;
-        } case 0xCA: {
+        } case 0xCA: { // JP Z, u16
             break;
-        } case 0xCB: {
+        } case 0xCB: { // PREFIX CB
             break;
-        } case 0xCC: {
+        } case 0xCC: { // CALL Z, u16
             break;
-        } case 0xCD: {
+        } case 0xCD: { // CALL u16
             break;
-        } case 0xCE: {
+        } case 0xCE: { // ADC A, u8
             break;
-        } case 0xCF: {
+        } case 0xCF: { // RST 08h
             break;
-        } case 0xD0: {
+        } case 0xD0: { // RET NC
             break;
-        } case 0xD1: {
+        } case 0xD1: { // POP DE
             break;
-        } case 0xD2: {
+        } case 0xD2: { // JP NC, u16
             break;
-        } case 0xD3: {
+        } case 0xD3: { // N/A
             break;
-        } case 0xD4: {
+        } case 0xD4: { // CALL NC, u16
             break;
-        } case 0xD5: {
+        } case 0xD5: { // PUSH DE
             break;
-        } case 0xD6: {
+        } case 0xD6: { // SUB A, u8
             break;
-        } case 0xD7: {
+        } case 0xD7: { // RST 10h
             break;
-        } case 0xD8: {
+        } case 0xD8: { // RET C
             break;
-        } case 0xD9: {
+        } case 0xD9: { // RETI
             break;
-        } case 0xDA: {
+        } case 0xDA: { // JP C, u16
             break;
-        } case 0xDB: {
+        } case 0xDB: { // N/A
             break;
-        } case 0xDC: {
+        } case 0xDC: { // CALL C, u16
             break;
-        } case 0xDD: {
+        } case 0xDD: { // N/A
             break;
-        } case 0xDE: {
+        } case 0xDE: { // SBC A, u8
             break;
-        } case 0xDF: {
+        } case 0xDF: { // RST 18h
             break;
-        } case 0xE0: {
+        } case 0xE0: { // LD (FF00 + u8), A
             break;
-        } case 0xE1: {
+        } case 0xE1: { // POP HL
             break;
-        } case 0xE2: {
+        } case 0xE2: { // LD (FF00 + C), A
             break;
-        } case 0xE3: {
+        } case 0xE3: { // N/A
             break;
-        } case 0xE4: {
+        } case 0xE4: { // N/A
             break;
-        } case 0xE5: {
+        } case 0xE5: { // PUSH HL
             break;
-        } case 0xE6: {
+        } case 0xE6: { // AND A, u8
             break;
-        } case 0xE7: {
+        } case 0xE7: { // RST 20h
             break;
-        } case 0xE8: {
+        } case 0xE8: { // ADD SP, i8
             break;
-        } case 0xE9: {
+        } case 0xE9: { // JP HL
             break;
-        } case 0xEA: {
+        } case 0xEA: { // LD (u16), A
             break;
-        } case 0xEB: {
+        } case 0xEB: { // N/A
             break;
-        } case 0xEC: {
+        } case 0xEC: { // N/A
             break;
-        } case 0xED: {
+        } case 0xED: { // N/A
             break;
-        } case 0xEE: {
+        } case 0xEE: { // XOR A, u8
             break;
-        } case 0xEF: {
+        } case 0xEF: { // RST 28h
             break;
-        } case 0xF0: {
+        } case 0xF0: { // LD A, (FF00, u8)
             break;
-        } case 0xF1: {
+        } case 0xF1: { // POP AF
             break;
-        } case 0xF2: {
+        } case 0xF2: { // LD A, (FF00 + C)
             break;
-        } case 0xF3: {
+        } case 0xF3: { // DI
             break;
-        } case 0xF4: {
+        } case 0xF4: { //  N/A
             break;
-        } case 0xF5: {
+        } case 0xF5: { // PUSH AF
             break;
-        } case 0xF6: {
+        } case 0xF6: { // OR A, u8
             break;
-        } case 0xF7: {
+        } case 0xF7: { // RST 30h
             break;
-        } case 0xF8: {
+        } case 0xF8: { // LD HL, SP+i8
             break;
-        } case 0xF9: {
+        } case 0xF9: { // LD SP, HL
             break;
-        } case 0xFA: {
+        } case 0xFA: { // LD A, (u16)
             break;
-        } case 0xFB: {
+        } case 0xFB: { // EI
             break;
-        } case 0xFC: {
+        } case 0xFC: { // N/A
             break;
-        } case 0xFD: {
+        } case 0xFD: { // N/A
             break;
-        } case 0xFE: {
+        } case 0xFE: { // CP A, u8
             break;
-        } case 0xFF: {
+        } case 0xFF: { // RST 38h
             break;
         }
     }
