@@ -38,10 +38,10 @@ void CPU::debug() {
     printf("SP: %X\n", rf.getSP());
     printf("---------FLAGS---------\n");
     printf("%sZ      %sN       %sH      %sC%s\n\n", 
-            F & (1 << FLAG_Z) ? KRED:KNRM, 
-            F & (1 << FLAG_N) ? KRED:KNRM, 
-            F & (1 << FLAG_H) ? KRED:KNRM, 
-            F & (1 << FLAG_C) ? KRED:KNRM, 
+            getFlag(FLAG_Z) ? KRED:KNRM, 
+            getFlag(FLAG_N) ? KRED:KNRM, 
+            getFlag(FLAG_H) ? KRED:KNRM, 
+            getFlag(FLAG_C) ? KRED:KNRM, 
             KNRM);
 }
 
@@ -64,6 +64,10 @@ void CPU::clearFlag(uint8_t flag) {
     uint8_t AF = rf.readReg(REG_AF, IS_16_BIT);
     AF &= ~(1 << flag);
     rf.writeReg(REG_AF, AF);
+}
+
+bool CPU::getFlag(uint8_t flag) {
+    return ((rf.readReg(REG_AF, IS_16_BIT) & (1 << flag)) == (1 << flag));
 }
 
 /**
@@ -389,7 +393,7 @@ void CPU::execute(uint8_t ins){
             rf.writeReg(REG_A, rf.readReg(REG_A, IS_8_BIT) + rf.readReg(REG_L, IS_8_BIT));
             break;
         } case 0x86: { // ADD A, (HL)
-            rf.writeReg(REG_A, rf.readReg(REG_A, IS_8_BIT) + memory->memory[readReg(REG_HL, IS_16_BIT)]);
+            rf.writeReg(REG_A, rf.readReg(REG_A, IS_8_BIT) + memory->memory[rf.readReg(REG_HL, IS_16_BIT)]);
             break;
         } case 0x87: { // ADD A, A
             rf.writeReg(REG_A, rf.readReg(REG_A, IS_8_BIT) + rf.readReg(REG_A, IS_8_BIT));

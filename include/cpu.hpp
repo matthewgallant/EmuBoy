@@ -17,6 +17,7 @@ class CPU {
         void debug();
         void setFlag(uint8_t flag);
         void clearFlag(uint8_t flag);
+        bool getFlag(uint8_t flag);
     private:
         RegisterFile rf;
         Memory *memory;
