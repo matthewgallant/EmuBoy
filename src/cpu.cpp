@@ -599,6 +599,8 @@ void CPU::execute(uint8_t ins){
         } case 0xC4: { // CALL NZ, u16
             break;
         } case 0xC5: { // PUSH BC
+            memory->memory[rf.getSP()] = rf.readReg(REG_BC, IS_16_BIT);
+            rf.setSP(rf.getSP() - 1); // DOES GAME STACK GROWN DOWN??
             break;
         } case 0xC6: { // ADD A, u8
             break;
@@ -631,6 +633,8 @@ void CPU::execute(uint8_t ins){
         } case 0xD4: { // CALL NC, u16
             break;
         } case 0xD5: { // PUSH DE
+            memory->memory[rf.getSP()] = rf.readReg(REG_DE, IS_16_BIT);
+            rf.setSP(rf.getSP() - 1); // DOES GAME STACK GROWN DOWN??
             break;
         } case 0xD6: { // SUB A, u8
             break;
@@ -663,6 +667,8 @@ void CPU::execute(uint8_t ins){
         } case 0xE4: { // N/A
             break;
         } case 0xE5: { // PUSH HL
+            memory->memory[rf.getSP()] = rf.readReg(REG_HL, IS_16_BIT);
+            rf.setSP(rf.getSP() - 1); // DOES GAME STACK GROWN DOWN??
             break;
         } case 0xE6: { // AND A, u8
             break;
@@ -695,6 +701,8 @@ void CPU::execute(uint8_t ins){
         } case 0xF4: { //  N/A
             break;
         } case 0xF5: { // PUSH AF
+            memory->memory[rf.getSP()] = rf.readReg(REG_AF, IS_16_BIT);
+            rf.setSP(rf.getSP() - 1); // DOES GAME STACK GROWN DOWN??
             break;
         } case 0xF6: { // OR A, u8
             break;
