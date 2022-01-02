@@ -359,20 +359,28 @@ void CPU::execute(uint8_t ins){
         } case 0x7F: { // LD A, A
             break;
         } case 0x80: { // ADD A, B
+            rf.writeReg(REG_A, rf.readReg(REG_A, IS_8_BIT) + rf.readReg(REG_B, IS_8_BIT));
             break;
         } case 0x81: { // ADD A, C
+            rf.writeReg(REG_A, rf.readReg(REG_A, IS_8_BIT) + rf.readReg(REG_C, IS_8_BIT));
             break;
         } case 0x82: { // ADD A, D
+            rf.writeReg(REG_A, rf.readReg(REG_A, IS_8_BIT) + rf.readReg(REG_D, IS_8_BIT));
             break;
         } case 0x83: { // ADD A, E
+            rf.writeReg(REG_A, rf.readReg(REG_A, IS_8_BIT) + rf.readReg(REG_E, IS_8_BIT));
             break;
         } case 0x84: { // ADD A, H
+            rf.writeReg(REG_A, rf.readReg(REG_A, IS_8_BIT) + rf.readReg(REG_H, IS_8_BIT));
             break;
         } case 0x85: { // ADD A, L
+            rf.writeReg(REG_A, rf.readReg(REG_A, IS_8_BIT) + rf.readReg(REG_L, IS_8_BIT));
             break;
         } case 0x86: { // ADD A, (HL)
+            rf.writeReg(REG_A, rf.readReg(REG_A, IS_8_BIT) + memory->memory[readReg(REG_HL, IS_16_BIT)]);
             break;
         } case 0x87: { // ADD A, A
+            rf.writeReg(REG_A, rf.readReg(REG_A, IS_8_BIT) + rf.readReg(REG_A, IS_8_BIT));
             break;
         } case 0x88: { // ADC A, B
             break;
