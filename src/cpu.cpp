@@ -26,7 +26,7 @@ void CPU::step() {
 }
 
 void CPU::debug() {
-    printf("INS: %X \t PC: %X\n", memory->memory[rf.getPC()], rf.getPC());
+    printf("INS: %X \t PC: %X\n", memory->memory[rf.getPC() - 1], rf.getPC());
     printf("-------REGISTERS-------\n");
     printf("A: %X \n", rf.readReg(REG_A, IS_8_BIT));
     printf("B: %X \t\t C: %X\n", rf.readReg(REG_B, IS_8_BIT), rf.readReg(REG_C, IS_8_BIT));
