@@ -52,10 +52,10 @@ void CPU::execute(uint8_t ins){
         } case 0x03: { // INC BC
             break;
         } case 0x04: { // INC B
-            rf.writeReg(REG_B, rf.readReg(REG_B, false) + 1);
+            rf.writeReg(REG_B, rf.readReg(REG_B, IS_8_BIT) + 1);
             break;
         } case 0x05: { // DEC B 
-            rf.writeReg(REG_B, rf.readReg(REG_B, false) - 1);
+            rf.writeReg(REG_B, rf.readReg(REG_B, IS_8_BIT) - 1);
             break;
         } case 0x06: { // LD B, u8
             break;
@@ -70,10 +70,10 @@ void CPU::execute(uint8_t ins){
         } case 0x0B: { // INC BC
             break;
         } case 0x0C: { // INC C
-            rf.writeReg(REG_C, rf.readReg(REG_C, false) + 1);
+            rf.writeReg(REG_C, rf.readReg(REG_C, IS_8_BIT) + 1);
             break;
         } case 0x0D: { // DEC C
-            rf.writeReg(REG_C, rf.readReg(REG_C, false) - 1);
+            rf.writeReg(REG_C, rf.readReg(REG_C, IS_8_BIT) - 1);
             break;
         } case 0x0E: { // LD C, u8
             break;
@@ -88,10 +88,10 @@ void CPU::execute(uint8_t ins){
         } case 0x13: { // INC DE
             break;
         } case 0x14: { // INC D
-            rf.writeReg(REG_D, rf.readReg(REG_D, false) + 1);
+            rf.writeReg(REG_D, rf.readReg(REG_D, IS_8_BIT) + 1);
             break;
         } case 0x15: { // DEC D
-            rf.writeReg(REG_D, rf.readReg(REG_D, false) - 1);
+            rf.writeReg(REG_D, rf.readReg(REG_D, IS_8_BIT) - 1);
             break;
         } case 0x16: { // LD D, u8
             break;
@@ -106,10 +106,10 @@ void CPU::execute(uint8_t ins){
         } case 0x1B: { // DEC DE
             break;
         } case 0x1C: { // INC E
-            rf.writeReg(REG_E, rf.readReg(REG_E, false) + 1);
+            rf.writeReg(REG_E, rf.readReg(REG_E, IS_8_BIT) + 1);
             break;
         } case 0x1D: { // DEC E
-            rf.writeReg(REG_E, rf.readReg(REG_E, false) - 1);
+            rf.writeReg(REG_E, rf.readReg(REG_E, IS_8_BIT) - 1);
             break;
         } case 0x1E: { // LD E, u8
             break;
@@ -124,10 +124,10 @@ void CPU::execute(uint8_t ins){
         } case 0x23: { // INC HL
             break;
         } case 0x24: { // INC H
-            rf.writeReg(REG_H, rf.readReg(REG_H, false) + 1);
+            rf.writeReg(REG_H, rf.readReg(REG_H, IS_8_BIT) + 1);
             break;
         } case 0x25: { // DEC H
-            rf.writeReg(REG_H, rf.readReg(REG_H, false) - 1);
+            rf.writeReg(REG_H, rf.readReg(REG_H, IS_8_BIT) - 1);
             break;
         } case 0x26: { // LD H, u8
             break;
@@ -142,10 +142,10 @@ void CPU::execute(uint8_t ins){
         } case 0x2B: { // DEC HL
             break;
         } case 0x2C: { // INC L
-            rf.writeReg(REG_L, rf.readReg(REG_L, false) + 1);
+            rf.writeReg(REG_L, rf.readReg(REG_L, IS_8_BIT) + 1);
             break;
         } case 0x2D: { // DEC L
-            rf.writeReg(REG_L, rf.readReg(REG_L, false) - 1);
+            rf.writeReg(REG_L, rf.readReg(REG_L, IS_8_BIT) - 1);
             break;
         } case 0x2E: { // LD L, u8
             break;
@@ -178,10 +178,10 @@ void CPU::execute(uint8_t ins){
             rf.setSP(rf.getSP() - 1);
             break;
         } case 0x3C: { // INC A
-            rf.writeReg(REG_A, rf.readReg(REG_A, NOT_16_BIT) + 1);
+            rf.writeReg(REG_A, rf.readReg(REG_A, IS_8_BIT) + 1);
             break;
         } case 0x3D: { // DEC A
-            rf.writeReg(REG_A, rf.readReg(REG_A, NOT_16_BIT) - 1);
+            rf.writeReg(REG_A, rf.readReg(REG_A, IS_8_BIT) - 1);
             break;
         } case 0x3E: { // LD A, u8
             break;

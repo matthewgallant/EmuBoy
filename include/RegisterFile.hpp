@@ -38,7 +38,7 @@
 #define INIT_SP 0xFFFE
 
 #define IS_16_BIT true
-#define NOT_16_BIT false
+#define IS_8_BIT false
 
 
 // RegisterFile
