@@ -299,133 +299,133 @@ void CPU::execute(uint8_t ins){
             break;
         } case 0x7F: { // LD A, A
             break;
-        } case 0x80: {
+        } case 0x80: { // ADD A, B
             break;
-        } case 0x81: {
+        } case 0x81: { // ADD A, C
             break;
-        } case 0x82: {
+        } case 0x82: { // ADD A, D
             break;
-        } case 0x83: {
+        } case 0x83: { // ADD A, E
             break;
-        } case 0x84: {
+        } case 0x84: { // ADD A, H
             break;
-        } case 0x85: {
+        } case 0x85: { // ADD A, L
             break;
-        } case 0x86: {
+        } case 0x86: { // ADD A, (HL)
             break;
-        } case 0x87: {
+        } case 0x87: { // ADD A, A
             break;
-        } case 0x88: {
+        } case 0x88: { // ADC A, B
             break;
-        } case 0x89: {
+        } case 0x89: { // ADC A, C
             break;
-        } case 0x8A: {
+        } case 0x8A: { // ADC A, D
             break;
-        } case 0x8B: {
+        } case 0x8B: { // ADC A, E
             break;
-        } case 0x8C: {
+        } case 0x8C: { // ADC A, H
             break;
-        } case 0x8D: {
+        } case 0x8D: { // ADC A, L
             break;
-        } case 0x8E: {
+        } case 0x8E: { // ADC A, (HL)
             break;
-        } case 0x8F: {
+        } case 0x8F: { // ADC A, A
             break;
-        } case 0x90: {
+        } case 0x90: { // SUB A, B
             break;
-        } case 0x91: {
+        } case 0x91: { // SUB A, C
             break;
-        } case 0x92: {
+        } case 0x92: { // SUB A, D
             break;
-        } case 0x93: {
+        } case 0x93: { // SUB A, E
             break;
-        } case 0x94: {
+        } case 0x94: { // SUB A, H
             break;
-        } case 0x95: {
+        } case 0x95: { // SUB A, L
             break;
-        } case 0x96: {
+        } case 0x96: { // SUB A, (HL)
             break;
-        } case 0x97: {
+        } case 0x97: { // SUB A, A
             break;
-        } case 0x98: {
+        } case 0x98: { // SBC A, B
             break;
-        } case 0x99: {
+        } case 0x99: { // SBC A, C
             break;
-        } case 0x9A: {
+        } case 0x9A: { // SBC A, D
             break;
-        } case 0x9B: {
+        } case 0x9B: { // SBC A, E
             break;
-        } case 0x9C: {
+        } case 0x9C: { // SBC A, H
             break;
-        } case 0x9D: {
+        } case 0x9D: { // SBC A, L
             break;
-        } case 0x9E: {
+        } case 0x9E: { // SBC A, (HL)
             break;
-        } case 0x9F: {
+        } case 0x9F: { // SBC A, A
             break;
-        } case 0xA0: {
+        } case 0xA0: { // AND A, B
             break;
-        } case 0xA1: {
+        } case 0xA1: { // AND A, C
             break;
-        } case 0xA2: {
+        } case 0xA2: { // AND A, D
             break;
-        } case 0xA3: {
+        } case 0xA3: { // AND A, E
             break;
-        } case 0xA4: {
+        } case 0xA4: { // AND A, H
             break;
-        } case 0xA5: {
+        } case 0xA5: { // AND A, L
             break;
-        } case 0xA6: {
+        } case 0xA6: { // AND A, (HL)
             break;
-        } case 0xA7: {
+        } case 0xA7: { // AND A, A
             break;
-        } case 0xA8: {
+        } case 0xA8: { // XOR A, B
             break;
-        } case 0xA9: {
+        } case 0xA9: { // XOR A, C
             break;
-        } case 0xAA: {
+        } case 0xAA: { // XOR A, D 
+            break; 
+        } case 0xAB: { // XOR A, E
             break;
-        } case 0xAB: {
+        } case 0xAC: { // XOR A, H
             break;
-        } case 0xAC: {
+        } case 0xAD: { // XOR A, L
             break;
-        } case 0xAD: {
+        } case 0xAE: { // XOR A, (HL)
             break;
-        } case 0xAE: {
+        } case 0xAF: { // XOR A, A
             break;
-        } case 0xAF: {
+        } case 0xB0: { // OR A, B
             break;
-        } case 0xB0: {
+        } case 0xB1: { // OR A, C
             break;
-        } case 0xB1: {
+        } case 0xB2: { // OR A, D
             break;
-        } case 0xB2: {
+        } case 0xB3: { // OR A, E
             break;
-        } case 0xB3: {
+        } case 0xB4: { // OR A, H
             break;
-        } case 0xB4: {
+        } case 0xB5: { // OR A, L
             break;
-        } case 0xB5: {
+        } case 0xB6: { // OR A, (HL)
             break;
-        } case 0xB6: {
+        } case 0xB7: { // OR A, A
             break;
-        } case 0xB7: {
+        } case 0xB8: { // CP A, B
             break;
-        } case 0xB8: {
+        } case 0xB9: { // CP A, C
             break;
-        } case 0xB9: {
+        } case 0xBA: { // CP A, D
             break;
-        } case 0xBA: {
+        } case 0xBB: { // CP A, E
             break;
-        } case 0xBB: {
+        } case 0xBC: { // CP A, H
             break;
-        } case 0xBC: {
+        } case 0xBD: { // CP A, L
             break;
-        } case 0xBD: {
+        } case 0xBE: { // CP A, (HL)
             break;
-        } case 0xBE: {
-            break;
-        } case 0xBF: {
+        } case 0xBF: { // CP A, A
             break;
         } case 0xC0: {
             break;
