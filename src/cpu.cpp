@@ -14,11 +14,12 @@ CPU::CPU() {
  * von-neumman style fetch-decode-execute
  */
 void CPU::step() { 
-    rf.setPC(rf.getPC() + 1);
     // fetch
     next_instruction = memory->memory[rf.getPC()];
     // decode & execute
     execute(next_instruction);
+    // increment program counter
+    rf.setPC(rf.getPC() + 1);
 }
 
 /**
