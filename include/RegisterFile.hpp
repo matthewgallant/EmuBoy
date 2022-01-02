@@ -37,6 +37,7 @@
 #define INIT_HL 0x014D
 #define INIT_SP 0xFFFE
 
+// General Constants 
 #define IS_16_BIT true
 #define IS_8_BIT false
 

@@ -16,8 +16,23 @@ void CPU::step() {
     rf.setPC(rf.getPC() + 1);
     // fetch
     next_instruction = memory->memory[rf.getPC()];
+    // THIS IS ONLY FOR DEBUG REMOVE LATER!!!
+    if(next_instruction == 0) {
+        return;
+    }
+    debug();
     // decode & execute
     execute(next_instruction);
+}
+
+void CPU::debug() {
+    printf("INS: %X \t PC: %X\n", memory->memory[rf.getPC()], rf.getPC());
+    printf("-------REGISTERS-------\n");
+    printf("A: %X \n", rf.readReg(REG_A, IS_8_BIT));
+    printf("B: %X \t\t C: %X\n", rf.readReg(REG_B, IS_8_BIT), rf.readReg(REG_C, IS_8_BIT));
+    printf("D: %X \t\t E: %X\n", rf.readReg(REG_D, IS_8_BIT), rf.readReg(REG_E, IS_8_BIT));
+    printf("H: %X \t\t L: %X\n", rf.readReg(REG_H, IS_8_BIT), rf.readReg(REG_L, IS_8_BIT));
+    printf("SP: %X\n\n", rf.getSP());
 }
 
 /**
