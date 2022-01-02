@@ -23,6 +23,14 @@ uint16_t RegisterFile::setPC(uint16_t pc) {
 uint16_t RegisterFile::getPC() {
     return this->PC;
 }
+
+uint16_t RegisterFile::setSP(uint16_t sp) {
+    this->SP = sp;
+    return this->SP;
+}
+uint16_t RegisterFile::getSP() {
+    return this->SP;
+}
 // SR is an octal value which is mapped to a specific register,
 // depending on the type of val we use different lookup tables. 
 // Both tables can be found at this link:

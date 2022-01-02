@@ -158,6 +158,7 @@ void CPU::execute(uint8_t ins){
         } case 0x32: { // LD (HL-), A
             break;
         } case 0x33: { // INC SP
+            rf.setSP(rf.getSP() + 1);
             break;
         } case 0x34: { // INC (HL)
             break;
@@ -174,6 +175,7 @@ void CPU::execute(uint8_t ins){
         } case 0x3A: { // LD A, (HL-)
             break;
         } case 0x3B: { // DEC SP
+            rf.setSP(rf.getSP() - 1);
             break;
         } case 0x3C: { // INC A
             rf.writeReg(REG_A, rf.readReg(REG_A, false) + 1);
