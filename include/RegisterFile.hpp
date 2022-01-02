@@ -37,6 +37,9 @@
 #define INIT_HL 0x014D
 #define INIT_SP 0xFFFE
 
+#define IS_16_BIT true
+#define NOT_16_BIT false
+
 
 // RegisterFile
 // 

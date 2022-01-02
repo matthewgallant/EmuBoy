@@ -178,10 +178,10 @@ void CPU::execute(uint8_t ins){
             rf.setSP(rf.getSP() - 1);
             break;
         } case 0x3C: { // INC A
-            rf.writeReg(REG_A, rf.readReg(REG_A, false) + 1);
+            rf.writeReg(REG_A, rf.readReg(REG_A, NOT_16_BIT) + 1);
             break;
         } case 0x3D: { // DEC A
-            rf.writeReg(REG_A, rf.readReg(REG_A, false) - 1);
+            rf.writeReg(REG_A, rf.readReg(REG_A, NOT_16_BIT) - 1);
             break;
         } case 0x3E: { // LD A, u8
             break;
