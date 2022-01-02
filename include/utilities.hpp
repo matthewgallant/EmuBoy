@@ -2,6 +2,7 @@
 #include <iomanip>
 
 void debugRom(std::vector<uint8_t> romData);
+void unknownInstruction(int instr);
 
 // The following are utility macros 
 // to allow us to properly parse opcode

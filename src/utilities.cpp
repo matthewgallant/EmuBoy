@@ -26,3 +26,13 @@ void debugRom(std::vector<uint8_t> romData) {
 	}
 	std::cout.copyfmt(init);
 }
+
+/**
+ * Outputs a red colorized instruction error
+ * 
+ * @param instr instruction opcode
+ */
+void unknownInstruction(int instr) {
+	std::cout << "\033[31m" << "Unknown Instruction: " << std::setw(2) << std::hex << instr << "\033[0m" << std::endl;
+	exit(EXIT_FAILURE);
+}
