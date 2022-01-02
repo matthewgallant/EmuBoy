@@ -28,7 +28,7 @@ void CPU::step() {
 }
 
 void CPU::debug() {
-    uint8_t F = (rf.readReg(REG_AF, IS_16_BIT) & 0xFF00) >> 8;
+    uint8_t F = (rf.readReg(REG_AF, IS_16_BIT) & 0xFF);
     printf("INS: %X \t PC: %X\n", memory->memory[rf.getPC()], rf.getPC());
     printf("-------REGISTERS-------\n");
     printf("A: %X \n", rf.readReg(REG_A, IS_8_BIT));
@@ -38,10 +38,10 @@ void CPU::debug() {
     printf("SP: %X\n", rf.getSP());
     printf("---------FLAGS---------\n");
     printf("%sZ      %sN       %sH      %sC%s\n\n", 
-            F & (1 << 7) ? KRED:KNRM, // Z 
-            F & (1 << 6) ? KRED:KNRM, // N
-            F & (1 << 5) ? KRED:KNRM, // H 
-            F & (1 << 4) ? KRED:KNRM, // C
+            F & (1 << FLAG_Z) ? KRED:KNRM, 
+            F & (1 << FLAG_N) ? KRED:KNRM, 
+            F & (1 << FLAG_H) ? KRED:KNRM, 
+            F & (1 << FLAG_C) ? KRED:KNRM, 
             KNRM);
 }
 
@@ -52,6 +52,18 @@ void CPU::debug() {
  */
 void CPU::setMemory(Memory *memory) {
     this->memory = memory;
+}
+
+void CPU::setFlag(uint8_t flag) { 
+    uint8_t AF = rf.readReg(REG_AF, IS_16_BIT);
+    AF |= 1 << flag;
+    rf.writeReg(REG_AF, AF);
+}
+
+void CPU::clearFlag(uint8_t flag) {
+    uint8_t AF = rf.readReg(REG_AF, IS_16_BIT);
+    AF &= ~(1 << flag);
+    rf.writeReg(REG_AF, AF);
 }
 
 /**

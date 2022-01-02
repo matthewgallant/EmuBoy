@@ -3,6 +3,11 @@
 #include "memory.hpp"
 #include "utilities.hpp"
 
+#define FLAG_Z 7
+#define FLAG_N 6
+#define FLAG_H 5
+#define FLAG_C 4
+
 class CPU {
     public:
         CPU();
@@ -10,6 +15,8 @@ class CPU {
         void setMemory(Memory *memory);
         void execute(uint8_t ins);
         void debug();
+        void setFlag(uint8_t flag);
+        void clearFlag(uint8_t flag);
     private:
         RegisterFile rf;
         Memory *memory;
