@@ -37,6 +37,10 @@
 #define INIT_HL 0x014D
 #define INIT_SP 0xFFFE
 
+// General Constants 
+#define IS_16_BIT true
+#define IS_8_BIT false
+
 
 // RegisterFile
 // 
@@ -56,6 +60,8 @@ class RegisterFile {
         uint16_t readReg(uint8_t sr, bool is_16_bit);
         uint16_t setPC(uint16_t pc);
         uint16_t getPC();
+        uint16_t setSP(uint16_t sp);
+        uint16_t getSP();
     private:
         // each register has a name like A or B and are 
         // organised in to 16-bit pairs as seen below.
