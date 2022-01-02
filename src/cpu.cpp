@@ -591,7 +591,9 @@ void CPU::execute(uint8_t ins){
         } case 0xC0: { // RET NZ
             break;
         } case 0xC1: { // POP BC
-            rf.writeReg(REG_BC, memory->memory[rf.getSP()]);
+            rf.writeReg(REG_B, memory->memory[rf.getSP()]);
+            rf.setSP(rf.getSP() + 1);
+            rf.writeReg(REG_C, memory->memory[rf.getSP()]);
             rf.setSP(rf.getSP() + 1);
             break;
         } case 0xC2: { // JP NZ, u16
@@ -601,7 +603,9 @@ void CPU::execute(uint8_t ins){
         } case 0xC4: { // CALL NZ, u16
             break;
         } case 0xC5: { // PUSH BC
-            memory->memory[rf.getSP()] = rf.readReg(REG_BC, IS_16_BIT);
+            memory->memory[rf.getSP()] = rf.readReg(REG_C, IS_8_BIT);
+            rf.setSP(rf.getSP() - 1); // DOES GAME STACK GROWN DOWN??
+            memory->memory[rf.getSP()] = rf.readReg(REG_B, IS_8_BIT);
             rf.setSP(rf.getSP() - 1); // DOES GAME STACK GROWN DOWN??
             break;
         } case 0xC6: { // ADD A, u8
@@ -627,7 +631,9 @@ void CPU::execute(uint8_t ins){
         } case 0xD0: { // RET NC
             break;
         } case 0xD1: { // POP DE
-            rf.writeReg(REG_DE, memory->memory[rf.getSP()]);
+            rf.writeReg(REG_D, memory->memory[rf.getSP()]);
+            rf.setSP(rf.getSP() + 1);
+            rf.writeReg(REG_E, memory->memory[rf.getSP()]);
             rf.setSP(rf.getSP() + 1);
             break;
         } case 0xD2: { // JP NC, u16
@@ -637,7 +643,9 @@ void CPU::execute(uint8_t ins){
         } case 0xD4: { // CALL NC, u16
             break;
         } case 0xD5: { // PUSH DE
-            memory->memory[rf.getSP()] = rf.readReg(REG_DE, IS_16_BIT);
+            memory->memory[rf.getSP()] = rf.readReg(REG_E, IS_8_BIT);
+            rf.setSP(rf.getSP() - 1); // DOES GAME STACK GROWN DOWN??
+            memory->memory[rf.getSP()] = rf.readReg(REG_D, IS_8_BIT);
             rf.setSP(rf.getSP() - 1); // DOES GAME STACK GROWN DOWN??
             break;
         } case 0xD6: { // SUB A, u8
@@ -663,7 +671,9 @@ void CPU::execute(uint8_t ins){
         } case 0xE0: { // LD (FF00 + u8), A
             break;
         } case 0xE1: { // POP HL
-            rf.writeReg(REG_HL, memory->memory[rf.getSP()]);
+            rf.writeReg(REG_H, memory->memory[rf.getSP()]);
+            rf.setSP(rf.getSP() + 1);
+            rf.writeReg(REG_L, memory->memory[rf.getSP()]);
             rf.setSP(rf.getSP() + 1);
             break;
         } case 0xE2: { // LD (FF00 + C), A
@@ -673,7 +683,9 @@ void CPU::execute(uint8_t ins){
         } case 0xE4: { // N/A
             break;
         } case 0xE5: { // PUSH HL
-            memory->memory[rf.getSP()] = rf.readReg(REG_HL, IS_16_BIT);
+            memory->memory[rf.getSP()] = rf.readReg(REG_L, IS_16_BIT);
+            rf.setSP(rf.getSP() - 1); // DOES GAME STACK GROWN DOWN??
+            memory->memory[rf.getSP()] = rf.readReg(REG_H, IS_16_BIT);
             rf.setSP(rf.getSP() - 1); // DOES GAME STACK GROWN DOWN??
             break;
         } case 0xE6: { // AND A, u8
@@ -699,7 +711,9 @@ void CPU::execute(uint8_t ins){
         } case 0xF0: { // LD A, (FF00, u8)
             break;
         } case 0xF1: { // POP AF
-            rf.writeReg(REG_AF, memory->memory[rf.getSP()]);
+            rf.writeReg(REG_A, memory->memory[rf.getSP()]);
+            rf.setSP(rf.getSP() + 1);
+            rf.writeReg(REG_F, memory->memory[rf.getSP()]);
             rf.setSP(rf.getSP() + 1);
             break;
         } case 0xF2: { // LD A, (FF00 + C)
@@ -709,7 +723,9 @@ void CPU::execute(uint8_t ins){
         } case 0xF4: { //  N/A
             break;
         } case 0xF5: { // PUSH AF
-            memory->memory[rf.getSP()] = rf.readReg(REG_AF, IS_16_BIT);
+            memory->memory[rf.getSP()] = rf.readReg(REG_F, IS_16_BIT);
+            rf.setSP(rf.getSP() - 1); // DOES GAME STACK GROWN DOWN??
+            memory->memory[rf.getSP()] = rf.readReg(REG_A, IS_16_BIT);
             rf.setSP(rf.getSP() - 1); // DOES GAME STACK GROWN DOWN??
             break;
         } case 0xF6: { // OR A, u8
