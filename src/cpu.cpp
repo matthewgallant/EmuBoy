@@ -95,8 +95,8 @@ void CPU::execute(uint8_t ins){
         } case 0x03: { // INC BC
             break;
         } case 0x04: { // INC B
-            bool z_tmp = rf.readReg(REG_B, IS_8_BIT) == 0xFF
-            clearFlag(FLAG_N)
+            bool z_tmp = rf.readReg(REG_B, IS_8_BIT) == 0xFF;
+            clearFlag(FLAG_N);
             if(z_tmp) {setFlag(FLAG_Z); setFlag(FLAG_H);}
             rf.writeReg(REG_B, rf.readReg(REG_B, IS_8_BIT) + 1);
             isDefined = true;
@@ -118,8 +118,8 @@ void CPU::execute(uint8_t ins){
         } case 0x0B: { // INC BC
             break;
         } case 0x0C: { // INC C
-            bool z_tmp = rf.readReg(REG_C, IS_8_BIT) == 0xFF
-            clearFlag(FLAG_N)
+            bool z_tmp = rf.readReg(REG_C, IS_8_BIT) == 0xFF;
+            clearFlag(FLAG_N);
             if(z_tmp) {setFlag(FLAG_Z); setFlag(FLAG_H);}
             rf.writeReg(REG_C, rf.readReg(REG_C, IS_8_BIT) + 1);
             isDefined = true;
@@ -141,8 +141,8 @@ void CPU::execute(uint8_t ins){
         } case 0x13: { // INC DE
             break;
         } case 0x14: { // INC D
-            bool z_tmp = rf.readReg(REG_D, IS_8_BIT) == 0xFF
-            clearFlag(FLAG_N)
+            bool z_tmp = rf.readReg(REG_D, IS_8_BIT) == 0xFF;
+            clearFlag(FLAG_N);
             if(z_tmp) {setFlag(FLAG_Z); setFlag(FLAG_H);}
             rf.writeReg(REG_D, rf.readReg(REG_D, IS_8_BIT) + 1);
             isDefined = true;
@@ -164,8 +164,8 @@ void CPU::execute(uint8_t ins){
         } case 0x1B: { // DEC DE
             break;
         } case 0x1C: { // INC E
-            bool z_tmp = rf.readReg(REG_E, IS_8_BIT) == 0xFF
-            clearFlag(FLAG_N)
+            bool z_tmp = rf.readReg(REG_E, IS_8_BIT) == 0xFF;
+            clearFlag(FLAG_N);
             if(z_tmp) {setFlag(FLAG_Z); setFlag(FLAG_H);}
             rf.writeReg(REG_E, rf.readReg(REG_E, IS_8_BIT) + 1);
             isDefined = true;
@@ -187,8 +187,8 @@ void CPU::execute(uint8_t ins){
         } case 0x23: { // INC HL
             break;
         } case 0x24: { // INC H
-            bool z_tmp = rf.readReg(REG_H, IS_8_BIT) == 0xFF
-            clearFlag(FLAG_N)
+            bool z_tmp = rf.readReg(REG_H, IS_8_BIT) == 0xFF;
+            clearFlag(FLAG_N);
             if(z_tmp) {setFlag(FLAG_Z); setFlag(FLAG_H);}
             rf.writeReg(REG_H, rf.readReg(REG_H, IS_8_BIT) + 1);
             isDefined = true;
@@ -210,8 +210,8 @@ void CPU::execute(uint8_t ins){
         } case 0x2B: { // DEC HL
             break;
         } case 0x2C: { // INC L
-            bool z_tmp = rf.readReg(REG_L, IS_8_BIT) == 0xFF
-            clearFlag(FLAG_N)
+            bool z_tmp = rf.readReg(REG_L, IS_8_BIT) == 0xFF;
+            clearFlag(FLAG_N);
             if(z_tmp) {setFlag(FLAG_Z); setFlag(FLAG_H);}
             rf.writeReg(REG_L, rf.readReg(REG_L, IS_8_BIT) + 1);
             isDefined = true;
@@ -253,8 +253,8 @@ void CPU::execute(uint8_t ins){
             isDefined = true;
             break;
         } case 0x3C: { // INC A
-            bool z_tmp = rf.readReg(REG_A, IS_8_BIT) == 0xFF
-            clearFlag(FLAG_N)
+            bool z_tmp = rf.readReg(REG_A, IS_8_BIT) == 0xFF;
+            clearFlag(FLAG_N);
             if(z_tmp) {setFlag(FLAG_Z); setFlag(FLAG_H);}
             rf.writeReg(REG_A, rf.readReg(REG_A, IS_8_BIT) + 1);
             isDefined = true;
