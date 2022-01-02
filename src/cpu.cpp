@@ -28,13 +28,21 @@ void CPU::step() {
 }
 
 void CPU::debug() {
+    uint8_t F = (rf.readReg(REG_AF, IS_16_BIT) & 0xFF00) >> 8;
     printf("INS: %X \t PC: %X\n", memory->memory[rf.getPC()], rf.getPC());
     printf("-------REGISTERS-------\n");
     printf("A: %X \n", rf.readReg(REG_A, IS_8_BIT));
     printf("B: %X \t\t C: %X\n", rf.readReg(REG_B, IS_8_BIT), rf.readReg(REG_C, IS_8_BIT));
     printf("D: %X \t\t E: %X\n", rf.readReg(REG_D, IS_8_BIT), rf.readReg(REG_E, IS_8_BIT));
     printf("H: %X \t\t L: %X\n", rf.readReg(REG_H, IS_8_BIT), rf.readReg(REG_L, IS_8_BIT));
-    printf("SP: %X\n\n", rf.getSP());
+    printf("SP: %X\n", rf.getSP());
+    printf("---------FLAGS---------\n");
+    printf("%sZ      %sN       %sH      %sC%s\n\n", 
+            F & (1 << 7) ? KRED:KNRM, // Z 
+            F & (1 << 6) ? KRED:KNRM, // N
+            F & (1 << 5) ? KRED:KNRM, // H 
+            F & (1 << 4) ? KRED:KNRM, // C
+            KNRM);
 }
 
 /**

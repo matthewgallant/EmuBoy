@@ -17,3 +17,15 @@ void unknownInstruction(int instr);
 #define INS_GET_X(ins) ((ins >> 6) & 0x7)
 #define INS_GET_P(ins) ((ins >> 3) & 0x1)
 #define INS_GET_Q(ins) ((ins >> 3) & 0x3)
+
+
+// Terminal colors oh my god 
+#define KNRM  "\x1B[0m"
+#define KRED  "\x1B[31m"
+#define KGRN  "\x1B[32m"
+#define KYEL  "\x1B[33m"
+#define KBLU  "\x1B[34m"
+#define KMAG  "\x1B[35m"
+#define KCYN  "\x1B[36m"
+#define KWHT  "\x1B[37m"
+#define WHTB "\e[47m"
