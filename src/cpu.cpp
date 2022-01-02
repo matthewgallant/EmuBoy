@@ -591,6 +591,8 @@ void CPU::execute(uint8_t ins){
         } case 0xC0: { // RET NZ
             break;
         } case 0xC1: { // POP BC
+            rf.writeReg(REG_BC, memory->memory[rf.getSP()]);
+            rf.setSP(rf.getSP() + 1);
             break;
         } case 0xC2: { // JP NZ, u16
             break;
@@ -625,6 +627,8 @@ void CPU::execute(uint8_t ins){
         } case 0xD0: { // RET NC
             break;
         } case 0xD1: { // POP DE
+            rf.writeReg(REG_DE, memory->memory[rf.getSP()]);
+            rf.setSP(rf.getSP() + 1);
             break;
         } case 0xD2: { // JP NC, u16
             break;
@@ -659,6 +663,8 @@ void CPU::execute(uint8_t ins){
         } case 0xE0: { // LD (FF00 + u8), A
             break;
         } case 0xE1: { // POP HL
+            rf.writeReg(REG_HL, memory->memory[rf.getSP()]);
+            rf.setSP(rf.getSP() + 1);
             break;
         } case 0xE2: { // LD (FF00 + C), A
             break;
@@ -693,6 +699,8 @@ void CPU::execute(uint8_t ins){
         } case 0xF0: { // LD A, (FF00, u8)
             break;
         } case 0xF1: { // POP AF
+            rf.writeReg(REG_AF, memory->memory[rf.getSP()]);
+            rf.setSP(rf.getSP() + 1);
             break;
         } case 0xF2: { // LD A, (FF00 + C)
             break;
