@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "cpu.hpp"
+#include "utilities.hpp"
 
 CPU::CPU() {
     std::cout << "Hello from the CPU" << std::endl;
@@ -41,6 +42,8 @@ void CPU::execute(uint8_t ins){
     uint8_t z = INS_GET_Z(ins);
     uint8_t p = INS_GET_P(ins);
     uint8_t q = INS_GET_Q(ins);
+
+    bool isDefined = false;
 
     switch(ins) {
         case 0x00: { // NOP
@@ -556,5 +559,9 @@ void CPU::execute(uint8_t ins){
         } case 0xFF: { // RST 38h
             break;
         }
+    }
+
+    if (isDefined == false) {
+        unknownInstruction(ins);
     }
 }
