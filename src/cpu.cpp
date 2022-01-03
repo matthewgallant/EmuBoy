@@ -27,6 +27,9 @@ void CPU::step() {
     rf.setPC(rf.getPC() + 1);
 }
 
+/**
+ * Prints out various information of the CPU (registers, PC, SP, and Flag values)
+ */
 void CPU::debug() {
     uint8_t F = (rf.readReg(REG_AF, IS_16_BIT) & 0xFF);
     printf("INS: %X \t PC: %X\n", memory->memory[rf.getPC()], rf.getPC());
@@ -54,18 +57,30 @@ void CPU::setMemory(Memory *memory) {
     this->memory = memory;
 }
 
+/**
+ * @param flag Flag value to set 
+ */
 void CPU::setFlag(uint8_t flag) { 
     uint8_t AF = rf.readReg(REG_AF, IS_16_BIT);
     AF |= 1 << flag;
     rf.writeReg(REG_AF, AF);
 }
 
+/**
+ * 
+ * @param flag Flag value to clear
+ */
 void CPU::clearFlag(uint8_t flag) {
     uint8_t AF = rf.readReg(REG_AF, IS_16_BIT);
     AF &= ~(1 << flag);
     rf.writeReg(REG_AF, AF);
 }
 
+/**
+ * 
+ * @param flag Flag value to get the value of
+ * @return The value of the flag which is being probed
+ */
 bool CPU::getFlag(uint8_t flag) {
     return ((rf.readReg(REG_AF, IS_16_BIT) & (1 << flag)) == (1 << flag));
 }
