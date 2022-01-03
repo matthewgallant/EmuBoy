@@ -4,6 +4,7 @@
 #include <string>
 
 #include "cpu.hpp"
+#include "ppu.hpp"
 #include "memory.hpp"
 #include "cartridge.hpp"
 #include "utilities.hpp"
@@ -34,10 +35,13 @@ int main(int argc, char* args[]) {
     CPU cpu;
 	cpu.setMemory(&memory);
 
-	int steps = 0;
-	while(true) {
-		cpu.step();
-	}
+	// Create virtual ppu
+	PPU ppu;
+
+	// int steps = 0;
+	// while(true) {
+	// 	cpu.step();
+	// }
 
 	// Safely quit program
 	return 0;
