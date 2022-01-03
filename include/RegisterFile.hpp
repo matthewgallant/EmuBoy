@@ -22,6 +22,7 @@
 #define REG_H   4
 #define REG_L   5
 #define REG_A   7
+#define REG_F   8
 
 // double register lookup values
 #define REG_BC  0

@@ -58,6 +58,8 @@ uint8_t RegisterFile::writeReg(uint8_t sr, uint8_t val) {
         case REG_A:
             this->AF.r1 = val;
             break;
+        case REG_F:
+            this->AF.r2 = val;
         default:
             break;
     }
