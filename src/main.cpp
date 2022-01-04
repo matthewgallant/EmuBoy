@@ -24,7 +24,7 @@ int main(int argc, char* args[]) {
 		0x4E, 0x4F};
 
 	// Print rom hex for debugging
-	debugRom(cartridgeContents);
+	// debugBytes(cartridgeContents);
 
 	// Create virtual memory
 	Memory memory;

@@ -7,13 +7,13 @@
 #define DEBUG_LINE_ITEMS 16
 
 /**
- * Outputs a vector of rom data in a format similar to hexdump
+ * Outputs a vector of bytes in a format similar to hexdump
  * 
- * @param romData A vector of rom data
+ * @param bytes vector of bytes
  */
-void debugRom(std::vector<uint8_t> romData) {
+void debugBytes(std::vector<uint8_t> bytes) {
 	int lineItems = 0;
-	for(auto i: romData) {
+	for(auto i: bytes) {
 		int value = i;
 		std::cout << std::hex << std::setw(2) << std::setfill('0') << value << " ";
 
