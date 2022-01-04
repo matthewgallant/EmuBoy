@@ -30,3 +30,13 @@ void Memory::load(std::vector<uint8_t> data, uint16_t address) {
 void Memory::load(uint8_t data, uint16_t address) {
     memory[address] = data;
 }
+
+/**
+ * @brief Returns a byte of data from a specified memory address
+ * 
+ * @param address specified memory address
+ * @return uint8_t byte of data from memory
+ */
+uint8_t Memory::read(uint16_t address) {
+    return memory[address];
+}
