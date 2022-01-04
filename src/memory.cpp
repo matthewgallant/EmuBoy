@@ -6,7 +6,7 @@
 Memory::Memory() {
     
     // Create stack of memory and fill with zeroes
-    for (int i = 0; i < 0xFFFF; i++) {
+    for (int i = 0; i < 65536; i++) {
         memory.push_back(0x00);
     }
 }
