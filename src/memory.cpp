@@ -12,11 +12,11 @@ Memory::Memory() {
 }
 
 /**
- * Loads vector containing data at the specified memory address
+ * @brief Loads a vector of data to a specified starting memory address
  * 
- * @param data vector containing the data
- * @param address int representation of the memory address
+ * @param data vector of data to load
+ * @param address specified memory address
  */
-void Memory::load(std::vector<uint8_t> data, int address) {
+void Memory::load(std::vector<uint8_t> data, uint16_t address) {
     std::copy(data.begin(), data.end(), memory.begin() + address);
 }
