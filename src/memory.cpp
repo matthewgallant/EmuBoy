@@ -18,5 +18,5 @@ Memory::Memory() {
  * @param address int representation of the memory address
  */
 void Memory::load(std::vector<uint8_t> data, int address) {
-    memory.insert(memory.begin() + address, data.begin(), data.end());
+    std::copy(data.begin(), data.end(), memory.begin() + address);
 }
