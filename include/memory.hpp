@@ -4,7 +4,7 @@
 class Memory {
     public:
         Memory();
-        void loadRomData(std::vector<uint8_t> romData);
+        void load(std::vector<uint8_t> data, int address);
     private:
         std::vector<uint8_t> memory;
     friend class CPU;
