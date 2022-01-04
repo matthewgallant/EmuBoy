@@ -22,7 +22,7 @@ Cartridge::Cartridge() {
  * @param switchableBankEnd ending memory address of the switchable rom bank requested
  * @return std::vector<uint8_t> The rom data in a vector
  */
-std::vector<uint8_t> Cartridge::getCartridgeContents(int switchableBankStart, int switchableBankEnd) {
+std::vector<uint8_t> Cartridge::getCartridgeContents(uint16_t switchableBankStart, uint16_t switchableBankEnd) {
     
 	// Init cartridge contents vector with the rom from bank zero (16k)
 	std::vector<uint8_t> readableCartridgeContents = {fullCartridgeContents.begin(), fullCartridgeContents.begin() + 0x4000}; 
