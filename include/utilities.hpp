@@ -2,6 +2,7 @@
 #include <iomanip>
 
 void debugBytes(std::vector<uint8_t> bytes);
+void debugByte(uint8_t byte);
 void unknownInstruction(int instr);
 
 // The following are utility macros 
