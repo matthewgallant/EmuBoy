@@ -20,3 +20,13 @@ Memory::Memory() {
 void Memory::load(std::vector<uint8_t> data, uint16_t address) {
     std::copy(data.begin(), data.end(), memory.begin() + address);
 }
+
+/**
+ * @brief Loads a byte of data to a specified memory address
+ * 
+ * @param data byte of data to load
+ * @param address specified memory address
+ */
+void Memory::load(uint8_t data, uint16_t address) {
+    memory[address] = data;
+}
