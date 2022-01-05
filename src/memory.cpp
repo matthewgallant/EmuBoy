@@ -12,22 +12,22 @@ Memory::Memory() {
 }
 
 /**
- * @brief Loads a vector of data to a specified starting memory address
+ * @brief Writes a vector of data to a specified starting memory address
  * 
- * @param data vector of data to load
+ * @param data vector of data to write
  * @param address specified memory address
  */
-void Memory::load(std::vector<uint8_t> data, uint16_t address) {
+void Memory::write(std::vector<uint8_t> data, uint16_t address) {
     std::copy(data.begin(), data.end(), memory.begin() + address);
 }
 
 /**
- * @brief Loads a byte of data to a specified memory address
+ * @brief Writes a byte of data to a specified memory address
  * 
- * @param data byte of data to load
+ * @param data byte of data to write
  * @param address specified memory address
  */
-void Memory::load(uint8_t data, uint16_t address) {
+void Memory::write(uint8_t data, uint16_t address) {
     memory[address] = data;
 }
 
