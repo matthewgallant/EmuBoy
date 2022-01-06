@@ -28,7 +28,7 @@ int main(int argc, char* args[]) {
 
 	// Create virtual memory
 	Memory memory;
-	memory.load(cartridgeContents, 0x0000);
+	//memory.load(cartridgeContents, 0x0000);
 	
 	// Create virtual cpu
     CPU cpu;

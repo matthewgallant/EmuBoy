@@ -575,20 +575,35 @@ void CPU::execute(uint8_t ins){
         } case 0x8F: { // ADC A, A
             break;
         } case 0x90: { // SUB A, B
+            rf.writeReg(REG_A, rf.readReg(REG_A, IS_8_BIT) - rf.readReg(REG_B, IS_8_BIT));
+            isDefined = true;
             break;
         } case 0x91: { // SUB A, C
+            rf.writeReg(REG_A, rf.readReg(REG_A, IS_8_BIT) - rf.readReg(REG_C, IS_8_BIT));
+            isDefined = true;
             break;
         } case 0x92: { // SUB A, D
+            rf.writeReg(REG_A, rf.readReg(REG_A, IS_8_BIT) - rf.readReg(REG_D, IS_8_BIT));
+            isDefined = true;
             break;
         } case 0x93: { // SUB A, E
+            rf.writeReg(REG_A, rf.readReg(REG_A, IS_8_BIT) - rf.readReg(REG_E, IS_8_BIT));
+            isDefined = true;
             break;
         } case 0x94: { // SUB A, H
+            rf.writeReg(REG_A, rf.readReg(REG_A, IS_8_BIT) - rf.readReg(REG_H, IS_8_BIT));
+            isDefined = true;
             break;
         } case 0x95: { // SUB A, L
+            rf.writeReg(REG_A, rf.readReg(REG_A, IS_8_BIT) - rf.readReg(REG_L, IS_8_BIT));
+            isDefined = true;
             break;
         } case 0x96: { // SUB A, (HL)
+            rf.writeReg(REG_A, rf.readReg(REG_A, IS_8_BIT) - memory->memory[rf.readReg(REG_B, IS_8_BIT)]);
+            isDefined = true;
             break;
         } case 0x97: { // SUB A, A
+            rf.writeReg(REG_A, 0);
             break;
         } case 0x98: { // SBC A, B
             break;
@@ -607,52 +622,99 @@ void CPU::execute(uint8_t ins){
         } case 0x9F: { // SBC A, A
             break;
         } case 0xA0: { // AND A, B
+            rf.writeReg(REG_A, rf.readReg(REG_A, IS_8_BIT) & rf.readReg(REG_B, IS_8_BIT)]);
+            isDefined = true;
             break;
         } case 0xA1: { // AND A, C
+            rf.writeReg(REG_A, rf.readReg(REG_A, IS_8_BIT) & rf.readReg(REG_C, IS_8_BIT)]);
+            isDefined = true;
             break;
         } case 0xA2: { // AND A, D
+            rf.writeReg(REG_A, rf.readReg(REG_A, IS_8_BIT) & rf.readReg(REG_D, IS_8_BIT)]);
+            isDefined = true;
             break;
         } case 0xA3: { // AND A, E
+            rf.writeReg(REG_A, rf.readReg(REG_A, IS_8_BIT) & rf.readReg(REG_E, IS_8_BIT)]);
+            isDefined = true;
             break;
         } case 0xA4: { // AND A, H
+            rf.writeReg(REG_A, rf.readReg(REG_A, IS_8_BIT) & rf.readReg(REG_H, IS_8_BIT)]);
+            isDefined = true;
             break;
         } case 0xA5: { // AND A, L
+            rf.writeReg(REG_A, rf.readReg(REG_A, IS_8_BIT) & rf.readReg(REG_L, IS_8_BIT)]);
+            isDefined = true;
             break;
         } case 0xA6: { // AND A, (HL)
+            rf.writeReg(REG_A, rf.readReg(REG_A, IS_8_BIT) & memory->memory[rf.readReg(REG_HL, IS_16_BIT)]);
+            isDefined = true;
             break;
         } case 0xA7: { // AND A, A
+            // A & A == A
             break;
         } case 0xA8: { // XOR A, B
+            rf.writeReg(REG_A, rf.readReg(REG_A, IS_8_BIT) ^ rf.readReg(REG_B, IS_8_BIT)]);
+            isDefined = true;
             break;
         } case 0xA9: { // XOR A, C
+            rf.writeReg(REG_A, rf.readReg(REG_A, IS_8_BIT) ^ rf.readReg(REG_C, IS_8_BIT)]);
+            isDefined = true;
             break;
         } case 0xAA: { // XOR A, D 
+            rf.writeReg(REG_A, rf.readReg(REG_A, IS_8_BIT) ^ rf.readReg(REG_D, IS_8_BIT)]);
+            isDefined = true;
             break; 
         } case 0xAB: { // XOR A, E
+            rf.writeReg(REG_A, rf.readReg(REG_A, IS_8_BIT) ^ rf.readReg(REG_E, IS_8_BIT)]);
+            isDefined = true;
             break;
         } case 0xAC: { // XOR A, H
+            rf.writeReg(REG_A, rf.readReg(REG_A, IS_8_BIT) ^ rf.readReg(REG_H, IS_8_BIT)]);
+            isDefined = true;
             break;
         } case 0xAD: { // XOR A, L
+            rf.writeReg(REG_A, rf.readReg(REG_A, IS_8_BIT) ^ rf.readReg(REG_L, IS_8_BIT)]);
+            isDefined = true;
             break;
         } case 0xAE: { // XOR A, (HL)
+            rf.writeReg(REG_A, rf.readReg(REG_A, IS_8_BIT) ^ memory->memory[rf.readReg(REG_L, IS_8_BIT)]);
+            isDefined = true;
             break;
         } case 0xAF: { // XOR A, A
+            // A ^ A == 0
+            rf.writeReg(REG_A, 0);
+            isDefined = true;
             break;
         } case 0xB0: { // OR A, B
+            rf.writeReg(REG_A, rf.readReg(REG_A, IS_8_BIT) | rf.readReg(REG_B, IS_8_BIT)]);
+            isDefined = true;
             break;
         } case 0xB1: { // OR A, C
+            rf.writeReg(REG_A, rf.readReg(REG_A, IS_8_BIT) | rf.readReg(REG_C, IS_8_BIT)]);
+            isDefined = true;
             break;
         } case 0xB2: { // OR A, D
+            rf.writeReg(REG_A, rf.readReg(REG_A, IS_8_BIT) | rf.readReg(REG_D, IS_8_BIT)]);
+            isDefined = true;
             break;
         } case 0xB3: { // OR A, E
+            rf.writeReg(REG_A, rf.readReg(REG_A, IS_8_BIT) | rf.readReg(REG_E, IS_8_BIT)]);
+            isDefined = true;
             break;
         } case 0xB4: { // OR A, H
+            rf.writeReg(REG_A, rf.readReg(REG_A, IS_8_BIT) | rf.readReg(REG_H, IS_8_BIT)]);
+            isDefined = true;
             break;
         } case 0xB5: { // OR A, L
+            rf.writeReg(REG_A, rf.readReg(REG_A, IS_8_BIT) | rf.readReg(REG_L, IS_8_BIT)]);
+            isDefined = true;
             break;
         } case 0xB6: { // OR A, (HL)
+            rf.writeReg(REG_A, rf.readReg(REG_A, IS_8_BIT) | memory->memory[rf.readReg(REG_L, IS_8_BIT)]);
+            isDefined = true;
             break;
         } case 0xB7: { // OR A, A
+            // A | A == A
             break;
         } case 0xB8: { // CP A, B
             break;
