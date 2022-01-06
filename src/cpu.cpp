@@ -284,6 +284,7 @@ void CPU::execute(uint8_t ins){
             break;
         } case 0x40: { // LD B, B
             // B <- B is B
+            isDefined = true;
             break;
         } case 0x41: { // LD B, C
             rf.writeReg(REG_B, rf.readReg(REG_C, IS_8_BIT));
@@ -319,6 +320,7 @@ void CPU::execute(uint8_t ins){
             break;
         } case 0x49: { // LD C, C
             // C <- C is C
+            isDefined = true;
             break;
         } case 0x4A: { // LD C, D
             rf.writeReg(REG_C, rf.readReg(REG_D, IS_8_BIT));
@@ -354,6 +356,7 @@ void CPU::execute(uint8_t ins){
             break;
         } case 0x52: { // LD D, D
             // D <- D is D
+            isDefined = true;
             break;
         } case 0x53: { // LD D, E
             rf.writeReg(REG_D, rf.readReg(REG_E, IS_8_BIT));
@@ -389,6 +392,7 @@ void CPU::execute(uint8_t ins){
             break;
         } case 0x5B: { // LD E, E
             // E <- E is still E
+            isDefined = true;
             break;
         } case 0x5C: { // LD E, H
             rf.writeReg(REG_E, rf.readReg(REG_H, IS_8_BIT));
@@ -656,6 +660,7 @@ void CPU::execute(uint8_t ins){
             break;
         } case 0xA7: { // AND A, A
             // A & A == A
+            isDefined = true;
             break;
         } case 0xA8: { // XOR A, B
             rf.writeReg(REG_A, rf.readReg(REG_A, IS_8_BIT) ^ rf.readReg(REG_B, IS_8_BIT)]);
@@ -720,6 +725,7 @@ void CPU::execute(uint8_t ins){
             break;
         } case 0xB7: { // OR A, A
             // A | A == A
+            isDefined = true;
             break;
         } case 0xB8: { // CP A, B
             break;
