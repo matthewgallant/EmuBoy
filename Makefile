@@ -10,6 +10,8 @@ OBJ := $(addprefix $(ODIR)/,\
 	cpu.o cartridge.o main.o memory.o \
 	RegisterFile.o utilities.o)
 
+all: build_files emuboy
+
 emuboy: $(OBJ)  
 	$(CXX) -o bin/$@ $^ $(CXXFLAGS) 
 
@@ -21,7 +23,6 @@ build_files:
 $(ODIR)/%.o: $(SRC)/%.cpp  
 	$(CXX) -c -o $@ $< $(CXXFLAGS)
 
-all: build_files emuboy
 
 clean:
 	rm -rf $(ODIR)
