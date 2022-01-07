@@ -6,8 +6,10 @@ ODIR=obj
 
 
 DEPS=$(IDIR)/*.hpp
-OBJ := $(addprefix $(ODIR)/, cpu.o cartridge.o main.o \
-	  memory.o RegisterFile.o utilities.o)
+OBJ := $(addprefix $(ODIR)/,\
+	cpu.o cartridge.o main.o memory.o \
+	RegisterFile.o utilities.o)
+
 emuboy: $(OBJ)  
 	$(CXX) -o bin/$@ $^ $(CXXFLAGS) 
 
@@ -16,7 +18,7 @@ build_files:
 	mkdir -p $(ODIR) 
 	mkdir -p bin 
 
-$(ODIR)/%.o: $(SRC)/%.cpp $(DEPS) build_files
+$(ODIR)/%.o: $(SRC)/%.cpp  
 	$(CXX) -c -o $@ $< $(CXXFLAGS)
 
 all: build_files emuboy
