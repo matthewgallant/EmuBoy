@@ -6,9 +6,8 @@ ODIR=obj
 
 
 DEPS=$(IDIR)/*.hpp
-OBJ := $(addprefix $(ODIR)/,\
-	cpu.o cartridge.o main.o memory.o \
-	RegisterFile.o utilities.o)
+SRCS=$(wildcard $(SRC)/*.cpp)
+OBJ=$(SRCS:$(SRC)/%.cpp=$(ODIR)/%.o)
 
 all: build_files emuboy
 
