@@ -1,7 +1,7 @@
 IDIR=include
 SRC=src
 CXX=g++
-CXXFLAGS=-I $(IDIR)
+CXXFLAGS=-I $(IDIR) -std=c++11
 ODIR=obj
 
 
