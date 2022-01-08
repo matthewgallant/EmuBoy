@@ -102,10 +102,13 @@ void CPU::execute(uint8_t ins){
 
     switch(ins) {
         case 0x00: { // NOP
+            isDefined = true;   
             break;
         } case 0x01: { // LD BC, u16 
             break;
         } case 0x02: { // LD (BC), A
+            memory->memory[rf.readReg(REG_BC, IS_16_BIT)] = rf.readReg(REG_A, IS_8_BIT);
+            isDefined = true;
             break;
         } case 0x03: { // INC BC
             break;
@@ -129,6 +132,8 @@ void CPU::execute(uint8_t ins){
         } case 0x09: { // ADD HL, BC
             break;
         } case 0x0A: { // LD A, (BC)
+            rf.writeReg(REG_A, memory->memory[rf.readReg(REG_BC, IS_16_BIT)]);
+            isDefined = true;
             break;
         } case 0x0B: { // INC BC
             break;
@@ -152,6 +157,8 @@ void CPU::execute(uint8_t ins){
         } case 0x11: { // LD DE, u16
             break;
         } case 0x12: { // LD (DE), A
+            memory->memory[rf.readReg(REG_DE, IS_16_BIT)] = rf.readReg(REG_A, IS_8_BIT);
+            isDefined = true;
             break;
         } case 0x13: { // INC DE
             break;
@@ -196,6 +203,9 @@ void CPU::execute(uint8_t ins){
         } case 0x21: { // LD HL, u16
             break;
         } case 0x22: { // LD (HL+), A
+            // THIS doesn't seem right do we need a + 1?
+            memory->memory[rf.readReg(REG_HL, IS_16_BIT)] = rf.readReg(REG_A, IS_8_BIT);
+            isDefined = true;
             break;
         } case 0x23: { // INC HL
             break;
@@ -242,6 +252,9 @@ void CPU::execute(uint8_t ins){
         } case 0x31: { // LD SP, u16
             break;
         } case 0x32: { // LD (HL-), A
+            // similar to the HL+, should this be subtracting one?
+            memory->memory[rf.readReg(REG_HL, IS_16_BIT)] = rf.readReg(REG_A, IS_8_BIT);
+            isDefined = true;
             break;
         } case 0x33: { // INC SP
             rf.setSP(rf.getSP() + 1);
