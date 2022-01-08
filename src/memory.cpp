@@ -32,6 +32,18 @@ void Memory::write(uint8_t data, uint16_t address) {
 }
 
 /**
+ * @brief Returns a vector of data from a specified memory address
+ * 
+ * @param startAddress specified memory start address
+ * @param endAddress specified memory end address
+ * @return std::vector<uint8_t> data read from memory
+ */
+std::vector<uint8_t> Memory::read(uint16_t startAddress, uint16_t endAddress) {
+    std::vector<uint8_t> readData = {memory.begin() + startAddress, memory.begin() + endAddress}; 
+    return readData;
+}
+
+/**
  * @brief Returns a byte of data from a specified memory address
  * 
  * @param address specified memory address

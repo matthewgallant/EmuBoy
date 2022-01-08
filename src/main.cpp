@@ -29,6 +29,9 @@ int main(int argc, char* args[]) {
 	// Create virtual memory
 	Memory memory;
 	//memory.load(cartridgeContents, 0x0000);
+
+	std::vector<uint8_t> testRead = memory.read(0x0000, 0x0002);
+	debugBytes(testRead);
 	
 	// Create virtual cpu
     CPU cpu;
