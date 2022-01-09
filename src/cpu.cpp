@@ -258,6 +258,11 @@ void CPU::execute(uint8_t ins){
             isDefined = true;;
             break;
         } case 0x31: { // LD SP, u16
+            uint16_t new_sp_lower = memory->memory[rf.getPC()];
+            uint16_t new_sp_upper = memory->memory[rf.getPC() + 1];
+            rf.setSP((new_sp_upper << 8) | new_sp_lower);
+            rf.setPC(rf.getPC() + 2);
+            isDefined = true;
             break;
         } case 0x32: { // LD (HL-), A
             // similar to the HL+, should this be subtracting one?
@@ -960,7 +965,7 @@ void CPU::execute(uint8_t ins){
         } case 0xC3: { // JP u16
             uint16_t lower = memory->memory[rf.getPC() + 1];
             uint16_t higher = memory->memory[rf.getPC() + 2];
-            rf.setPC((higher << 8) | lower);
+            rf.setPC(((higher << 8) | lower) - 1);
             isDefined = true;
             break;
         } case 0xC4: { // CALL NZ, u16
@@ -1004,6 +1009,18 @@ void CPU::execute(uint8_t ins){
         } case 0xCC: { // CALL Z, u16
             break;
         } case 0xCD: { // CALL u16
+            // push pc to stack
+            uint16_t old_pc_upper = rf.getPC() >> 8;
+            uint16_t old_pc_lower = rf.getPC() & 0xF; 
+            memory->memory[rf.getSP() - 1] = old_pc_upper;
+            memory->memory[rf.getSP() - 2] = old_pc_lower;
+            // load new pc 
+            uint16_t new_pc_upper = memory->memory[rf.getSP()] >> 8;
+            uint16_t new_pc_lower = memory->memory[rf.getSP()] & 0xF;
+            // set new pc
+            rf.setPC((new_pc_upper << 8) | new_pc_lower);
+            rf.setPC(rf.getPC() - 2);
+            isDefined = true;
             break;
         } case 0xCE: { // ADC A, u8
             break;
@@ -1113,6 +1130,9 @@ void CPU::execute(uint8_t ins){
         } case 0xF2: { // LD A, (FF00 + C)
             break;
         } case 0xF3: { // DI
+            // Disiable INTERRUPTS ?????
+            // We don't have interrupts soooo im gonna say it works :)
+            isDefined = true;
             break;
         } case 0xF4: { //  N/A
             break;
