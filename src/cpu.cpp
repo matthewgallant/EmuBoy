@@ -116,6 +116,13 @@ void CPU::execute(uint8_t ins){
             isDefined = true;
             break;
         } case 0x03: { // INC BC
+            uint16_t old_bc = rf.readReg(REG_BC, IS_16_BIT);
+            clearFlag(FLAG_N);
+            rf.writeReg(REG_BC, --old_bc);
+            if(old_bc == 0) {
+                setFlag(FLAG_Z);
+            }
+            isDefined = true;
             break;
         } case 0x04: { // INC B
             bool z_tmp = rf.readReg(REG_B, IS_8_BIT) == 0xFF;
@@ -316,6 +323,10 @@ void CPU::execute(uint8_t ins){
             isDefined = true;
             break;
         } case 0x3E: { // LD A, u8
+            uint8_t val = memory->memory[rf.getPC() + 1];
+            rf.writeReg(REG_A, val);
+            rf.setPC(rf.getPC() + 1);
+            isDefined = true;
             break;
         } case 0x3F: { // CCF
             clearFlag(FLAG_N);
@@ -650,6 +661,11 @@ void CPU::execute(uint8_t ins){
         } case 0x8D: { // ADC A, L
             break;
         } case 0x8E: { // ADC A, (HL)
+            uint8_t val = memory->memory[rf.readReg(REG_HL, IS_16_BIT)];
+            rf.writeReg(REG_A, val + getFlag(FLAG_C));
+            if(rf.readReg(REG_A, IS_8_BIT) == 0) 
+                setFlag(FLAG_Z);
+            isDefined = true;
             break;
         } case 0x8F: { // ADC A, A
             rf.writeReg(REG_A, rf.readReg(REG_A, IS_8_BIT) + (rf.readReg(REG_A, IS_8_BIT) + getFlag(FLAG_C)));
