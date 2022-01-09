@@ -14,11 +14,10 @@ CPU::CPU() {
  * von-neumman style fetch-decode-execute
  */
 void CPU::step() { 
+    // THIS IS ONLY FOR DEBUG REMOVE LATER!!!
+    debug();
     // fetch
     next_instruction = memory->memory[rf.getPC()];
-    // THIS IS ONLY FOR DEBUG REMOVE LATER!!!
-    
-    debug();
     // decode & execute
     execute(next_instruction);
     // increment program counter
@@ -301,6 +300,14 @@ void CPU::execute(uint8_t ins){
         } case 0x3E: { // LD A, u8
             break;
         } case 0x3F: { // CCF
+            clearFlag(FLAG_N);
+            clearFlag(FLAG_H);
+            if(getFlag(FLAG_C)){
+                clearFlag(FLAG_C);
+            } else {
+                setFlag(FLAG_C);
+            }
+            isDefined = true;
             break;
         } case 0x40: { // LD B, B
             // B <- B is B
@@ -935,6 +942,9 @@ void CPU::execute(uint8_t ins){
         } case 0xBE: { // CP A, (HL)
             break;
         } case 0xBF: { // CP A, A
+            setFlag(FLAG_Z);
+            setFlag(FLAG_N);
+            isDefined = true;  
             break;
         } case 0xC0: { // RET NZ
             break;
@@ -948,9 +958,9 @@ void CPU::execute(uint8_t ins){
         } case 0xC2: { // JP NZ, u16
             break;
         } case 0xC3: { // JP u16
-            uint16_t lower = memory->memory[rf.getSP()];
-            uint16_t higher = memory->memory[rf.getSP() + 1];
-            rf.setSP((higher << 8) | lower);
+            uint16_t lower = memory->memory[rf.getPC() + 1];
+            uint16_t higher = memory->memory[rf.getPC() + 2];
+            rf.setPC((higher << 8) | lower);
             isDefined = true;
             break;
         } case 0xC4: { // CALL NZ, u16
@@ -971,13 +981,25 @@ void CPU::execute(uint8_t ins){
         } case 0xC9: { // RET
             uint16_t pc_low = (uint16_t) memory->memory[rf.getSP()];
             uint16_t pc_high = (uint16_t) memory->memory[rf.getSP() + 1];
+            std::cout << pc_low << " " << pc_high << std::endl;
             rf.setSP(rf.getSP() + 2);
             rf.setPC((pc_high << 8) | pc_low);
             isDefined = true;
             break;
         } case 0xCA: { // JP Z, u16
+            if(getFlag(FLAG_Z)) {
+                uint16_t lower = memory->memory[rf.getSP()];
+                uint16_t upper = memory->memory[rf.getSP() + 1];
+                uint16_t addr = (upper << 8) | lower;
+                rf.setSP(addr);
+            }
+            rf.setSP(rf.getSP() + 2);
+            isDefined = true;
             break;
         } case 0xCB: { // PREFIX CB
+            cbPrefixExecute(memory->memory[rf.getPC() + 1]);
+            rf.setPC(rf.getPC() + 2);
+            isDefined = true;
             break;
         } case 0xCC: { // CALL Z, u16
             break;
@@ -1063,6 +1085,11 @@ void CPU::execute(uint8_t ins){
         } case 0xE9: { // JP HL
             break;
         } case 0xEA: { // LD (u16), A
+            uint8_t lower = memory->memory[rf.getSP()];
+            uint8_t upper = memory->memory[rf.getSP() + 1];
+            uint16_t addr = (upper << 8) | lower;
+            memory->memory[addr] = rf.readReg(REG_A, IS_8_BIT);
+            isDefined = true;
             break;
         } case 0xEB: { // N/A
             break;

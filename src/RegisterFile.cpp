@@ -13,7 +13,7 @@ RegisterFile::RegisterFile(){
     writeReg(REG_DE, INIT_DE, false);
     writeReg(REG_HL, INIT_HL, false);
     writeReg(REG_SP, INIT_SP, true);
-    this->PC = 0;
+    this->PC = 0x100;
 }
 
 uint16_t RegisterFile::setPC(uint16_t pc) {
@@ -70,7 +70,6 @@ uint8_t RegisterFile::writeReg(uint8_t sr, uint8_t val) {
 uint16_t RegisterFile::writeReg(uint8_t sr, uint16_t val, bool is_SP) {
     switch(sr) {
         case REG_BC:
-            std::cout << "writeReg val: " << val << std::endl;
             this->BC.r1 = val >> 8;
             this->BC.r2 = val & 0xFF;
             break;

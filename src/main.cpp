@@ -42,6 +42,7 @@ int main(int argc, char* args[]) {
 	int steps = 0;
 	while(true) {
 		cpu.step();
+		//getchar();
 	}
 
 	// Safely quit program
