@@ -980,6 +980,13 @@ void CPU::execute(uint8_t ins){
         } case 0xC6: { // ADD A, u8
             break;
         } case 0xC7: { // RST 00h
+            uint16_t old_pc_upper = rf.getPC() >> 8;
+            uint16_t old_pc_lower = rf.getPC() & 0xF;
+            memory->memory[rf.getSP() - 1] = old_pc_upper;
+            memory->memory[rf.getSP() - 2] = old_pc_lower;
+            rf.setSP(rf.getSP() - 2);
+            rf.setPC(0x0000);
+            isDefined = true;
             break;
         } case 0xC8: { // RET Z
             break;
@@ -1025,6 +1032,13 @@ void CPU::execute(uint8_t ins){
         } case 0xCE: { // ADC A, u8
             break;
         } case 0xCF: { // RST 08h
+            uint16_t old_pc_upper = rf.getPC() >> 8;
+            uint16_t old_pc_lower = rf.getPC() & 0xF;
+            memory->memory[rf.getSP() - 1] = old_pc_upper;
+            memory->memory[rf.getSP() - 2] = old_pc_lower;
+            rf.setSP(rf.getSP() - 2);
+            rf.setPC(0x0008);
+            isDefined = true;
             break;
         } case 0xD0: { // RET NC
             break;
@@ -1054,6 +1068,13 @@ void CPU::execute(uint8_t ins){
             isDefined = true;
             break;
         } case 0xD7: { // RST 10h
+            uint16_t old_pc_upper = rf.getPC() >> 8;
+            uint16_t old_pc_lower = rf.getPC() & 0xF;
+            memory->memory[rf.getSP() - 1] = old_pc_upper;
+            memory->memory[rf.getSP() - 2] = old_pc_lower;
+            rf.setSP(rf.getSP() - 2);
+            rf.setPC(0x0010);
+            isDefined = true;
             break;
         } case 0xD8: { // RET C
             break;
@@ -1070,8 +1091,19 @@ void CPU::execute(uint8_t ins){
         } case 0xDE: { // SBC A, u8
             break;
         } case 0xDF: { // RST 18h
+            uint16_t old_pc_upper = rf.getPC() >> 8;
+            uint16_t old_pc_lower = rf.getPC() & 0xF;
+            memory->memory[rf.getSP() - 1] = old_pc_upper;
+            memory->memory[rf.getSP() - 2] = old_pc_lower;
+            rf.setSP(rf.getSP() - 2);
+            rf.setPC(0x0018);
+            isDefined = true;
             break;
         } case 0xE0: { // LD (FF00 + u8), A
+            uint16_t addr_offset = memory->memory[rf.getPC() + 1];
+            memory->memory[0xFF00 + addr_offset] = rf.readReg(REG_A, IS_8_BIT);
+            rf.setPC(rf.getPC() + 2);
+            isDefined = true;
             break;
         } case 0xE1: { // POP HL
             rf.writeReg(REG_H, memory->memory[rf.getSP()]);
@@ -1096,6 +1128,13 @@ void CPU::execute(uint8_t ins){
         } case 0xE6: { // AND A, u8
             break;
         } case 0xE7: { // RST 20h
+            uint16_t old_pc_upper = rf.getPC() >> 8;
+            uint16_t old_pc_lower = rf.getPC() & 0xF;
+            memory->memory[rf.getSP() - 1] = old_pc_upper;
+            memory->memory[rf.getSP() - 2] = old_pc_lower;
+            rf.setSP(rf.getSP() - 2);
+            rf.setPC(0x0020);
+            isDefined = true;
             break;
         } case 0xE8: { // ADD SP, i8
             break;
@@ -1117,8 +1156,19 @@ void CPU::execute(uint8_t ins){
         } case 0xEE: { // XOR A, u8
             break;
         } case 0xEF: { // RST 28h
+            uint16_t old_pc_upper = rf.getPC() >> 8;
+            uint16_t old_pc_lower = rf.getPC() & 0xF;
+            memory->memory[rf.getSP() - 1] = old_pc_upper;
+            memory->memory[rf.getSP() - 2] = old_pc_lower;
+            rf.setSP(rf.getSP() - 2);
+            rf.setPC(0x0028);
+            isDefined = true;
             break;
         } case 0xF0: { // LD A, (FF00, u8)
+            uint16_t addr_offset = memory->memory[rf.getPC() + 1];
+            rf.writeReg(REG_A, memory->memory[0xFF00 + addr_offset]);
+            rf.setPC(rf.getPC() + 2);
+            isDefined = true;
             break;
         } case 0xF1: { // POP AF
             rf.writeReg(REG_A, memory->memory[rf.getSP()]);
@@ -1162,6 +1212,13 @@ void CPU::execute(uint8_t ins){
         } case 0xFE: { // CP A, u8
             break;
         } case 0xFF: { // RST 38h
+            uint16_t old_pc_upper = rf.getPC() >> 8;
+            uint16_t old_pc_lower = rf.getPC() & 0xF;
+            memory->memory[rf.getSP() - 1] = old_pc_upper;
+            memory->memory[rf.getSP() - 2] = old_pc_lower;
+            rf.setSP(rf.getSP() - 2);
+            rf.setPC(0x0038);
+            isDefined = true;
             break;
         }
     }
