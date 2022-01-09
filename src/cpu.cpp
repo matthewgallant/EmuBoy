@@ -6,6 +6,7 @@
 CPU::CPU() {
     std::cout << "Hello from the CPU" << std::endl;
     this->rf = *(new RegisterFile());
+    std::cout << rf.readReg(REG_AF, IS_16_BIT) << std::endl;
 }
 
 
@@ -14,6 +15,8 @@ CPU::CPU() {
  * von-neumman style fetch-decode-execute
  */
 void CPU::step() { 
+    // If we're halted don't step 
+    if(state == HALTED) return;
     // THIS IS ONLY FOR DEBUG REMOVE LATER!!!
     debug();
     // fetch
@@ -60,7 +63,7 @@ void CPU::setMemory(Memory *memory) {
 void CPU::setFlag(uint8_t flag) { 
     uint8_t AF = rf.readReg(REG_AF, IS_16_BIT);
     AF |= 1 << flag;
-    rf.writeReg(REG_AF, AF);
+    rf.writeReg(REG_AF, AF, false);
 }
 
 /**
@@ -70,7 +73,7 @@ void CPU::setFlag(uint8_t flag) {
 void CPU::clearFlag(uint8_t flag) {
     uint8_t AF = rf.readReg(REG_AF, IS_16_BIT);
     AF &= ~(1 << flag);
-    rf.writeReg(REG_AF, AF);
+    rf.writeReg(REG_AF, AF, false);
 }
 
 /**
@@ -125,6 +128,9 @@ void CPU::execute(uint8_t ins){
         } case 0x07: { // RLCA 
             break;
         } case 0x08: { // LD (u16), SP
+            memory->memory[memory->memory[rf.getPC() + 1]] = rf.getSP();
+            rf.setPC(rf.getPC() + 1);
+            isDefined = true;
             break;
         } case 0x09: { // ADD HL, BC
             break;
@@ -530,6 +536,7 @@ void CPU::execute(uint8_t ins){
             break;     
         } case 0x76: { // HALT
             // ???? IDK
+            state = HALTED;
             break;
         } case 0x77: { // LD (HL), A
             memory->memory[rf.readReg(REG_HL, IS_16_BIT)] = rf.readReg(REG_A, IS_8_BIT);
@@ -981,7 +988,7 @@ void CPU::execute(uint8_t ins){
             break;
         } case 0xC7: { // RST 00h
             uint16_t old_pc_upper = rf.getPC() >> 8;
-            uint16_t old_pc_lower = rf.getPC() & 0xF;
+            uint16_t old_pc_lower = rf.getPC() & 0xFF;
             memory->memory[rf.getSP() - 1] = old_pc_upper;
             memory->memory[rf.getSP() - 2] = old_pc_lower;
             rf.setSP(rf.getSP() - 2);
@@ -1018,12 +1025,12 @@ void CPU::execute(uint8_t ins){
         } case 0xCD: { // CALL u16
             // push pc to stack
             uint16_t old_pc_upper = rf.getPC() >> 8;
-            uint16_t old_pc_lower = rf.getPC() & 0xF; 
+            uint16_t old_pc_lower = rf.getPC() & 0xFF; 
             memory->memory[rf.getSP() - 1] = old_pc_upper;
             memory->memory[rf.getSP() - 2] = old_pc_lower;
             // load new pc 
             uint16_t new_pc_upper = memory->memory[rf.getSP()] >> 8;
-            uint16_t new_pc_lower = memory->memory[rf.getSP()] & 0xF;
+            uint16_t new_pc_lower = memory->memory[rf.getSP()] & 0xFF;
             // set new pc
             rf.setPC((new_pc_upper << 8) | new_pc_lower);
             rf.setPC(rf.getPC() - 2);
@@ -1033,7 +1040,7 @@ void CPU::execute(uint8_t ins){
             break;
         } case 0xCF: { // RST 08h
             uint16_t old_pc_upper = rf.getPC() >> 8;
-            uint16_t old_pc_lower = rf.getPC() & 0xF;
+            uint16_t old_pc_lower = rf.getPC() & 0xFF;
             memory->memory[rf.getSP() - 1] = old_pc_upper;
             memory->memory[rf.getSP() - 2] = old_pc_lower;
             rf.setSP(rf.getSP() - 2);
@@ -1069,7 +1076,7 @@ void CPU::execute(uint8_t ins){
             break;
         } case 0xD7: { // RST 10h
             uint16_t old_pc_upper = rf.getPC() >> 8;
-            uint16_t old_pc_lower = rf.getPC() & 0xF;
+            uint16_t old_pc_lower = rf.getPC() & 0xFF;
             memory->memory[rf.getSP() - 1] = old_pc_upper;
             memory->memory[rf.getSP() - 2] = old_pc_lower;
             rf.setSP(rf.getSP() - 2);
@@ -1092,7 +1099,7 @@ void CPU::execute(uint8_t ins){
             break;
         } case 0xDF: { // RST 18h
             uint16_t old_pc_upper = rf.getPC() >> 8;
-            uint16_t old_pc_lower = rf.getPC() & 0xF;
+            uint16_t old_pc_lower = rf.getPC() & 0xFF;
             memory->memory[rf.getSP() - 1] = old_pc_upper;
             memory->memory[rf.getSP() - 2] = old_pc_lower;
             rf.setSP(rf.getSP() - 2);
@@ -1129,7 +1136,7 @@ void CPU::execute(uint8_t ins){
             break;
         } case 0xE7: { // RST 20h
             uint16_t old_pc_upper = rf.getPC() >> 8;
-            uint16_t old_pc_lower = rf.getPC() & 0xF;
+            uint16_t old_pc_lower = rf.getPC() & 0xFF;
             memory->memory[rf.getSP() - 1] = old_pc_upper;
             memory->memory[rf.getSP() - 2] = old_pc_lower;
             rf.setSP(rf.getSP() - 2);
@@ -1157,7 +1164,7 @@ void CPU::execute(uint8_t ins){
             break;
         } case 0xEF: { // RST 28h
             uint16_t old_pc_upper = rf.getPC() >> 8;
-            uint16_t old_pc_lower = rf.getPC() & 0xF;
+            uint16_t old_pc_lower = rf.getPC() & 0xFF;
             memory->memory[rf.getSP() - 1] = old_pc_upper;
             memory->memory[rf.getSP() - 2] = old_pc_lower;
             rf.setSP(rf.getSP() - 2);
@@ -1213,7 +1220,7 @@ void CPU::execute(uint8_t ins){
             break;
         } case 0xFF: { // RST 38h
             uint16_t old_pc_upper = rf.getPC() >> 8;
-            uint16_t old_pc_lower = rf.getPC() & 0xF;
+            uint16_t old_pc_lower = rf.getPC() & 0xFF;
             memory->memory[rf.getSP() - 1] = old_pc_upper;
             memory->memory[rf.getSP() - 2] = old_pc_lower;
             rf.setSP(rf.getSP() - 2);
@@ -1310,7 +1317,7 @@ void CPU::cbPrefixExecute(uint8_t ins){
             } else {
                 uint8_t tmp = rf.readReg(z, IS_8_BIT);
                 uint8_t upper = tmp >> 4;
-                uint8_t lower = tmp & 0xF;
+                uint8_t lower = tmp & 0xFF;
                 tmp = 0;
                 tmp |= (lower << 4) | upper;
                 rf.writeReg(z, tmp);

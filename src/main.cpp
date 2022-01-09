@@ -39,6 +39,7 @@ int main(int argc, char* args[]) {
     CPU cpu;
 	cpu.setMemory(&memory);
 
+	cpu.debug();
 	int steps = 0;
 	while(true) {
 		cpu.step();

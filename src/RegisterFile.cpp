@@ -83,7 +83,10 @@ uint16_t RegisterFile::writeReg(uint8_t sr, uint16_t val, bool is_SP) {
             break;
         case REG_AF: // OR REG_SP
             if(is_SP) this->SP = val;
-            else writeReg(REG_AF, val);
+            else {
+                this->AF.r1 = val >> 8;
+                this->AF.r2 = val & 0xFF;
+            }
             break;
         default:
             break;

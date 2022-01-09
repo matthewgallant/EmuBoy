@@ -8,6 +8,8 @@
 #define FLAG_H 5
 #define FLAG_C 4
 
+#define HALTED true
+
 class CPU {
     public:
         CPU();
@@ -23,4 +25,5 @@ class CPU {
         RegisterFile rf;
         Memory *memory;
         uint8_t next_instruction;
+        bool state;
 };
