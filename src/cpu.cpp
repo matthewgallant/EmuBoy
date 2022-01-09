@@ -1123,3 +1123,128 @@ void CPU::execute(uint8_t ins){
         unknownInstruction(ins);
     }
 }
+
+void CPU::cbPrefixExecute(uint8_t ins){
+    uint8_t x = INS_GET_X(ins);
+    uint8_t y = INS_GET_Y(ins);
+    uint8_t z = INS_GET_Z(ins);
+    uint8_t p = INS_GET_P(ins);
+    uint8_t q = INS_GET_Q(ins);
+
+    if(x == 0){         // ROT -- rotate / shift
+        if(y == 0) { // RLC
+            if(z == 6) {
+                // memory stuff here
+            } else {
+                // hahaha this is so fucked up :)
+                uint8_t tmp = rf.readReg(z, IS_8_BIT);
+                uint8_t c = tmp & (1 << 7);
+                if(c == 1 << 7) setFlag(FLAG_C);
+                tmp <<= 1;
+                tmp |= c ? 1:0;
+                rf.writeReg(z, tmp);
+            }
+        } else if(y == 2) { // RL
+            if(z == 6) {
+                // memory stuff here
+            } else {
+                uint8_t tmp = rf.readReg(z, IS_8_BIT);
+                if(tmp & (1 << 7)) setFlag(FLAG_C);
+                tmp <<= 1;
+                rf.writeReg(z, tmp);
+            }
+        } else if(y == 1) { // RRC
+            if(z == 6) {
+                // memory stuff here
+            } else {
+                uint8_t tmp = rf.readReg(z, IS_8_BIT);
+                if(tmp & 1) setFlag(FLAG_C);
+                tmp >>= 1;
+                rf.writeReg(z | (getFlag(FLAG_C) << 7), tmp);
+            }
+        } else if(y == 3) { // RR
+            if(z == 6) {
+                // memory stuff here
+            } else {
+                uint8_t tmp = rf.readReg(z, IS_8_BIT);
+                if(tmp & 1) setFlag(FLAG_C);
+                tmp >>= 1;
+                rf.writeReg(z, tmp);
+            }
+        } else if(y == 4) { // SLA
+            if(z == 6) {
+                // memory stuff here
+            } else {
+                uint8_t tmp = rf.readReg(z, IS_8_BIT);
+                if(tmp & (1 << 7)) setFlag(FLAG_C);
+                tmp <<= 1;
+                rf.writeReg(z, tmp);
+            }
+        } else if(y == 5) { // SRA
+            if(z == 6) {
+                // memory stuff here
+            } else {
+                uint8_t tmp = rf.readReg(z, IS_8_BIT);
+                bool bit_7 = tmp & (1 << 7);
+                if(tmp & 1) setFlag(FLAG_C);
+                tmp >>= 1;
+                tmp |= bit_7 << 7;
+                rf.writeReg(z, tmp);
+            }
+        } else if(y == 7) { // SRL
+            if(z == 6) {
+                // memory stuff here
+            } else {
+                uint8_t tmp = rf.readReg(z, IS_8_BIT);
+                if(tmp & 1) setFlag(FLAG_C);
+                tmp >>= 1;
+                rf.writeReg(z, tmp);
+            }
+        } else if(y == 6) { // SWAP
+            if(z == 6) {
+                // memory stuff here
+            } else {
+                uint8_t tmp = rf.readReg(z, IS_8_BIT);
+                uint8_t upper = tmp >> 4;
+                uint8_t lower = tmp & 0xF;
+                tmp = 0;
+                tmp |= (lower << 4) | upper;
+                rf.writeReg(z, tmp);
+                clearFlag(FLAG_C);
+            }
+        }
+    } else if(x == 1){  // BIT -- test bit
+        setFlag(FLAG_H);
+        clearFlag(FLAG_N);
+        if(z == 6) {
+            if(memory->memory[rf.readReg(REG_HL, IS_16_BIT)] & (1 << y)){
+                setFlag(FLAG_Z);
+            }
+        } else if(rf.readReg(z, IS_8_BIT) & (1 << y)) {
+            setFlag(FLAG_Z);
+        }else{
+            clearFlag(FLAG_Z);
+        }
+    } else if(x == 2){  // RES -- reset bit
+        if(z == 6){
+            uint8_t tmp = memory->memory[rf.readReg(REG_HL, IS_16_BIT)];
+            tmp ^= ~(1 << y);
+            memory->memory[rf.readReg(REG_HL, IS_16_BIT)] = tmp;
+        } else {
+            uint8_t tmp = rf.readReg(z, IS_8_BIT);
+            tmp ^= ~(1 << y);
+            rf.writeReg(z, tmp);
+        }
+    } else if(x == 3){  // SET -- set bit
+        if(z == 6){
+            uint8_t tmp = memory->memory[rf.readReg(REG_HL, IS_16_BIT)];
+            tmp |= 1 << y;
+            memory->memory[rf.readReg(REG_HL, IS_16_BIT)] = tmp;
+        } else {
+            uint8_t tmp = rf.readReg(z, IS_8_BIT);
+            tmp |= 1 << y;
+            rf.writeReg(z, tmp);
+        }
+    }
+  
+}
