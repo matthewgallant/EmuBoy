@@ -105,6 +105,11 @@ void CPU::execute(uint8_t ins){
             isDefined = true;   
             break;
         } case 0x01: { // LD BC, u16 
+            uint16_t new_bc_lower = memory->memory[rf.getPC() + 1];
+            uint16_t new_bc_upper = memory->memory[rf.getPC() + 2];
+            rf.writeReg(REG_BC, (new_bc_upper << 8) | (new_bc_lower & 0xFF), false);
+            rf.setPC(rf.getPC() + 3);
+            isDefined = true;
             break;
         } case 0x02: { // LD (BC), A
             memory->memory[rf.readReg(REG_BC, IS_16_BIT)] = rf.readReg(REG_A, IS_8_BIT);
@@ -139,6 +144,8 @@ void CPU::execute(uint8_t ins){
             isDefined = true;
             break;
         } case 0x0B: { // INC BC
+            rf.writeReg(REG_BC, rf.readReg(REG_BC, IS_16_BIT) + 1, false);
+            isDefined = true;
             break;
         } case 0x0C: { // INC C
             bool z_tmp = rf.readReg(REG_C, IS_8_BIT) == 0xFF;
@@ -1033,7 +1040,7 @@ void CPU::execute(uint8_t ins){
             uint16_t new_pc_lower = memory->memory[rf.getSP()] & 0xFF;
             // set new pc
             rf.setPC((new_pc_upper << 8) | new_pc_lower);
-            rf.setPC(rf.getPC() - 2);
+            rf.setSP(rf.getSP() - 2);
             isDefined = true;
             break;
         } case 0xCE: { // ADC A, u8
