@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <string>
+#include <thread>
 
 #include "cpu.hpp"
 #include "memory.hpp"
@@ -40,14 +41,19 @@ int main(int argc, char* args[]) {
     CPU cpu;
 	cpu.setMemory(&memory);
 
+	// run the cpu cycle in a seperate thread
+	std::thread processor([](CPU *cpu) {
+		cpu->debug();
+		int steps = 0;
+		while(true) {
+			cpu->step();
+			getchar();
+		}
+	}, &cpu);
+	
 	PPU ppu;
 
-	cpu.debug();
-	int steps = 0;
-	while(true) {
-		cpu.step();
-		getchar();
-	}
+	processor.join();
 
 	// Safely quit program
 	return 0;
