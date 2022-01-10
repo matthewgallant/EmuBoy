@@ -7,6 +7,7 @@
 #include "memory.hpp"
 #include "cartridge.hpp"
 #include "utilities.hpp"
+#include "ppu.hpp"
 
 int main(int argc, char* args[]) {
 	// Get file from environment
@@ -38,6 +39,8 @@ int main(int argc, char* args[]) {
 	// Create virtual cpu
     CPU cpu;
 	cpu.setMemory(&memory);
+
+	PPU ppu;
 
 	cpu.debug();
 	int steps = 0;
