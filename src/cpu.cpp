@@ -1047,15 +1047,17 @@ void CPU::execute(uint8_t ins){
             break;
         } case 0xCD: { // CALL u16
             // push pc to stack
-            uint16_t old_pc_upper = rf.getPC() >> 8;
+            uint16_t old_pc_upper = rf.getPC() >> 7;
             uint16_t old_pc_lower = rf.getPC() & 0xFF; 
             memory->memory[rf.getSP() - 1] = old_pc_upper;
             memory->memory[rf.getSP() - 2] = old_pc_lower;
             // load new pc 
-            uint16_t new_pc_upper = memory->memory[rf.getSP()] >> 8;
-            uint16_t new_pc_lower = memory->memory[rf.getSP()] & 0xFF;
+            uint16_t new_pc_upper = memory->memory[rf.getPC() + 1];
+            uint16_t new_pc_lower = memory->memory[rf.getPC() + 2];
+            std::cout << new_pc_upper << new_pc_lower << std::endl;
             // set new pc
-            rf.setPC((new_pc_upper << 8) | new_pc_lower);
+            // subtract 1 to account for exec incrementing one
+            rf.setPC(((new_pc_upper << 8) | new_pc_lower) - 1);
             rf.setSP(rf.getSP() - 2);
             isDefined = true;
             break;
