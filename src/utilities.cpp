@@ -4,27 +4,36 @@
 
 #include "utilities.hpp"
 
+#define DEBUG_LINE_ITEMS 16
+
 /**
- * Outputs a vector of rom data in a format similar to hexdump
+ * Outputs a vector of bytes in a format similar to hexdump
  * 
- * @param romData A vector of rom data
+ * @param bytes vector of bytes
  */
-void debugRom(std::vector<uint8_t> romData) {
+void debugBytes(std::vector<uint8_t> bytes) {
 	int lineItems = 0;
-	std::ios init(NULL);
-	init.copyfmt(std::cout);
-	for(auto i: romData) {
+	for(auto i: bytes) {
 		int value = i;
 		std::cout << std::hex << std::setw(2) << std::setfill('0') << value << " ";
 
 		// Limit hex pairs per line to 16 per line like hexdump
 		lineItems++;
-		if (lineItems == 16) {
+		if (lineItems == DEBUG_LINE_ITEMS) {
 			lineItems = 0;
 			std::cout << std::endl;
 		}
 	}
-	std::cout.copyfmt(init);
+	if (lineItems % DEBUG_LINE_ITEMS != 0) std::cout << std::endl;
+}
+
+/**
+ * @brief Output a byte in a format that is command line friendly
+ * 
+ * @param byte byte to debug/output
+ */
+void debugByte(uint8_t byte) {
+	std::cout << "Debug Byte: " << std::hex << std::setw(2) << std::setfill('0') << (int)byte << std::endl;
 }
 
 /**

@@ -8,6 +8,8 @@
 #define FLAG_H 5
 #define FLAG_C 4
 
+#define HALTED true
+
 class CPU {
     public:
         CPU();
@@ -18,8 +20,10 @@ class CPU {
         void setFlag(uint8_t flag);
         void clearFlag(uint8_t flag);
         bool getFlag(uint8_t flag);
+        void cbPrefixExecute(uint8_t ins);
     private:
         RegisterFile rf;
         Memory *memory;
         uint8_t next_instruction;
+        bool state;
 };

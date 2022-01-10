@@ -4,7 +4,12 @@
 class Memory {
     public:
         Memory();
-        void loadRomData(std::vector<uint8_t> romData);
+        
+        void write(std::vector<uint8_t> data, uint16_t address);
+        void write(uint8_t data, uint16_t address);
+
+        std::vector<uint8_t> read(uint16_t startAddress, uint16_t endAddress);
+        uint8_t read(uint16_t address);
     private:
         std::vector<uint8_t> memory;
     friend class CPU;

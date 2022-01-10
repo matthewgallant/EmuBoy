@@ -3,3 +3,4 @@ lib/
 include/SDL2/
 .vscode/
 .DS_Store
+obj/
