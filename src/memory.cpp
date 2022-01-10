@@ -9,6 +9,29 @@ Memory::Memory() {
     for (int i = 0; i < 65536; i++) {
         memory.push_back(0x00);
     }
+
+    // Initialize I/O register memory addresses on start
+    // Below excludes addresses that are set to 0x00 since that's already done up above.
+    // See page 18 of http://marc.rawer.de/Gameboy/Docs/GBCPUman.pdf for more info.
+    write(0x80, 0xFF10); // NR10
+    write(0xBF, 0xFF11); // NR11
+    write(0xF3, 0xFF12); // NR12
+    write(0xBF, 0xFF14); // NR14
+    write(0x3F, 0xFF16); // NR21
+    write(0xBF, 0xFF19); // NR24
+    write(0x7F, 0xFF1A); // NR30
+    write(0xFF, 0xFF1B); // NR31
+    write(0x9F, 0xFF1C); // NR32
+    write(0xBF, 0xFF1E); // NR33
+    write(0xFF, 0xFF20); // NR41
+    write(0xBF, 0xFF23); // NR30
+    write(0x77, 0xFF24); // NR50
+    write(0xF3, 0xFF25); // NR51
+    write(0xF1, 0xFF26); // NR52
+    write(0x91, 0xFF40); // LCDC
+    write(0xFC, 0xFF47); // BGP
+    write(0xFF, 0xFF48); // OBP0
+    write(0xFF, 0xFF49); // OBP1
 }
 
 /**
