@@ -1,6 +1,9 @@
+# Compiled binaries
 bin/
-lib/
-include/SDL2/
-.vscode/
-.DS_Store
 obj/
+
+# VS Code project settings
+.vscode/
+
+# macOS folder metadata
+.DS_Store
