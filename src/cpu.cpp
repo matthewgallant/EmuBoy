@@ -5,7 +5,7 @@
 
 CPU::CPU() {
     std::cout << "Hello from the CPU" << std::endl;
-    this->rf = *(new RegisterFile());
+    this->rf = RegisterFile();
     std::cout << rf.readReg(REG_AF, IS_16_BIT) << std::endl;
 }
 
