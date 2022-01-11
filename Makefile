@@ -1,7 +1,7 @@
 IDIR=include
 SRC=src
 CXX=g++
-CXXFLAGS=-I $(IDIR) -std=c++11 -pthread -O3 -Wall -Wextra 
+CXXFLAGS=-I $(IDIR) -std=c++11 -pthread -O3 -Wall -Wextra -Wno-stringop-overread
 LDFLAGS=-lSDL2
 ODIR=obj
 
