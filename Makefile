@@ -10,7 +10,7 @@ DEPS=$(IDIR)/*.hpp
 SRCS=$(wildcard $(SRC)/*.cpp)
 OBJ=$(SRCS:$(SRC)/%.cpp=$(ODIR)/%.o)
 
-all: build_files emuboy
+all: analyse build_files emuboy
 
 emuboy: $(OBJ)  
 	$(CXX) -o bin/$@ $^ $(CXXFLAGS) $(LDFLAGS)
