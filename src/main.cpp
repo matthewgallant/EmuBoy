@@ -44,7 +44,6 @@ int main(int argc, char* args[]) {
 	// run the cpu cycle in a seperate thread
 	std::thread processor([](CPU *cpu) {
 		cpu->debug();
-		int steps = 0;
 		while(true) {
 			cpu->step();
 			getchar();

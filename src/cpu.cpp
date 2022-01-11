@@ -31,7 +31,6 @@ void CPU::step() {
  * Prints out various information of the CPU (registers, PC, SP, and Flag values)
  */
 void CPU::debug() {
-    uint8_t F = (rf.readReg(REG_AF, IS_16_BIT) & 0xFF);
     printf("INS: %X \t PC: %X\n", memory->memory[rf.getPC()], rf.getPC());
     printf("-------REGISTERS-------\n");
     printf("A: %X \n", rf.readReg(REG_A, IS_8_BIT));
@@ -92,11 +91,12 @@ bool CPU::getFlag(uint8_t flag) {
  */
 void CPU::execute(uint8_t ins){
     // begin decoding 
-    uint8_t x = INS_GET_X(ins);
-    uint8_t y = INS_GET_Y(ins);
-    uint8_t z = INS_GET_Z(ins);
-    uint8_t p = INS_GET_P(ins);
-    uint8_t q = INS_GET_Q(ins);
+    // there are decoded values not really needed but I'll leave it here :)
+    // uint8_t x = INS_GET_X(ins);
+    // uint8_t y = INS_GET_Y(ins);
+    // uint8_t z = INS_GET_Z(ins);
+    // uint8_t p = INS_GET_P(ins);
+    // uint8_t q = INS_GET_Q(ins);
 
     bool isDefined = false;
 
@@ -518,8 +518,8 @@ void CPU::execute(uint8_t ins){
             isDefined = true;
             break;     
         } case 0x6D: { // LD L, L
-            break;     
             isDefined = true;
+            break;     
         } case 0x6E: { // LD L, (HL)
             rf.writeReg(REG_B, memory->memory[rf.readReg(REG_HL, IS_16_BIT)]);
             isDefined = true;
@@ -590,8 +590,8 @@ void CPU::execute(uint8_t ins){
             break;
         } case 0x7F: { // LD A, A
             // A <- A is just A lol
-            break;
             isDefined = true;
+            break;
         } case 0x80: { // ADD A, B
             rf.writeReg(REG_A, rf.readReg(REG_A, IS_8_BIT) + rf.readReg(REG_B, IS_8_BIT));
             if(rf.readReg(REG_A, IS_8_BIT) == 0) 
@@ -1264,8 +1264,6 @@ void CPU::cbPrefixExecute(uint8_t ins){
     uint8_t x = INS_GET_X(ins);
     uint8_t y = INS_GET_Y(ins);
     uint8_t z = INS_GET_Z(ins);
-    uint8_t p = INS_GET_P(ins);
-    uint8_t q = INS_GET_Q(ins);
 
     if(x == 0){         // ROT -- rotate / shift
         if(y == 0) { // RLC
