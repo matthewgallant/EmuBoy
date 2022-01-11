@@ -1,16 +1,16 @@
 IDIR=include
 SRC=src
-CXX=clang++
+ODIR=obj
+
+CXX=g++
 CXXFLAGS=-I $(IDIR) -std=c++11 -pthread -O3 -Wall -Wextra 
 LDFLAGS=-lSDL2
-ODIR=obj
-ANALYZER=clang-tidy
 
 DEPS=$(IDIR)/*.hpp
 SRCS=$(wildcard $(SRC)/*.cpp)
 OBJ=$(SRCS:$(SRC)/%.cpp=$(ODIR)/%.o)
 
-all: analyse build_files emuboy
+all: build_files emuboy
 
 emuboy: $(OBJ)  
 	$(CXX) -o bin/$@ $^ $(CXXFLAGS) $(LDFLAGS)
@@ -25,10 +25,6 @@ $(ODIR)/%.o: $(SRC)/%.cpp
 clean:
 	rm -rf $(ODIR)
 	rm -rf bin
-
-analyse:
-	$(ANALYZER) $(SRC)/* -- -I $(IDIR)
-
 
 run: 
 	bin/emuboy
