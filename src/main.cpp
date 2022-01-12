@@ -11,7 +11,7 @@
 #include "cartridge.hpp"
 #include "utilities.hpp"
 
-int main(int argc, char* args[]) {
+int main() {
 	// Get file from environment
 	if (!std::getenv("ROM")) {
 		std::cout << "No ROM found in path. Please set 'ROM' in your path to your ROM file." << std::endl;
@@ -45,7 +45,7 @@ int main(int argc, char* args[]) {
 	}, &cpu);
 
 	// Create virtual ppu
-	PPU ppu();
+	PPU ppu;
 
 	processor.join();
 
