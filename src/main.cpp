@@ -35,6 +35,9 @@ int main() {
     CPU cpu;
 	cpu.setMemory(&memory);
 
+	// Create virtual ppu
+	PPU ppu(memory);
+
 	// run the cpu cycle in a seperate thread
 	std::thread processor([](CPU *cpu) {
 		cpu->debug();
@@ -43,9 +46,6 @@ int main() {
 			getchar();
 		}
 	}, &cpu);
-
-	// Create virtual ppu
-	PPU ppu;
 
 	processor.join();
 
