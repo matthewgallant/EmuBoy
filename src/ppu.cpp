@@ -4,10 +4,30 @@
 #include "memory.hpp"
 #include "utilities.hpp"
 
-#define WINDOW_WIDTH 160
-#define WINDOW_HEIGHT 144
-#define WINDOW_SCALE 3
+PPU::PPU(Memory memory):memory(memory) {
 
-PPU::PPU() {
+}
+
+void PPU::step() {
+
+}
+
+void PPU::changeMode() {
+
+}
+
+void PPU::changeScanline() {
+
+}
+
+void PPU::buildScanline() {
+
+}
+
+int PPU::getColor() {
+
+}
+
+bool PPU::poweredOn() {
 
 }
