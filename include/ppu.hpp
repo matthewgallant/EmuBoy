@@ -2,6 +2,11 @@
 
 #include "memory.hpp"
 
+#define HORIZONTAL_BLANK_MODE 0
+#define VERTICAL_BLANK_MODE 1
+#define SPRITE_SCAN_MODE 2
+#define RENDERING_MODE 3
+
 class PPU {
     public:
         PPU(Memory memory);
