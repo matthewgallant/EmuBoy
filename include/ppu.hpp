@@ -7,6 +7,10 @@
 #define SPRITE_SCAN_MODE 2
 #define RENDERING_MODE 3
 
+#define LCD_LINE_REGISTER 0xff44
+#define LCD_STATUS_REGISTER 0xff41
+#define LCD_CONTROL_REGISTER 0xff40
+
 class PPU {
     public:
         PPU(Memory memory);
@@ -14,7 +18,7 @@ class PPU {
     private:
 
         // Change ppu mode
-        void changeMode();
+        void changeMode(int newMode);
 
         // Change the current scanline
         void changeScanline();
@@ -31,11 +35,11 @@ class PPU {
         // Make access to memory class global
         Memory memory;
 
-        // Keep track of clock cycles
-        int clock;
+        // Keep track of cycle ticks
+        int ticks;
 
         // Create array for screen buffer
-        int pixels[160][144];
+        int buffer[160][144];
 
         // Keep track of the ppu mode
         int mode;

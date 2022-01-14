@@ -38,6 +38,11 @@ int main() {
 	// Create virtual ppu
 	PPU ppu(memory);
 
+	// PPU test setup (should run a but more than one)
+	for (int i = 0; i < 80000; i++) {
+		ppu.step();
+	}
+
 	// run the cpu cycle in a seperate thread
 	std::thread processor([](CPU *cpu) {
 		cpu->debug();
