@@ -48,7 +48,6 @@ int main() {
 		cpu->debug();
 		while(true) {
 			cpu->step();
-			getchar();
 		}
 	}, &cpu);
 
