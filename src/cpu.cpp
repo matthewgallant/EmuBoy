@@ -742,20 +742,60 @@ void CPU::execute(uint8_t ins){
             setFlag(FLAG_N);
             break;
         } case 0x98: { // SBC A, B
+            rf.writeReg(REG_A, rf.readReg(REG_A, IS_8_BIT) - rf.readReg(REG_B, IS_8_BIT) - getFlag(FLAG_C));
+            if(rf.readReg(REG_A, IS_8_BIT) == 0) 
+                setFlag(FLAG_Z);
+            setFlag(FLAG_N);
+            isDefined = true;
             break;
         } case 0x99: { // SBC A, C
+            rf.writeReg(REG_A, rf.readReg(REG_A, IS_8_BIT) - rf.readReg(REG_C, IS_8_BIT) - getFlag(FLAG_C));
+            if(rf.readReg(REG_A, IS_8_BIT) == 0) 
+                setFlag(FLAG_Z);
+            setFlag(FLAG_N);
+            isDefined = true;
             break;
         } case 0x9A: { // SBC A, D
+            rf.writeReg(REG_A, rf.readReg(REG_A, IS_8_BIT) - rf.readReg(REG_D, IS_8_BIT) - getFlag(FLAG_C));
+            if(rf.readReg(REG_A, IS_8_BIT) == 0) 
+                setFlag(FLAG_Z);
+            setFlag(FLAG_N);
+            isDefined = true;
             break;
         } case 0x9B: { // SBC A, E
+            rf.writeReg(REG_A, rf.readReg(REG_A, IS_8_BIT) - rf.readReg(REG_E, IS_8_BIT) - getFlag(FLAG_C));
+            if(rf.readReg(REG_A, IS_8_BIT) == 0) 
+                setFlag(FLAG_Z);
+            setFlag(FLAG_N);
+            isDefined = true;
             break;
         } case 0x9C: { // SBC A, H
+            rf.writeReg(REG_A, rf.readReg(REG_A, IS_8_BIT) - rf.readReg(REG_H, IS_8_BIT) - getFlag(FLAG_C));
+            if(rf.readReg(REG_A, IS_8_BIT) == 0) 
+                setFlag(FLAG_Z);
+            setFlag(FLAG_N);
+            isDefined = true;
             break;
         } case 0x9D: { // SBC A, L
+            rf.writeReg(REG_A, rf.readReg(REG_A, IS_8_BIT) - rf.readReg(REG_L, IS_8_BIT) - getFlag(FLAG_C));
+            if(rf.readReg(REG_A, IS_8_BIT) == 0) 
+                setFlag(FLAG_Z);
+            setFlag(FLAG_N);
+            isDefined = true;
             break;
         } case 0x9E: { // SBC A, (HL)
+            rf.writeReg(REG_A, rf.readReg(REG_A, IS_8_BIT) - memory->memory[rf.readReg(REG_B, IS_8_BIT)] -getFlag(FLAG_C));
+            if(rf.readReg(REG_A, IS_8_BIT) == 0) 
+                setFlag(FLAG_Z);
+            setFlag(FLAG_N);
+            isDefined = true;
             break;
         } case 0x9F: { // SBC A, A
+            rf.writeReg(REG_A, rf.readReg(REG_A, IS_8_BIT) - rf.readReg(REG_A, IS_8_BIT) - getFlag(FLAG_C));
+            if(rf.readReg(REG_A, IS_8_BIT) == 0) 
+                setFlag(FLAG_Z);
+            setFlag(FLAG_N);
+            isDefined = true;
             break;
         } case 0xA0: { // AND A, B
             rf.writeReg(REG_A, rf.readReg(REG_A, IS_8_BIT) & rf.readReg(REG_B, IS_8_BIT));
