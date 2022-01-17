@@ -85,6 +85,14 @@ bool CPU::getFlag(uint8_t flag) {
 }
 
 /**
+ * Returns the current instruction
+ */
+uint8_t CPU::getInstruction() {
+    return memory->memory[rf.getPC()];
+}
+
+
+/**
  * Executes a single instruction on the CPU.
  * 
  * @param ins 8-bit encode instruction
@@ -204,6 +212,8 @@ void CPU::execute(uint8_t ins){
         } case 0x1A: { // LD A, (DE)
             break;
         } case 0x1B: { // DEC DE
+            rf.writeReg(REG_DE, rf.readReg(REG_DE, IS_16_BIT) - 1);    
+            isDefined = true;
             break;
         } case 0x1C: { // INC E
             rf.writeReg(REG_E, rf.readReg(REG_E, IS_8_BIT) + 1);
@@ -304,6 +314,8 @@ void CPU::execute(uint8_t ins){
         } case 0x38: { // JR C, i8
             break;
         } case 0x39: { // ADD HL, SP
+            rf.writeReg(REG_HL, rf.readReg(REG_HL, IS_16_BIT) + rf.getSP(), false);
+            isDefined = true;
             break;
         } case 0x3A: { // LD A, (HL-)
             break;
@@ -1019,6 +1031,11 @@ void CPU::execute(uint8_t ins){
             isDefined = true;
             break;
         } case 0xC8: { // RET Z
+            // If the Carry flag isn't set, execute return
+            if(getFlag(FLAG_Z)) {
+                this->execute(0xC9);
+            }
+            isDefined = true;
             break;
         } case 0xC9: { // RET
             uint16_t pc_low = (uint16_t) memory->memory[rf.getSP()];
@@ -1073,6 +1090,11 @@ void CPU::execute(uint8_t ins){
             isDefined = true;
             break;
         } case 0xD0: { // RET NC
+            // If the Carry flag isn't set, execute return
+            if(!getFlag(FLAG_C)) {
+                this->execute(0xC9);
+            }
+            isDefined = true;
             break;
         } case 0xD1: { // POP DE
             rf.writeReg(REG_D, memory->memory[rf.getSP()]);
@@ -1249,7 +1271,7 @@ void CPU::execute(uint8_t ins){
             memory->memory[rf.getSP() - 1] = old_pc_upper;
             memory->memory[rf.getSP() - 2] = old_pc_lower;
             rf.setSP(rf.getSP() - 2);
-            rf.setPC(0x0038);
+            rf.setPC(0x0038 - 1); // Minus one because step() adds one
             isDefined = true;
             break;
         }

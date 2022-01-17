@@ -3,6 +3,7 @@
 #include <vector>
 #include <string>
 #include <thread>
+#include <unistd.h>
 
 #include "cpu.hpp"
 #include "memory.hpp"
@@ -10,6 +11,12 @@
 #include "lcd.hpp"
 #include "cartridge.hpp"
 #include "utilities.hpp"
+
+#define DEBUG 0
+#define RUN 1
+#define SLOW 2
+
+#define MODE SLOW 
 
 int main() {
 	// Get file from environment
@@ -48,6 +55,7 @@ int main() {
 		cpu->debug();
 		while(true) {
 			cpu->step();
+			if(cpu->getInstruction() != 0) usleep(500000);
 		}
 	}, &cpu);
 
