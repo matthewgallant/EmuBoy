@@ -18,6 +18,8 @@
 
 #define MODE SLOW 
 
+// Slowtime is 500ms
+#define SLOWTIME 500000
 int main() {
 	// Get file from environment
 	if (!std::getenv("ROM")) {
@@ -55,7 +57,10 @@ int main() {
 		cpu->debug();
 		while(true) {
 			cpu->step();
-			if(cpu->getInstruction() != 0) usleep(500000);
+			if(cpu->getInstruction() != 0) {
+				if(MODE == SLOW) usleep(SLOWTIME);
+				if(MODE == RUN) continue;
+			};
 		}
 	}, &cpu);
 
