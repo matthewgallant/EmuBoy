@@ -10,6 +10,8 @@ DEPS=$(IDIR)/*.hpp
 SRCS=$(wildcard $(SRC)/*.cpp)
 OBJ=$(SRCS:$(SRC)/%.cpp=$(ODIR)/%.o)
 
+ANALYZER=clang-tidy
+
 all: build_files emuboy
 
 emuboy: $(OBJ)  
@@ -28,5 +30,8 @@ clean:
 
 run: 
 	bin/emuboy
+
+analyse:
+		$(ANALYZER) $(SRC)/* -- -I $(IDIR)
 
 debug: all run
