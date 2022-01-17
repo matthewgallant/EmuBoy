@@ -1027,7 +1027,7 @@ void CPU::execute(uint8_t ins){
             memory->memory[rf.getSP() - 1] = old_pc_upper;
             memory->memory[rf.getSP() - 2] = old_pc_lower;
             rf.setSP(rf.getSP() - 2);
-            rf.setPC(0x0000);
+            rf.setPC(0x0000 - 1);
             isDefined = true;
             break;
         } case 0xC8: { // RET Z
@@ -1086,7 +1086,7 @@ void CPU::execute(uint8_t ins){
             memory->memory[rf.getSP() - 1] = old_pc_upper;
             memory->memory[rf.getSP() - 2] = old_pc_lower;
             rf.setSP(rf.getSP() - 2);
-            rf.setPC(0x0008);
+            rf.setPC(0x0008 - 1);
             isDefined = true;
             break;
         } case 0xD0: { // RET NC
@@ -1127,7 +1127,7 @@ void CPU::execute(uint8_t ins){
             memory->memory[rf.getSP() - 1] = old_pc_upper;
             memory->memory[rf.getSP() - 2] = old_pc_lower;
             rf.setSP(rf.getSP() - 2);
-            rf.setPC(0x0010);
+            rf.setPC(0x0010 - 1);
             isDefined = true;
             break;
         } case 0xD8: { // RET C
@@ -1150,7 +1150,7 @@ void CPU::execute(uint8_t ins){
             memory->memory[rf.getSP() - 1] = old_pc_upper;
             memory->memory[rf.getSP() - 2] = old_pc_lower;
             rf.setSP(rf.getSP() - 2);
-            rf.setPC(0x0018);
+            rf.setPC(0x0018 - 1);
             isDefined = true;
             break;
         } case 0xE0: { // LD (FF00 + u8), A
@@ -1187,7 +1187,7 @@ void CPU::execute(uint8_t ins){
             memory->memory[rf.getSP() - 1] = old_pc_upper;
             memory->memory[rf.getSP() - 2] = old_pc_lower;
             rf.setSP(rf.getSP() - 2);
-            rf.setPC(0x0020);
+            rf.setPC(0x0020 - 1);
             isDefined = true;
             break;
         } case 0xE8: { // ADD SP, i8
@@ -1215,7 +1215,7 @@ void CPU::execute(uint8_t ins){
             memory->memory[rf.getSP() - 1] = old_pc_upper;
             memory->memory[rf.getSP() - 2] = old_pc_lower;
             rf.setSP(rf.getSP() - 2);
-            rf.setPC(0x0028);
+            rf.setPC(0x0028 - 1);
             isDefined = true;
             break;
         } case 0xF0: { // LD A, (FF00, u8)
@@ -1250,6 +1250,13 @@ void CPU::execute(uint8_t ins){
         } case 0xF6: { // OR A, u8
             break;
         } case 0xF7: { // RST 30h
+            uint16_t old_pc_upper = rf.getPC() >> 8;
+            uint16_t old_pc_lower = rf.getPC() & 0xFF;
+            memory->memory[rf.getSP() - 1] = old_pc_upper;
+            memory->memory[rf.getSP() - 2] = old_pc_lower;
+            rf.setSP(rf.getSP() - 2);
+            rf.setPC(0x0030 - 1); // Minus one because step() adds one
+            isDefined = true;  
             break;
         } case 0xF8: { // LD HL, SP+i8
             break;
