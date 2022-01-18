@@ -21,6 +21,7 @@ class CPU {
         void clearFlag(uint8_t flag);
         bool getFlag(uint8_t flag);
         void cbPrefixExecute(uint8_t ins);
+        uint8_t getInstruction();
     private:
         RegisterFile rf;
         Memory *memory;

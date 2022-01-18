@@ -3,6 +3,7 @@
 #include <vector>
 #include <string>
 #include <thread>
+#include <unistd.h>
 
 #include "cpu.hpp"
 #include "memory.hpp"
@@ -11,6 +12,14 @@
 #include "cartridge.hpp"
 #include "utilities.hpp"
 
+#define DEBUG 0
+#define RUN 1
+#define SLOW 2
+
+#define MODE DEBUG 
+
+// Slowtime is 500ms
+#define SLOWTIME 500000
 int main() {
 	// Get file from environment
 	if (!std::getenv("ROM")) {
@@ -48,7 +57,11 @@ int main() {
 		cpu->debug();
 		while(true) {
 			cpu->step();
-			getchar();
+
+			if(cpu->getInstruction() == 0) continue;
+			if(MODE == SLOW) usleep(SLOWTIME);
+			else if(MODE == RUN) continue;
+			else if(MODE == DEBUG) getchar();
 		}
 	}, &cpu);
 

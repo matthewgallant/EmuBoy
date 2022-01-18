@@ -85,6 +85,14 @@ bool CPU::getFlag(uint8_t flag) {
 }
 
 /**
+ * Returns the current instruction
+ */
+uint8_t CPU::getInstruction() {
+    return memory->memory[rf.getPC()];
+}
+
+
+/**
  * Executes a single instruction on the CPU.
  * 
  * @param ins 8-bit encode instruction
@@ -204,6 +212,8 @@ void CPU::execute(uint8_t ins){
         } case 0x1A: { // LD A, (DE)
             break;
         } case 0x1B: { // DEC DE
+            rf.writeReg(REG_DE, rf.readReg(REG_DE, IS_16_BIT) - 1);    
+            isDefined = true;
             break;
         } case 0x1C: { // INC E
             rf.writeReg(REG_E, rf.readReg(REG_E, IS_8_BIT) + 1);
@@ -220,7 +230,8 @@ void CPU::execute(uint8_t ins){
             break;
         } case 0x20: { // JR NZ, i8
             if(!getFlag(FLAG_Z)) {
-                rf.setPC(rf.getPC() + memory->memory[rf.getPC() + 1]);
+                int8_t offset = memory->memory[rf.getPC() + 1];
+                rf.setPC(rf.getPC() + offset);
             }
             isDefined = true;
             break;
@@ -273,7 +284,7 @@ void CPU::execute(uint8_t ins){
             break;
         } case 0x30: { // JR NC, i8
             if(!getFlag(FLAG_C)) {
-                rf.setPC(rf.getPC() + memory->memory[rf.getPC() + 1]);
+                rf.setPC(rf.getPC() + (int8_t) memory->memory[rf.getPC() + 1]);
             }
             isDefined = true;;
             break;
@@ -304,6 +315,8 @@ void CPU::execute(uint8_t ins){
         } case 0x38: { // JR C, i8
             break;
         } case 0x39: { // ADD HL, SP
+            rf.writeReg(REG_HL, rf.readReg(REG_HL, IS_16_BIT) + rf.getSP(), false);
+            isDefined = true;
             break;
         } case 0x3A: { // LD A, (HL-)
             break;
@@ -593,7 +606,10 @@ void CPU::execute(uint8_t ins){
             isDefined = true;
             break;
         } case 0x80: { // ADD A, B
-            rf.writeReg(REG_A, rf.readReg(REG_A, IS_8_BIT) + rf.readReg(REG_B, IS_8_BIT));
+            uint8_t a = rf.readReg(REG_A, IS_8_BIT);
+            uint8_t b = rf.readReg(REG_B, IS_8_BIT);
+            printf("%x\n", 0xFF & (a + b));
+            rf.writeReg(REG_A, (a + b));
             if(rf.readReg(REG_A, IS_8_BIT) == 0) 
                 setFlag(FLAG_Z);
             clearFlag(FLAG_N);
@@ -730,20 +746,60 @@ void CPU::execute(uint8_t ins){
             setFlag(FLAG_N);
             break;
         } case 0x98: { // SBC A, B
+            rf.writeReg(REG_A, rf.readReg(REG_A, IS_8_BIT) - rf.readReg(REG_B, IS_8_BIT) - getFlag(FLAG_C));
+            if(rf.readReg(REG_A, IS_8_BIT) == 0) 
+                setFlag(FLAG_Z);
+            setFlag(FLAG_N);
+            isDefined = true;
             break;
         } case 0x99: { // SBC A, C
+            rf.writeReg(REG_A, rf.readReg(REG_A, IS_8_BIT) - rf.readReg(REG_C, IS_8_BIT) - getFlag(FLAG_C));
+            if(rf.readReg(REG_A, IS_8_BIT) == 0) 
+                setFlag(FLAG_Z);
+            setFlag(FLAG_N);
+            isDefined = true;
             break;
         } case 0x9A: { // SBC A, D
+            rf.writeReg(REG_A, rf.readReg(REG_A, IS_8_BIT) - rf.readReg(REG_D, IS_8_BIT) - getFlag(FLAG_C));
+            if(rf.readReg(REG_A, IS_8_BIT) == 0) 
+                setFlag(FLAG_Z);
+            setFlag(FLAG_N);
+            isDefined = true;
             break;
         } case 0x9B: { // SBC A, E
+            rf.writeReg(REG_A, rf.readReg(REG_A, IS_8_BIT) - rf.readReg(REG_E, IS_8_BIT) - getFlag(FLAG_C));
+            if(rf.readReg(REG_A, IS_8_BIT) == 0) 
+                setFlag(FLAG_Z);
+            setFlag(FLAG_N);
+            isDefined = true;
             break;
         } case 0x9C: { // SBC A, H
+            rf.writeReg(REG_A, rf.readReg(REG_A, IS_8_BIT) - rf.readReg(REG_H, IS_8_BIT) - getFlag(FLAG_C));
+            if(rf.readReg(REG_A, IS_8_BIT) == 0) 
+                setFlag(FLAG_Z);
+            setFlag(FLAG_N);
+            isDefined = true;
             break;
         } case 0x9D: { // SBC A, L
+            rf.writeReg(REG_A, rf.readReg(REG_A, IS_8_BIT) - rf.readReg(REG_L, IS_8_BIT) - getFlag(FLAG_C));
+            if(rf.readReg(REG_A, IS_8_BIT) == 0) 
+                setFlag(FLAG_Z);
+            setFlag(FLAG_N);
+            isDefined = true;
             break;
         } case 0x9E: { // SBC A, (HL)
+            rf.writeReg(REG_A, rf.readReg(REG_A, IS_8_BIT) - memory->memory[rf.readReg(REG_B, IS_8_BIT)] -getFlag(FLAG_C));
+            if(rf.readReg(REG_A, IS_8_BIT) == 0) 
+                setFlag(FLAG_Z);
+            setFlag(FLAG_N);
+            isDefined = true;
             break;
         } case 0x9F: { // SBC A, A
+            rf.writeReg(REG_A, rf.readReg(REG_A, IS_8_BIT) - rf.readReg(REG_A, IS_8_BIT) - getFlag(FLAG_C));
+            if(rf.readReg(REG_A, IS_8_BIT) == 0) 
+                setFlag(FLAG_Z);
+            setFlag(FLAG_N);
+            isDefined = true;
             break;
         } case 0xA0: { // AND A, B
             rf.writeReg(REG_A, rf.readReg(REG_A, IS_8_BIT) & rf.readReg(REG_B, IS_8_BIT));
@@ -1015,10 +1071,15 @@ void CPU::execute(uint8_t ins){
             memory->memory[rf.getSP() - 1] = old_pc_upper;
             memory->memory[rf.getSP() - 2] = old_pc_lower;
             rf.setSP(rf.getSP() - 2);
-            rf.setPC(0x0000);
+            rf.setPC(0x0000 - 1);
             isDefined = true;
             break;
         } case 0xC8: { // RET Z
+            // If the Carry flag isn't set, execute return
+            if(getFlag(FLAG_Z)) {
+                this->execute(0xC9);
+            }
+            isDefined = true;
             break;
         } case 0xC9: { // RET
             uint16_t pc_low = (uint16_t) memory->memory[rf.getSP()];
@@ -1069,10 +1130,15 @@ void CPU::execute(uint8_t ins){
             memory->memory[rf.getSP() - 1] = old_pc_upper;
             memory->memory[rf.getSP() - 2] = old_pc_lower;
             rf.setSP(rf.getSP() - 2);
-            rf.setPC(0x0008);
+            rf.setPC(0x0008 - 1);
             isDefined = true;
             break;
         } case 0xD0: { // RET NC
+            // If the Carry flag isn't set, execute RET (0xC9) 
+            if(!getFlag(FLAG_C)) {
+                this->execute(0xC9);
+            }
+            isDefined = true;
             break;
         } case 0xD1: { // POP DE
             rf.writeReg(REG_D, memory->memory[rf.getSP()]);
@@ -1095,7 +1161,7 @@ void CPU::execute(uint8_t ins){
             isDefined = true;
             break;
         } case 0xD6: { // SUB A, u8
-            rf.writeReg(REG_A, rf.readReg(REG_A, IS_8_BIT) + memory->memory[rf.getPC() + 1]);
+            rf.writeReg(REG_A, rf.readReg(REG_A, IS_8_BIT) - memory->memory[rf.getPC() + 1]);
             rf.setPC(rf.getPC() + 1);
             isDefined = true;
             break;
@@ -1105,7 +1171,7 @@ void CPU::execute(uint8_t ins){
             memory->memory[rf.getSP() - 1] = old_pc_upper;
             memory->memory[rf.getSP() - 2] = old_pc_lower;
             rf.setSP(rf.getSP() - 2);
-            rf.setPC(0x0010);
+            rf.setPC(0x0010 - 1);
             isDefined = true;
             break;
         } case 0xD8: { // RET C
@@ -1128,11 +1194,11 @@ void CPU::execute(uint8_t ins){
             memory->memory[rf.getSP() - 1] = old_pc_upper;
             memory->memory[rf.getSP() - 2] = old_pc_lower;
             rf.setSP(rf.getSP() - 2);
-            rf.setPC(0x0018);
+            rf.setPC(0x0018 - 1);
             isDefined = true;
             break;
         } case 0xE0: { // LD (FF00 + u8), A
-            uint16_t addr_offset = memory->memory[rf.getPC() + 1];
+            int16_t addr_offset = memory->memory[rf.getPC() + 1];
             memory->memory[0xFF00 + addr_offset] = rf.readReg(REG_A, IS_8_BIT);
             rf.setPC(rf.getPC() + 2);
             isDefined = true;
@@ -1147,8 +1213,10 @@ void CPU::execute(uint8_t ins){
         } case 0xE2: { // LD (FF00 + C), A
             break;
         } case 0xE3: { // N/A
+            isDefined = true; //??
             break;
         } case 0xE4: { // N/A
+            isDefined = true; //??
             break;
         } case 0xE5: { // PUSH HL
             memory->memory[rf.getSP()] = rf.readReg(REG_L, IS_16_BIT);
@@ -1165,7 +1233,7 @@ void CPU::execute(uint8_t ins){
             memory->memory[rf.getSP() - 1] = old_pc_upper;
             memory->memory[rf.getSP() - 2] = old_pc_lower;
             rf.setSP(rf.getSP() - 2);
-            rf.setPC(0x0020);
+            rf.setPC(0x0020 - 1);
             isDefined = true;
             break;
         } case 0xE8: { // ADD SP, i8
@@ -1193,7 +1261,7 @@ void CPU::execute(uint8_t ins){
             memory->memory[rf.getSP() - 1] = old_pc_upper;
             memory->memory[rf.getSP() - 2] = old_pc_lower;
             rf.setSP(rf.getSP() - 2);
-            rf.setPC(0x0028);
+            rf.setPC(0x0028 - 1);
             isDefined = true;
             break;
         } case 0xF0: { // LD A, (FF00, u8)
@@ -1228,6 +1296,13 @@ void CPU::execute(uint8_t ins){
         } case 0xF6: { // OR A, u8
             break;
         } case 0xF7: { // RST 30h
+            uint16_t old_pc_upper = rf.getPC() >> 8;
+            uint16_t old_pc_lower = rf.getPC() & 0xFF;
+            memory->memory[rf.getSP() - 1] = old_pc_upper;
+            memory->memory[rf.getSP() - 2] = old_pc_lower;
+            rf.setSP(rf.getSP() - 2);
+            rf.setPC(0x0030 - 1); // Minus one because step() adds one
+            isDefined = true;  
             break;
         } case 0xF8: { // LD HL, SP+i8
             break;
@@ -1249,7 +1324,7 @@ void CPU::execute(uint8_t ins){
             memory->memory[rf.getSP() - 1] = old_pc_upper;
             memory->memory[rf.getSP() - 2] = old_pc_lower;
             rf.setSP(rf.getSP() - 2);
-            rf.setPC(0x0038);
+            rf.setPC(0x0038 - 1); // Minus one because step() adds one
             isDefined = true;
             break;
         }
