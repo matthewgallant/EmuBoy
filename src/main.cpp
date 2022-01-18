@@ -16,7 +16,7 @@
 #define RUN 1
 #define SLOW 2
 
-#define MODE SLOW 
+#define MODE DEBUG 
 
 // Slowtime is 500ms
 #define SLOWTIME 500000
@@ -57,10 +57,11 @@ int main() {
 		cpu->debug();
 		while(true) {
 			cpu->step();
-			if(cpu->getInstruction() != 0) {
-				if(MODE == SLOW) usleep(SLOWTIME);
-				if(MODE == RUN) continue;
-			};
+
+			if(cpu->getInstruction() == 0) continue;
+			if(MODE == SLOW) usleep(SLOWTIME);
+			else if(MODE == RUN) continue;
+			else if(MODE == DEBUG) getchar();
 		}
 	}, &cpu);
 
