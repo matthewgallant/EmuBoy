@@ -70,7 +70,7 @@ void CPU::setFlag(uint8_t flag) {
  * @param flag Flag value to clear
  */
 void CPU::clearFlag(uint8_t flag) {
-    uint8_t AF = rf.readReg(REG_AF, IS_16_BIT);
+    uint16_t AF = rf.readReg(REG_AF, IS_16_BIT);
     AF &= ~(1 << flag);
     rf.writeReg(REG_AF, AF, false);
 }
@@ -606,12 +606,10 @@ void CPU::execute(uint8_t ins){
             isDefined = true;
             break;
         } case 0x80: { // ADD A, B
-            uint8_t a = rf.readReg(REG_A, IS_8_BIT);
-            uint8_t b = rf.readReg(REG_B, IS_8_BIT);
-            printf("%x\n", 0xFF & (a + b));
-            rf.writeReg(REG_A, (a + b));
+            rf.writeReg(REG_A, 0xFF & (rf.readReg(REG_A, IS_8_BIT) + rf.readReg(REG_B, IS_8_BIT))); // (a + b));
             if(rf.readReg(REG_A, IS_8_BIT) == 0) 
                 setFlag(FLAG_Z);
+            else clearFlag(FLAG_Z);
             clearFlag(FLAG_N);
             isDefined = true;
             break;
