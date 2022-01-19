@@ -10,6 +10,7 @@
 #define LCD_LINE_REGISTER 0xff44
 #define LCD_STATUS_REGISTER 0xff41
 #define LCD_CONTROL_REGISTER 0xff40
+#define COLOR_PALETTE_REGISTER 0xff47
 
 class PPU {
     public:

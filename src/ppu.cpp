@@ -28,7 +28,7 @@ void PPU::step() {
             if (scanline == 143) {
                 changeMode(VERTICAL_BLANK_MODE);
                 // TODO: Request interrupts
-                // TODO: Draw buffer to screen
+                // TODO: Draw buffer to LCD
             } else {
                 changeMode(SPRITE_SCAN_MODE);
             }
@@ -85,6 +85,11 @@ void PPU::buildScanline() {
 
 int PPU::getColor() {
     
+    // Get palette value
+    uint8_t palette = memory.read(COLOR_PALETTE_REGISTER);
+
+    // TODO: Get color value from palette
+    return 0;
 }
 
 bool PPU::poweredOn() {

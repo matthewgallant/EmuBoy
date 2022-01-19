@@ -42,6 +42,16 @@ Memory::Memory() {
  */
 void Memory::write(std::vector<uint8_t> data, uint16_t address) {
     std::copy(data.begin(), data.end(), memory.begin() + address);
+
+    // Check if we need to copy data to echo ram
+    if (address >= 0xC000 && address <= 0xE000 && address + data.size() <= 0xE000) {
+
+        // Get value of address in relation to the 8k of ram
+        uint16_t index = address - 0xC000;
+
+        // Write data to echo ram
+        std::copy(data.begin(), data.end(), memory.begin() + 0xE000 + index);
+    }
 }
 
 /**
@@ -52,6 +62,16 @@ void Memory::write(std::vector<uint8_t> data, uint16_t address) {
  */
 void Memory::write(uint8_t data, uint16_t address) {
     memory[address] = data;
+
+    // Check if we need to copy data to echo ram
+    if (address >= 0xC000 && address <= 0xE000) {
+
+        // Get value of address in relation to the 8k of ram
+        uint16_t index = address - 0xC000;
+
+        // Write data to echo ram
+        memory[0xE000 + index] = data;
+    }
 }
 
 /**
