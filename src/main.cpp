@@ -10,6 +10,7 @@
 #include "ppu.hpp"
 #include "lcd.hpp"
 #include "cartridge.hpp"
+#include "clock.hpp"
 #include "utilities.hpp"
 
 #define DEBUG 0
