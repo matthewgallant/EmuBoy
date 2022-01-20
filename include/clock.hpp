@@ -7,6 +7,9 @@ class Clock {
     public:
         Clock();
 
-        bool canStepCPU();
-        bool canStepPPU();
+        bool hasCyclePassedCPU();
+        bool hasCyclePassedPPU();
+    private:
+        std::chrono::high_resolution_clock::time_point storedTimeCPU;
+        std::chrono::high_resolution_clock::time_point storedTimePPU;
 };
