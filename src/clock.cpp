@@ -10,6 +10,12 @@ Clock::Clock() {
     storedTimePPU = std::chrono::high_resolution_clock::now();
 }
 
+/**
+ * @brief Checks whether or not a CPU cycle @ 4.2 Mhz has passed
+ * 
+ * @return true if a cycle has completed
+ * @return false if a cycle has not completed
+ */
 bool Clock::hasCyclePassedCPU() {
 
     // Store current time
@@ -37,6 +43,12 @@ bool Clock::hasCyclePassedCPU() {
     }
 }
 
+/**
+ * @brief Checks whether or not a PPU cycle @ 2.1 Mhz has passed
+ * 
+ * @return true if a cycle has completed
+ * @return false if a cycle has not completed
+ */
 bool Clock::hasCyclePassedPPU() {
     
     // Store current time
