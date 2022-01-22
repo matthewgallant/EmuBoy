@@ -62,7 +62,7 @@ int main() {
 		while(true) {
 			cpu->step();
 
-			if(cpu->getInstruction() == 0) continue;
+			//if(cpu->getInstruction() == 0) continue;
 			if(MODE == SLOW) usleep(SLOWTIME);
 			else if(MODE == RUN) continue;
 			else if(MODE == DEBUG) getchar();
