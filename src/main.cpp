@@ -10,6 +10,7 @@
 #include "ppu.hpp"
 #include "lcd.hpp"
 #include "cartridge.hpp"
+#include "clock.hpp"
 #include "utilities.hpp"
 
 #define DEBUG 0
@@ -39,6 +40,9 @@ int main() {
 	std::cout << "Create Memory" << std::endl;
 	Memory memory;
 	memory.write(cartridgeContents, 0x0000);
+
+	// Create virtual clock (crystal)
+	Clock clock;
 	
 	// Create virtual cpu
     CPU cpu;
