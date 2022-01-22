@@ -217,6 +217,9 @@ void CPU::execute(uint8_t ins){
         } case 0x18: { // JR i8
             break;
         } case 0x19: { // ADD HL, DE
+            uint16_t new_value = rf.readReg(REG_HL, IS_16_BIT) + rf.readReg(REG_DE, IS_16_BIT);
+            rf.writeReg(REG_HL, new_value, false);
+            isDefined = true;
             break;
         } case 0x1A: { // LD A, (DE)
             uint8_t value = memory->memory[rf.readReg(REG_DE, IS_16_BIT)];
@@ -303,6 +306,10 @@ void CPU::execute(uint8_t ins){
         } case 0x2E: { // LD L, u8
             break;
         } case 0x2F: { // CPL
+            rf.writeReg(REG_A, ~rf.readReg(REG_A, IS_8_BIT));
+            setFlag(FLAG_H);
+            setFlag(FLAG_N);
+            isDefined = true;
             break;
         } case 0x30: { // JR NC, i8
             if(!getFlag(FLAG_C)) {
