@@ -17,7 +17,7 @@
 #define RUN 1
 #define SLOW 2
 
-#define MODE DEBUG 
+#define MODE RUN
 
 // Slowtime is 500ms
 #define SLOWTIME 500000

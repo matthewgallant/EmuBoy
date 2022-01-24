@@ -181,6 +181,8 @@ void CPU::execute(uint8_t ins){
         } case 0x0F: { // RRCA
             break;
         } case 0x10: { // STOP
+            // KILL THA CLOCK??
+            isDefined = true;
             break;
         } case 0x11: { // LD DE, u16
             break;
@@ -211,6 +213,10 @@ void CPU::execute(uint8_t ins){
             isDefined = true;
             break;
         } case 0x16: { // LD D, u8
+            uint8_t val = memory->memory[rf.getPC() + 1];
+            rf.writeReg(REG_D, val);
+            rf.setPC(rf.getPC() + 1);
+            isDefined = true;
             break;
         } case 0x17: { // RLA
             break;
@@ -1356,6 +1362,22 @@ void CPU::execute(uint8_t ins){
         } case 0xFD: { // N/A
             break;
         } case 0xFE: { // CP A, u8
+            uint8_t val = memory->memory[rf.getPC() + 1];
+            uint8_t A = rf.readReg(REG_A, IS_8_BIT);
+            // WHAT IS HALF CARRY OH MY GOD
+            setFlag(FLAG_N);
+            if((val - A) == 0) {
+                setFlag(FLAG_Z);
+            }else{
+                clearFlag(FLAG_Z);
+            }
+
+            if(val > A) {
+                setFlag(FLAG_H);
+            } else {
+                clearFlag(FLAG_H);
+            }
+            isDefined = true;
             break;
         } case 0xFF: { // RST 38h
             uint16_t old_pc_upper = rf.getPC() >> 8;
