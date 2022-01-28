@@ -1,6 +1,7 @@
 #pragma once
 
 #include "memory.hpp"
+#include "controls.hpp"
 
 class IO {
     public:
@@ -10,4 +11,7 @@ class IO {
 
         // Make memory access global
         Memory memory;
+
+        // Instantiate controls
+        Controls controls;
 };
