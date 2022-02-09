@@ -221,6 +221,9 @@ void CPU::execute(uint8_t ins){
         } case 0x17: { // RLA
             break;
         } case 0x18: { // JR i8
+            int8_t jump = memory->memory[rf.getPC() + 1];
+            rf.setPC(rf.getPC() + jump);
+            isDefined = true;
             break;
         } case 0x19: { // ADD HL, DE
             uint16_t new_value = rf.readReg(REG_HL, IS_16_BIT) + rf.readReg(REG_DE, IS_16_BIT);
@@ -252,8 +255,8 @@ void CPU::execute(uint8_t ins){
         } case 0x20: { // JR NZ, i8
             if(!getFlag(FLAG_Z)) {
                 int8_t offset = memory->memory[rf.getPC() + 1];
-                printf("offset %d\n", offset - 2);
-                rf.setPC(rf.getPC() + offset - 2);
+                printf("offset %d\n", offset - 1);
+                rf.setPC(rf.getPC() + offset - 1);
             }
             isDefined = true;
             break;
@@ -1303,7 +1306,7 @@ void CPU::execute(uint8_t ins){
         } case 0xF0: { // LD A, (FF00, u8)
             uint16_t addr_offset = memory->memory[rf.getPC() + 1];
             rf.writeReg(REG_A, memory->memory[0xFF00 + addr_offset]);
-            rf.setPC(rf.getPC() + 2);
+            rf.setPC(rf.getPC() + 1);
             isDefined = true;
             break;
         } case 0xF1: { // POP AF
@@ -1377,6 +1380,7 @@ void CPU::execute(uint8_t ins){
             } else {
                 clearFlag(FLAG_H);
             }
+            rf.setPC(rf.getPC() + 1);
             isDefined = true;
             break;
         } case 0xFF: { // RST 38h
@@ -1400,6 +1404,8 @@ void CPU::cbPrefixExecute(uint8_t ins){
     uint8_t x = INS_GET_X(ins);
     uint8_t y = INS_GET_Y(ins);
     uint8_t z = INS_GET_Z(ins);
+
+    debug();
 
     if(x == 0){         // ROT -- rotate / shift
         if(y == 0) { // RLC
@@ -1498,11 +1504,11 @@ void CPU::cbPrefixExecute(uint8_t ins){
     } else if(x == 2){  // RES -- reset bit
         if(z == 6){
             uint8_t tmp = memory->memory[rf.readReg(REG_HL, IS_16_BIT)];
-            tmp ^= ~(1 << y);
+            tmp &= ~(1 << y);
             memory->memory[rf.readReg(REG_HL, IS_16_BIT)] = tmp;
         } else {
             uint8_t tmp = rf.readReg(z, IS_8_BIT);
-            tmp ^= ~(1 << y);
+            tmp &= ~(1 << y);
             rf.writeReg(z, tmp);
         }
     } else if(x == 3){  // SET -- set bit
