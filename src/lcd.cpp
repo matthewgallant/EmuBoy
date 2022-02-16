@@ -53,7 +53,13 @@ void LCD::drawFrame() {
         for (int j = 0; j < WINDOW_WIDTH; j++) {
 
             // Draw pixel at position
-            drawPixel(j, i);
+            // drawPixel(j, i, COLOR_WHITE);
+
+            if (i % 2 == 0 && j % 2 != 0) {
+                drawPixel(j, i, COLOR_WHITE);
+            } else {
+                drawPixel(j, i, COLOR_BLACK);
+            }
         }
     }
 
@@ -66,11 +72,12 @@ void LCD::drawFrame() {
  * 
  * @param pixelPosX horizonal position of the pixel
  * @param pixelPosY vertical position of the pixel
+ * @param pixelColor int representation of the pixel color
  */
-void LCD::drawPixel(int pixelPosX, int pixelPosY) {
+void LCD::drawPixel(int pixelPosX, int pixelPosY, int pixelColor) {
 
     // Set pixel color
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    setPixelColor(pixelColor);
 
     // Create the 'pixel' rect
     SDL_Rect pixelRect;
@@ -81,4 +88,26 @@ void LCD::drawPixel(int pixelPosX, int pixelPosY) {
 
     // Render the 'pixel'
     SDL_RenderFillRect(renderer, &pixelRect);
+}
+
+/**
+ * @brief Sets the current SDL render draw color
+ * 
+ * @param pixelColor int representation of the pixel color
+ */
+void LCD::setPixelColor(int pixelColor) {
+
+    // Define color for pixel
+    if (pixelColor == COLOR_BLACK) {
+        r = g = b = 0;
+    } else if (pixelColor == COLOR_DARK_GREY) {
+        r = g = b = 119;
+    } else if (pixelColor == COLOR_LIGHT_GREY) {
+        r = g = b = 204;
+    } else {
+        r = g = b = 255;
+    }
+
+    // Set pixel color
+    SDL_SetRenderDrawColor(renderer, r, g, b, 255);
 }

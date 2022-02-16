@@ -1,6 +1,7 @@
 #pragma once
 
 #include "memory.hpp"
+#include "lcd.hpp"
 
 #define HORIZONTAL_BLANK_MODE 0
 #define VERTICAL_BLANK_MODE 1
@@ -47,4 +48,7 @@ class PPU {
 
         // Keep track of current scanline being handled
         int scanline;
+
+        // Initialize LCD
+        LCD lcd;
 };

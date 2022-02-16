@@ -50,6 +50,7 @@ int main() {
 
 	// Create virtual ppu
 	PPU ppu(memory);
+	ppu.step();
 
 	// PPU test setup (should run a but more than one)
 	for (int i = 0; i < 80000; i++) {
