@@ -50,27 +50,26 @@ int main() {
 
 	// Create virtual ppu
 	PPU ppu(memory);
-	ppu.step();
 
-	// PPU test setup (should run a but more than one)
-	for (int i = 0; i < 80000; i++) {
-		ppu.step();
-	}
+	// // PPU test setup (should run a but more than one)
+	// for (int i = 0; i < 80000; i++) {
+	// 	ppu.step();
+	// }
 
-	// run the cpu cycle in a seperate thread
-	std::thread processor([](CPU *cpu) {
-		cpu->debug();
-		while(true) {
-			cpu->step();
+	// // run the cpu cycle in a seperate thread
+	// std::thread processor([](CPU *cpu) {
+	// 	cpu->debug();
+	// 	while(true) {
+	// 		cpu->step();
 
-			//if(cpu->getInstruction() == 0) continue;
-			if(MODE == SLOW) usleep(SLOWTIME);
-			else if(MODE == RUN) continue;
-			else if(MODE == DEBUG) getchar();
-		}
-	}, &cpu);
+	// 		//if(cpu->getInstruction() == 0) continue;
+	// 		if(MODE == SLOW) usleep(SLOWTIME);
+	// 		else if(MODE == RUN) continue;
+	// 		else if(MODE == DEBUG) getchar();
+	// 	}
+	// }, &cpu);
 
-	processor.join();
+	// processor.join();
 
 	// Safely quit program
 	return 0;
