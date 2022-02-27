@@ -21,7 +21,7 @@ build_files:
 	mkdir -p $(ODIR) 
 	mkdir -p bin 
 
-$(ODIR)/%.o: $(SRC)/%.cpp  $(IDIR)/%.hpp
+$(ODIR)/%.o: $(SRC)/%.cpp  
 	$(CXX) -c -o $@ $< $(CXXFLAGS)
 
 clean:

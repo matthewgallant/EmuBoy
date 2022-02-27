@@ -615,13 +615,6 @@ void CPU::execute(uint8_t ins){
                 setFlag(FLAG_Z);
             isDefined = true;
             break;
-            clearFlag(FLAG_C);
-            clearFlag(FLAG_H);
-            clearFlag(FLAG_N);
-            if(rf.readReg(REG_A, IS_8_BIT) == 0)
-                setFlag(FLAG_Z);
-            isDefined = true;
-            break;
         } case 0xB8: { // CP A, B
             break;
         } case 0xB9: { // CP A, C
