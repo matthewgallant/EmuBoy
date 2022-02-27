@@ -390,217 +390,66 @@ void CPU::execute(uint8_t ins){
             isDefined = true;
             break;
         } case 0x40: { // LD B, B
-            // B <- B is B
-            isDefined = true;
-            break;
         } case 0x41: { // LD B, C
-            rf.writeReg(REG_B, rf.readReg(REG_C, IS_8_BIT));
-            isDefined = true;
-            break;
         } case 0x42: { // LD B, D
-            rf.writeReg(REG_B, rf.readReg(REG_D, IS_8_BIT));
-            isDefined = true;
-            break;
         } case 0x43: { // LD B, E
-            rf.writeReg(REG_B, rf.readReg(REG_E, IS_8_BIT));
-            isDefined = true;
-            break;
         } case 0x44: { // LD B, H
-            rf.writeReg(REG_B, rf.readReg(REG_H, IS_8_BIT));
-            isDefined = true;
-            break;
         } case 0x45: { // LD B, L
-            rf.writeReg(REG_B, rf.readReg(REG_L, IS_8_BIT));
-            isDefined = true;
-            break;
         } case 0x46: { // LD B, (HL)
-            rf.writeReg(REG_B, memory->memory[rf.readReg(REG_HL, IS_8_BIT)]);
-            isDefined = true;
-            break;
         } case 0x47: { // LD B, A
-            rf.writeReg(REG_B, rf.readReg(REG_A, IS_8_BIT));
-            isDefined = true;
-            break;
         } case 0x48: { // LD C, B
-            rf.writeReg(REG_C, rf.readReg(REG_B, IS_8_BIT));
-            isDefined = true;
-            break;
         } case 0x49: { // LD C, C
-            // C <- C is C
-            isDefined = true;
-            break;
         } case 0x4A: { // LD C, D
-            rf.writeReg(REG_C, rf.readReg(REG_D, IS_8_BIT));
-            isDefined = true;
-            break;
         } case 0x4B: { // LD C, E
-            rf.writeReg(REG_C, rf.readReg(REG_E, IS_8_BIT));
-            isDefined = true;
-            break;
         } case 0x4C: { // LD C, H
-            rf.writeReg(REG_C, rf.readReg(REG_H, IS_8_BIT));
-            isDefined = true;
-            break;
         } case 0x4D: { // LD C, L
-            rf.writeReg(REG_C, rf.readReg(REG_L, IS_8_BIT));
-            isDefined = true;
-            break;
         } case 0x4E: { // LD C, (HL)
-            rf.writeReg(REG_C, memory->memory[rf.readReg(REG_HL, IS_16_BIT)]);
-            isDefined = true;
-            break;
         } case 0x4F: { // LD C, A
-            rf.writeReg(REG_C, rf.readReg(REG_A, IS_8_BIT));
-            isDefined = true;
-            break;
         } case 0x50: { // LD D, B
-            rf.writeReg(REG_D, rf.readReg(REG_B, IS_8_BIT));
-            isDefined = true;
-            break;
         } case 0x51: { // LD D, C 
-            rf.writeReg(REG_D, rf.readReg(REG_C, IS_8_BIT));
-            isDefined = true;
-            break;
         } case 0x52: { // LD D, D
-            // D <- D is D
-            isDefined = true;
-            break;
         } case 0x53: { // LD D, E
-            rf.writeReg(REG_D, rf.readReg(REG_E, IS_8_BIT));
-            isDefined = true;
-            break;
         } case 0x54: { // LD D, H
-            rf.writeReg(REG_D, rf.readReg(REG_H, IS_8_BIT));
-            isDefined = true;
-            break;
         } case 0x55: { // LD D, L
-            rf.writeReg(REG_D, rf.readReg(REG_L, IS_8_BIT));
-            isDefined = true;
-            break;
         } case 0x56: { // LD D, (HL)
-            rf.writeReg(REG_D, memory->memory[rf.readReg(REG_HL, IS_16_BIT)]);
-            isDefined = true;
-            break;
         } case 0x57: { // LD D, A
-            rf.writeReg(REG_D, rf.readReg(REG_A, IS_8_BIT));
-            isDefined = true;
-            break;
         } case 0x58: { // LD E, B
-            rf.writeReg(REG_E, rf.readReg(REG_B, IS_8_BIT));
-            isDefined = true;
-            break;
         } case 0x59: { // LD E, C
-            rf.writeReg(REG_E, rf.readReg(REG_C, IS_8_BIT));
-            isDefined = true;
-            break;
         } case 0x5A: { // LD E, D
-            rf.writeReg(REG_E, rf.readReg(REG_D, IS_8_BIT));
-            isDefined = true;
-            break;
         } case 0x5B: { // LD E, E
-            // E <- E is still E
-            isDefined = true;
-            break;
         } case 0x5C: { // LD E, H
-            rf.writeReg(REG_E, rf.readReg(REG_H, IS_8_BIT));
-            isDefined = true;
-            break;
         } case 0x5D: { // LD E, L
-            rf.writeReg(REG_E, rf.readReg(REG_L, IS_8_BIT));
-            isDefined = true;
-            break;
         } case 0x5E: { // LD E, (HL)
-            rf.writeReg(REG_E, memory->memory[rf.readReg(REG_HL, IS_16_BIT)]);
-            isDefined = true;
-            break;
         } case 0x5F: { // LD E, A
-            rf.writeReg(REG_E, rf.readReg(REG_A, IS_8_BIT));
-            isDefined = true;
-            break;      
         } case 0x60: { // LD H, B
-            rf.writeReg(REG_H, rf.readReg(REG_B, IS_8_BIT));
-            isDefined = true;
-            break;      
         } case 0x61: { // LD H, C 
-            rf.writeReg(REG_H, rf.readReg(REG_C, IS_8_BIT));
-            isDefined = true;
-            break;     
         } case 0x62: { // LD H, D
-            rf.writeReg(REG_H, rf.readReg(REG_D, IS_8_BIT));
-            isDefined = true;
-            break;     
         } case 0x63: { // LD H, E
-            rf.writeReg(REG_H, rf.readReg(REG_E, IS_8_BIT));
-            isDefined = true;
-            break;     
         } case 0x64: { // LD H, H
-            isDefined = true;
-            break;     
-        } case 0x65: { // LD H, L
-            rf.writeReg(REG_H, rf.readReg(REG_L, IS_8_BIT));
-            isDefined = true;
-            break;     
         } case 0x66: { // LD H, (HL)
-            rf.writeReg(REG_H, memory->memory[rf.readReg(REG_HL, IS_16_BIT)]);
-            isDefined = true;
-            break;
         } case 0x67: { // LD H, A
-            rf.writeReg(REG_H, rf.readReg(REG_A, IS_8_BIT));
-            isDefined = true;
-            break;      
         } case 0x68: { // LD L, B
-            rf.writeReg(REG_L, rf.readReg(REG_B, IS_8_BIT));
-            isDefined = true;
-            break;      
         } case 0x69: { // LD L, C 
-            rf.writeReg(REG_L, rf.readReg(REG_C, IS_8_BIT));
-            isDefined = true;
-            break;     
         } case 0x6A: { // LD L, D
-            rf.writeReg(REG_L, rf.readReg(REG_D, IS_8_BIT));
-            isDefined = true;
-            break;     
         } case 0x6B: { // LD L, E
-            rf.writeReg(REG_L, rf.readReg(REG_E, IS_8_BIT));
-            isDefined = true;
-            break;     
         } case 0x6C: { // LD L, H
-            rf.writeReg(REG_L, rf.readReg(REG_H, IS_8_BIT));
-            isDefined = true;
-            break;     
         } case 0x6D: { // LD L, L
-            isDefined = true;
-            break;     
-        } case 0x6E: { // LD L, (HL)
-            rf.writeReg(REG_B, memory->memory[rf.readReg(REG_HL, IS_16_BIT)]);
-            isDefined = true;
-            break;
         } case 0x6F: { // LD L, A
-            rf.writeReg(REG_L, rf.readReg(REG_A, IS_8_BIT));
-            isDefined = true;
-            break;      
         } case 0x70: { // LD (HL), B
-            memory->memory[rf.readReg(REG_HL, IS_16_BIT)] = rf.readReg(REG_B, IS_8_BIT);
-            isDefined = true;
-            break;      
         } case 0x71: { // LD (HL), C 
-            memory->memory[rf.readReg(REG_HL, IS_16_BIT)] = rf.readReg(REG_C, IS_8_BIT);
-            isDefined = true;
-            break;     
         } case 0x72: { // LD (HL), D
-            memory->memory[rf.readReg(REG_HL, IS_16_BIT)] = rf.readReg(REG_D, IS_8_BIT);
-            isDefined = true;
-            break;     
         } case 0x73: { // LD (HL), E
-            memory->memory[rf.readReg(REG_HL, IS_16_BIT)] = rf.readReg(REG_E, IS_8_BIT);
-            isDefined = true;
-            break;     
         } case 0x74: { // LD (HL), H
-            memory->memory[rf.readReg(REG_HL, IS_16_BIT)] = rf.readReg(REG_H, IS_8_BIT);
-            isDefined = true;
-            break;     
         } case 0x75: { // LD (HL), L
-            memory->memory[rf.readReg(REG_HL, IS_16_BIT)] = rf.readReg(REG_L, IS_8_BIT);
+            if(z == 0x6) {
+                rf.writeReg(rf.readReg(y, IS_8_BIT), 
+                    memory->memory[rf.readReg(REG_HL, IS_16_BIT)]);
+            } else if(y == 0x6) {
+                memory->memory[rf.readReg(REG_HL, IS_16_BIT)] = 
+                    rf.readReg(z, IS_8_BIT);
+            } else {
+                rf.writeReg(rf.readReg(y, IS_8_BIT), rf.readReg(z, IS_8_BIT));
+            }
             isDefined = true;
             break;     
         } case 0x76: { // HALT
@@ -608,42 +457,26 @@ void CPU::execute(uint8_t ins){
             state = HALTED;
             break;
         } case 0x77: { // LD (HL), A
-            memory->memory[rf.readReg(REG_HL, IS_16_BIT)] = rf.readReg(REG_A, IS_8_BIT);
-            isDefined = true;
-            break;
         } case 0x78: { // LD A, B
-            rf.writeReg(REG_A, rf.readReg(REG_B, IS_8_BIT));
-            isDefined = true;
-            break;
         } case 0x79: { // LD A, C
-            rf.writeReg(REG_A, rf.readReg(REG_C, IS_8_BIT));
-            isDefined = true;
-            break;
         } case 0x7A: { // LD A, D 
-            rf.writeReg(REG_A, rf.readReg(REG_D, IS_8_BIT));
-            isDefined = true;
-            break;
         } case 0x7B: { // LD A, E
-            rf.writeReg(REG_A, rf.readReg(REG_E, IS_8_BIT));
-            isDefined = true;
-            break;
         } case 0x7C: { // LD A, H
-            rf.writeReg(REG_A, rf.readReg(REG_H, IS_8_BIT));
-            isDefined = true;
-            break;
         } case 0x7D: { // LD A, L
-            rf.writeReg(REG_A, rf.readReg(REG_L, IS_8_BIT));
-            isDefined = true;
-            break;
         } case 0x7E: { // LD A, (HL)
-            rf.writeReg(REG_A, memory->memory[rf.readReg(REG_HL, IS_16_BIT)]);
-            isDefined = true;
-            break;
         } case 0x7F: { // LD A, A
-            // A <- A is just A lol
+            if(z == 0x6) {
+                rf.writeReg(rf.readReg(y, IS_8_BIT), 
+                    memory->memory[rf.readReg(REG_HL, IS_16_BIT)]);
+            } else if(y == 0x6) {
+                memory->memory[rf.readReg(REG_HL, IS_16_BIT)] = 
+                    rf.readReg(z, IS_8_BIT);
+            } else {
+                rf.writeReg(rf.readReg(y, IS_8_BIT), rf.readReg(z, IS_8_BIT));
+            } 
             isDefined = true;
             break;
-        case 0x80:// ADD A, B
+        }case 0x80:// ADD A, B
         case 0x81:// ADD A, C
         case 0x82:// ADD A, D
         case 0x83:// ADD A, E
@@ -688,20 +521,13 @@ void CPU::execute(uint8_t ins){
             isDefined = true;
             break;
         case 0x90: // SUB A, B
-          
         case 0x91: // SUB A, C
-          
         case 0x92: // SUB A, D
-          
         case 0x93: // SUB A, E
-          
         case 0x94: // SUB A, H
-          
         case 0x95: // SUB A, L
-          
         case 0x96: // SUB A, (HL)
-          
-        case 0x97: // SUB A, A
+        case 0x97:{ // SUB A, A
             if(z == 0x6)
                 rf.writeReg(REG_A, rf.readReg(REG_A, IS_8_BIT) - memory->memory[rf.readReg(REG_HL, IS_8_BIT)]);
             else
