@@ -100,11 +100,11 @@ uint8_t CPU::getInstruction() {
 void CPU::execute(uint8_t ins){
     // begin decoding 
     // there are decoded values not really needed but I'll leave it here :)
-    // uint8_t x = INS_GET_X(ins);
-    // uint8_t y = INS_GET_Y(ins);
-    // uint8_t z = INS_GET_Z(ins);
-    // uint8_t p = INS_GET_P(ins);
-    // uint8_t q = INS_GET_Q(ins);
+    uint8_t x = INS_GET_X(ins);
+    uint8_t y = INS_GET_Y(ins);
+    uint8_t z = INS_GET_Z(ins);
+    uint8_t p = INS_GET_P(ins);
+    uint8_t q = INS_GET_Q(ins);
 
     bool isDefined = false;
 
@@ -756,7 +756,7 @@ void CPU::execute(uint8_t ins){
         case 0xAC: // XOR A, H
         case 0xAD: // XOR A, L
         case 0xAE: // XOR A, (HL)
-        case 0xAF: // XOR A, A
+        case 0xAF:{ // XOR A, A
             if(z == 0x6){
                 rf.writeReg(REG_A, rf.readReg(REG_A, IS_8_BIT) ^ memory->memory[rf.readReg(REG_L, IS_8_BIT)]);
             }else{

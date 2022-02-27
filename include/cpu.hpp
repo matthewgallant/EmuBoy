@@ -8,7 +8,7 @@
 #define FLAG_H 5
 #define FLAG_C 4
 
-#define HALTED true
+#define HALTED false
 
 class CPU {
     public:

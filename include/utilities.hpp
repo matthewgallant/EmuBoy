@@ -1,5 +1,6 @@
 #pragma once
 #include <iomanip>
+#include <vector>
 
 void debugBytes(std::vector<uint8_t> bytes);
 void debugByte(uint8_t byte);

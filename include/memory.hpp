@@ -1,5 +1,6 @@
-#pragma once
 #include <vector>
+#include <cstdint>
+#pragma once
 
 class Memory {
     public:
