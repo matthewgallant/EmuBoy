@@ -1,6 +1,10 @@
 #pragma once
 
+#include <algorithm>
+#include <vector>
+
 #include "memory.hpp"
+#include "lcd.hpp"
 
 #define HORIZONTAL_BLANK_MODE 0
 #define VERTICAL_BLANK_MODE 1
@@ -27,8 +31,11 @@ class PPU {
         // Calculates and pushes pixels to buffer for a scanline
         void buildScanline();
 
+        // Draws tiles to LCD
+        void debugTiles(std::vector<uint8_t> vram);
+
         // Get pixel color data
-        int getColor();
+        std::vector<int> getTileLineColors(uint8_t firstByte, uint8_t secondByte);
 
         // Get LCD power status (on/off)
         bool poweredOn();
@@ -39,8 +46,8 @@ class PPU {
         // Keep track of cycle ticks
         int ticks;
 
-        // Create array for screen buffer
-        int buffer[160][144];
+        // Create vector for screen buffer
+        std::vector<int> buffer = std::vector<int>(WINDOW_WIDTH * WINDOW_HEIGHT);
 
         // Keep track of the ppu mode
         int mode;

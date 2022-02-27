@@ -1,14 +1,11 @@
 #include <iostream>
+#include <vector>
 
 #include "lcd.hpp"
 #include "memory.hpp"
 #include "utilities.hpp"
 
-#define WINDOW_WIDTH 160
-#define WINDOW_HEIGHT 144
-#define WINDOW_SCALE 3
-
-LCD::LCD() {
+LCD::LCD(std::vector<int> buffer) {
 
     // Could not initialize SDL2
     if (SDL_Init(SDL_INIT_VIDEO) < 0) std::cout << "Could not initialize SDL2: " << SDL_GetError() << std::endl;
@@ -22,7 +19,7 @@ LCD::LCD() {
     if (renderer == NULL) std::cout << "Could not create SDL2 renderer: " << SDL_GetError() << std::endl;
 
     // Draw frame
-    drawFrame();
+    drawFrame(buffer);
     
     // Simple control loop
     SDL_Event event;
@@ -43,7 +40,7 @@ LCD::LCD() {
 /**
  * Prepares and renders a frame to the window
  */
-void LCD::drawFrame() {
+void LCD::drawFrame(std::vector<int> buffer) {
 
     // Clear render buffer
     SDL_RenderClear(renderer);
@@ -52,8 +49,16 @@ void LCD::drawFrame() {
     for (int i = 0; i < WINDOW_HEIGHT; i++) {
         for (int j = 0; j < WINDOW_WIDTH; j++) {
 
+            int position = (i * WINDOW_WIDTH) - WINDOW_WIDTH + j;
+
             // Draw pixel at position
-            drawPixel(j, i);
+            drawPixel(j, i, buffer[position]);
+
+            // if (i % 2 == 0 && j % 2 != 0) {
+            //     drawPixel(j, i, COLOR_WHITE);
+            // } else {
+            //     drawPixel(j, i, COLOR_BLACK);
+            // }
         }
     }
 
@@ -66,11 +71,12 @@ void LCD::drawFrame() {
  * 
  * @param pixelPosX horizonal position of the pixel
  * @param pixelPosY vertical position of the pixel
+ * @param pixelColor int representation of the pixel color
  */
-void LCD::drawPixel(int pixelPosX, int pixelPosY) {
+void LCD::drawPixel(int pixelPosX, int pixelPosY, int pixelColor) {
 
     // Set pixel color
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    setPixelColor(pixelColor);
 
     // Create the 'pixel' rect
     SDL_Rect pixelRect;
@@ -81,4 +87,26 @@ void LCD::drawPixel(int pixelPosX, int pixelPosY) {
 
     // Render the 'pixel'
     SDL_RenderFillRect(renderer, &pixelRect);
+}
+
+/**
+ * @brief Sets the current SDL render draw color
+ * 
+ * @param pixelColor int representation of the pixel color
+ */
+void LCD::setPixelColor(int pixelColor) {
+
+    // Define color for pixel
+    if (pixelColor == COLOR_BLACK) {
+        r = g = b = 0;
+    } else if (pixelColor == COLOR_DARK_GREY) {
+        r = g = b = 119;
+    } else if (pixelColor == COLOR_LIGHT_GREY) {
+        r = g = b = 204;
+    } else {
+        r = g = b = 255;
+    }
+
+    // Set pixel color
+    SDL_SetRenderDrawColor(renderer, r, g, b, 255);
 }
