@@ -18,7 +18,7 @@
 
 class PPU {
     public:
-        PPU(Memory memory);
+        PPU(Memory *memory);
         void step();
     private:
 
@@ -35,7 +35,7 @@ class PPU {
         void debugTiles(std::vector<uint8_t> vram);
 
         // Get pixel color data
-        std::vector<int> getTileLineColors(uint8_t firstByte, uint8_t secondByte);
+        std::vector<int> *getTileLineColors(uint8_t firstByte, uint8_t secondByte);
 
         // Get LCD power status (on/off)
         bool poweredOn();
