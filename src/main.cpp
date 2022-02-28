@@ -52,21 +52,22 @@ int main() {
 	PPU ppu(&memory);
 
 	// PPU test setup (should run a but more than one)
-	for (int i = 0; i < 80000; i++) {
-		ppu.step();
-	}
+	//for (int i = 0; i < 80000; i++) {
+	//	ppu.step();
+	//}
 	
 	// run the cpu cycle in a seperate thread
-	std::thread processor([](CPU *cpu) {
+	std::thread processor([](CPU *cpu, PPU *ppu) {
 	while(true) {
 			cpu->debug();
 			cpu->step();
+			ppu->step();
 			//if(cpu->getInstruction() == 0) continue;
 			if(MODE == SLOW) usleep(SLOWTIME);
 			else if(MODE == RUN) continue;
 			else if(MODE == DEBUG) getchar();
 		}		
-	}, &cpu);
+	}, &cpu, &ppu);
 
 	processor.join();
 

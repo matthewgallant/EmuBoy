@@ -99,25 +99,21 @@ void PPU::buildScanline() {
 void PPU::debugTiles(std::vector<uint8_t> vram) {
 
     // Loop through all of the  VRAM
-    for (int i = 0; i < vram.size(); i++) {
+    for (int i = 0; i < vram.size(); i += 2) {
+        // Get bytes of VRAM
+        uint8_t firstByte = vram[i];
+        uint8_t secondByte = vram[i + 1];
+        // uint8_t firstByte = 0b0110011;
+        // uint8_t secondByte = 0b01010101;
 
-        if(i % 2){
-            // Get bytes of VRAM
-            uint8_t firstByte = vram[i];
-            uint8_t secondByte = vram[i + 1];
-            // uint8_t firstByte = 0b0110011;
-            // uint8_t secondByte = 0b01010101;
+        // Get line colors
+        std::vector<int> *lineColors = getTileLineColors(firstByte, secondByte);
 
-            // Get line colors
-            std::vector<int> *lineColors = getTileLineColors(firstByte, secondByte);
-
-            // Loop through line colors
-            for (int j = 0; j < lineColors->size(); j++) {
-                int position = i / 2 * 8 + j;
-                buffer[position] = (*lineColors)[j];
-            }
+        // Loop through line colors
+        for (int j = 0; j < lineColors->size(); j++) {
+            int position = (i * 8) + j;
+            buffer[position] = (*lineColors)[j];
         }
-        
     }
 
     // Initialize LCD
