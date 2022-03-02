@@ -16,6 +16,7 @@
 #define LCD_CONTROL_REGISTER    0xff40
 #define COLOR_PALETTE_REGISTER  0xff47
 
+#define VRAM_SIZE               6144
 #define VRAM_OFFSET             0x8000
 #define CHARACTER_DATA_BEGIN    VRAM_OFFSET 
 #define BG_DISPLAY_DATA_1_BEGIN 0x9800

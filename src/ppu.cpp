@@ -102,26 +102,26 @@ void PPU::debugTiles(std::vector<uint8_t> vram) {
     int position_y = 0;
     int position_x = 0;
     for (int i = 0; i < char_ram_end; i += 2) {
-    //for (int i = 0; i < vram.size(); i += 2) {
         // Get bytes of VRAM
         uint8_t firstByte = vram[i];
         uint8_t secondByte = vram[i + 1];
-        // uint8_t firstByte = 0b0110011;
-        // uint8_t secondByte = 0b01010101;
 
         // Get line colors
         std::vector<int> *lineColors = getTileLineColors(firstByte, secondByte);
+        
+        // Set position if at the bottom the screen
         if(position_y == WINDOW_HEIGHT){
             position_y = 0;
             position_x += 8;
         }
 
         // Loop through line colors
-        // std::copy(lineColors->begin(), lineColors->end(), buffer[i]);
         for (int j = 0; j < lineColors->size(); j++) {
             int position = (position_y * WINDOW_WIDTH) + j + position_x+ 1; 
             buffer[position] = (*lineColors)[j];
         }
+
+        // increment current line
         position_y++;
     }
 

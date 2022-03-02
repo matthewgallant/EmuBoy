@@ -11,7 +11,6 @@ class Memory {
 
         std::vector<uint8_t> read(uint16_t startAddress, uint16_t endAddress);
         uint8_t read(uint16_t address);
-    private:
         std::vector<uint8_t> memory;
     friend class CPU;
 };
