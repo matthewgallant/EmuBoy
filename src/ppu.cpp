@@ -118,8 +118,8 @@ void PPU::debugTiles(std::vector<uint8_t> vram) {
 
         // Loop through line colors
         // std::copy(lineColors->begin(), lineColors->end(), buffer[i]);
-        for (int j = 0; j < lineColors->size() && position_y * WINDOW_WIDTH < buffer.size(); j++) {
-            int position = (position_y * WINDOW_WIDTH) + j+ 1; 
+        for (int j = 0; j < lineColors->size(); j++) {
+            int position = (position_y * WINDOW_WIDTH) + j + position_x+ 1; 
             buffer[position] = (*lineColors)[j];
         }
         position_y++;
