@@ -41,7 +41,7 @@ void debugByte(uint8_t byte) {
  * 
  * @param instr instruction opcode
  */
-void unknownInstruction(int instr) {
+int unknownInstruction(int instr) {
 	std::cout << "\033[31m" << "Unknown Instruction: " << std::setw(2) << std::hex << instr << "\033[0m" << std::endl;
-	exit(EXIT_FAILURE);
+	return -1;
 }

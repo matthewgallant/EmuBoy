@@ -49,7 +49,6 @@ int main() {
 	cpu.setMemory(&memory);
 
 	// Create virtual ppu
-	PPU ppu(&memory);
 
 	// PPU test setup (should run a but more than one)
 	//for (int i = 0; i < 80000; i++) {
@@ -57,17 +56,18 @@ int main() {
 	//}
 	
 	// run the cpu cycle in a seperate thread
-	std::thread processor([](CPU *cpu, PPU *ppu) {
+	std::thread processor([](CPU *cpu) {
 	while(true) {
 			cpu->debug();
 			cpu->step();
-			ppu->step();
 			//if(cpu->getInstruction() == 0) continue;
 			if(MODE == SLOW) usleep(SLOWTIME);
 			else if(MODE == RUN) continue;
 			else if(MODE == DEBUG) getchar();
 		}		
-	}, &cpu, &ppu);
+	}, &cpu);
+
+	PPU ppu(&memory);
 
 	processor.join();
 

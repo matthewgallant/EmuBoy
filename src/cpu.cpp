@@ -958,6 +958,7 @@ void CPU::execute(uint8_t ins){
 
     if (isDefined == false) {
         unknownInstruction(ins);
+        this->state = HALTED;
     }
 }
 
