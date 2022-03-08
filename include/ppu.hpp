@@ -22,11 +22,22 @@
 #define BG_DISPLAY_DATA_1_BEGIN 0x9800
 #define BG_DISPLAY_DATA_2_BEGIN 0x9C00
 
+#define OAM_2_VRAM(oam) 0x8000 + (oam * 0x10)
+
 class PPU {
     public:
         PPU(Memory *memory);
         void step();
     private:
+        // OAM member array
+        struct OamMember{
+            uint8_t LCD_y_coord;
+            uint8_t LCD_x_coord;
+            uint8_t CHR_code;
+            uint8_t flags;
+        };
+
+        std::vector<OamMember> oam;
 
         // Change ppu mode
         void changeMode(int newMode);
