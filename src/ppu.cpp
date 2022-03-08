@@ -101,6 +101,7 @@ void PPU::debugTiles(std::vector<uint8_t> vram) {
     // Loop through all of the  VRAM
     int position_y = 0;
     int position_x = 0;
+    int offset_y = 0;
     // loop through all tiles in the character/object/tile memory
     for (int i = 0; i < char_ram_end; i += 2) {
         // Get bytes of VRAM
@@ -108,11 +109,19 @@ void PPU::debugTiles(std::vector<uint8_t> vram) {
         uint8_t secondByte = vram[i + 1];
 
         // Set position if at the bottom the screen
+        if(position_x == WINDOW_WIDTH){
+            position_y += 8;
+            position_x = 0;
+        }
         if(position_y == WINDOW_HEIGHT){
             position_y = 0;
-            position_x += 8;
         }
 
+        if(offset_y > 7){
+            offset_y = 0;
+            position_x += 8;
+        }
+        
         // Get pixel values for the specific line of pixel for the current character
         std::vector<int> *lineColors = getTileLineColors(firstByte, secondByte);
         
@@ -121,12 +130,10 @@ void PPU::debugTiles(std::vector<uint8_t> vram) {
             // y * width will give the index of the start of each row,
             // j is the current pixel begin drawn and x is the offset from 
             // the right
-            int position = (position_y * WINDOW_WIDTH) + j + position_x; 
+            int position = ((offset_y + position_y) * WINDOW_WIDTH) + j + position_x; 
             buffer[position] = (*lineColors)[j];
         }
-
-        // increment current line
-        position_y++;
+        offset_y++;
     }
 
     // Initialize LCD
