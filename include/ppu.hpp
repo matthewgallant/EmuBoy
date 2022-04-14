@@ -21,6 +21,9 @@
 #define CHARACTER_DATA_BEGIN    VRAM_OFFSET 
 #define BG_DISPLAY_DATA_1_BEGIN 0x9800
 #define BG_DISPLAY_DATA_2_BEGIN 0x9C00
+#define OAM_START               0xFE00
+#define OAM_END                 0xFE9F
+#define OAM_SIZE                OAM_END - OAM_START
 
 #define OAM_2_VRAM(oam) 0x8000 + (oam * 0x10)
 
@@ -28,6 +31,7 @@ class PPU {
     public:
         PPU(Memory *memory);
         void step();
+        std::vector<int> *debugTiles();
     private:
         // OAM member array
         struct OamMember{
@@ -37,7 +41,7 @@ class PPU {
             uint8_t flags;
         };
 
-        std::vector<OamMember> oam;
+        std::vector<OamMember> *oam;
 
         // Change ppu mode
         void changeMode(int newMode);
@@ -49,7 +53,6 @@ class PPU {
         void buildScanline();
 
         // Draws tiles to LCD
-        void debugTiles(std::vector<uint8_t> vram);
 
         // Get pixel color data
         std::vector<int> *getTileLineColors(uint8_t firstByte, uint8_t secondByte);
@@ -58,7 +61,7 @@ class PPU {
         bool poweredOn();
 
         // Make access to memory class global
-        Memory memory;
+        Memory *memory;
 
         // Keep track of cycle ticks
         int ticks;

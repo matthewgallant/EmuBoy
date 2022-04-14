@@ -17,7 +17,7 @@
 #define RUN 1
 #define SLOW 2
 
-#define MODE RUN 
+#define MODE 0 
 
 // Slowtime is 500ms
 #define SLOWTIME 500000
@@ -68,6 +68,8 @@ int main() {
 	}, &cpu);
 
 	PPU ppu(&memory);
+	// this is a cursed line of code...
+    LCD lcd(*ppu.debugTiles());
 
 	processor.join();
 
