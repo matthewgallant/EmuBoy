@@ -15,6 +15,7 @@ class CPU {
         CPU();
         void step();
         void setMemory(Memory *memory);
+        Memory *getMemory();
         void execute(uint8_t ins);
         void debug();
         void setFlag(uint8_t flag);

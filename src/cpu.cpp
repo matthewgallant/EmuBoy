@@ -56,6 +56,10 @@ void CPU::setMemory(Memory *memory) {
     this->memory = memory;
 }
 
+Memory *CPU::getMemory() {
+    return memory;
+}
+
 /**
  * @param flag Flag value to set 
  */

@@ -17,10 +17,10 @@
 #define RUN 1
 #define SLOW 2
 
-#define MODE RUN 
+#define MODE SLOW 
 
 // Slowtime is 500ms
-#define SLOWTIME 500000
+#define SLOWTIME 250000
 int main() {
 	// Get file from environment
 	if (!std::getenv("ROM")) {
@@ -58,9 +58,12 @@ int main() {
 
 	// run the cpu cycle in a seperate thread
 	std::thread processor([](CPU *cpu) {
+	Memory *memory = cpu->getMemory();
+	int i = 0;
 	while(true) {
 			cpu->debug();
 			cpu->step();
+			memory->write(i++, VRAM_OFFSET);
 			//if(cpu->getInstruction() == 0) continue;
 			if(MODE == SLOW) usleep(SLOWTIME);
 			else if(MODE == RUN) continue;
@@ -69,7 +72,6 @@ int main() {
 	}, &cpu);
 	
 	PPU ppu(&memory);
-	// display the current vram from the ppu
     LCD lcd;
 
 	std::thread graphics([](PPU *ppu, LCD *lcd) {
