@@ -20,7 +20,7 @@
 #define MODE SLOW 
 
 // Slowtime is 500ms
-#define SLOWTIME 250000
+#define SLOWTIME 20000
 int main() {
 	// Get file from environment
 	if (!std::getenv("ROM")) {
@@ -59,10 +59,12 @@ int main() {
 	// run the cpu cycle in a seperate thread
 	std::thread processor([](CPU *cpu) {
 	Memory *memory = cpu->getMemory();
-	int i = 0;
+	uint8_t i = 0;
 	while(true) {
 			cpu->debug();
 			cpu->step();
+			// write to the first section of memory as indicator 
+			// threads have some shared memory
 			memory->write(i++, VRAM_OFFSET);
 			//if(cpu->getInstruction() == 0) continue;
 			if(MODE == SLOW) usleep(SLOWTIME);
@@ -73,7 +75,8 @@ int main() {
 	
 	PPU ppu(&memory);
     LCD lcd;
-
+	// thread for the graphics, every cycle it redraws with the 
+	// new vram memory... probably kind of slow
 	std::thread graphics([](PPU *ppu, LCD *lcd) {
 		while(true) {
 			lcd->drawFrame(*ppu->debugTiles());

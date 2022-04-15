@@ -94,6 +94,10 @@ void LCD::setPixelColor(int pixelColor) {
     SDL_SetRenderDrawColor(renderer, r, g, b, 255);
 }
 
+
+/**
+ * @brief check for event, and handle if its a quit
+ */
 void LCD::handle_quit() {
     static SDL_Event event;
     static bool quit = false;
