@@ -15,10 +15,12 @@
 
 class LCD {
     public:
-        LCD(std::vector<int> buffer);
+        LCD();
         void drawFrame(std::vector<int> buffer);
         void drawPixel(int pixelPosX, int pixelPosY, int pixelColor);
         void setPixelColor(int pixelColor);
+        void handle_quit();
+
     private:
         SDL_Window* window;
         SDL_Renderer* renderer;

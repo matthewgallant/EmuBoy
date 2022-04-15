@@ -17,7 +17,7 @@
 #define RUN 1
 #define SLOW 2
 
-#define MODE 0 
+#define MODE RUN 
 
 // Slowtime is 500ms
 #define SLOWTIME 500000
@@ -54,7 +54,8 @@ int main() {
 	//for (int i = 0; i < 80000; i++) {
 	//	ppu.step();
 	//}
-	
+
+
 	// run the cpu cycle in a seperate thread
 	std::thread processor([](CPU *cpu) {
 	while(true) {
@@ -66,13 +67,21 @@ int main() {
 			else if(MODE == DEBUG) getchar();
 		}		
 	}, &cpu);
-
+	
 	PPU ppu(&memory);
-	// this is a cursed line of code...
-    LCD lcd(*ppu.debugTiles());
+	// display the current vram from the ppu
+    LCD lcd;
 
+	std::thread graphics([](PPU *ppu, LCD *lcd) {
+		while(true) {
+			lcd->drawFrame(*ppu->debugTiles());
+			lcd->handle_quit();
+		}
+
+	}, &ppu, &lcd);
+
+	graphics.join();
 	processor.join();
-
 	printf("%x", OAM_2_VRAM(0x80));
 
 	// Safely quit program

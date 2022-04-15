@@ -1,3 +1,4 @@
+#include <SDL2/SDL_video.h>
 #include <iostream>
 #include <vector>
 
@@ -5,7 +6,7 @@
 #include "memory.hpp"
 #include "utilities.hpp"
 
-LCD::LCD(std::vector<int> buffer) {
+LCD::LCD() {
 
     // Could not initialize SDL2
     if (SDL_Init(SDL_INIT_VIDEO) < 0) std::cout << "Could not initialize SDL2: " << SDL_GetError() << std::endl;
@@ -17,24 +18,6 @@ LCD::LCD(std::vector<int> buffer) {
     // Initialize renderer
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     if (renderer == NULL) std::cout << "Could not create SDL2 renderer: " << SDL_GetError() << std::endl;
-
-    // Draw frame
-    drawFrame(buffer);
-    
-    // Simple control loop
-    SDL_Event event;
-    bool quit = false;
-    while(quit == false) {
-        while(SDL_PollEvent(&event) != 0) {
-            if(event.type == SDL_QUIT) {
-                quit = true;
-            }
-        }
-    }
-
-    // Exit the program
-    SDL_DestroyWindow(window);
-    SDL_Quit();
 }
 
 /**
@@ -109,4 +92,16 @@ void LCD::setPixelColor(int pixelColor) {
 
     // Set pixel color
     SDL_SetRenderDrawColor(renderer, r, g, b, 255);
+}
+
+void LCD::handle_quit() {
+    static SDL_Event event;
+    static bool quit = false;
+    if(quit == false) { 
+        SDL_PollEvent(&event);
+        if(event.type == SDL_QUIT) {
+            SDL_DestroyWindow(this->window);
+            SDL_Quit();
+        }
+    }
 }
