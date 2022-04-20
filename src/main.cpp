@@ -79,7 +79,9 @@ int main() {
 	// new vram memory... probably kind of slow
 	std::thread graphics([](PPU *ppu, LCD *lcd) {
 		while(true) {
-			lcd->drawFrame(*ppu->debugTiles());
+			std::vector<int> *buff = ppu->debugTiles();
+			if(buff == NULL) continue;
+			lcd->drawFrame(*buff);
 			lcd->handle_quit();
 		}
 

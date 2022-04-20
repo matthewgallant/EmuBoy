@@ -24,7 +24,6 @@ LCD::LCD() {
  * Prepares and renders a frame to the window
  */
 void LCD::drawFrame(std::vector<int> buffer) {
-
     // Clear render buffer
     SDL_RenderClear(renderer);
 
@@ -32,7 +31,8 @@ void LCD::drawFrame(std::vector<int> buffer) {
     for (int i = 0; i < WINDOW_HEIGHT; i++) {
         for (int j = 0; j < WINDOW_WIDTH; j++) {
 
-            int position = (i * WINDOW_WIDTH) - WINDOW_WIDTH + j;
+            unsigned int position = (i * WINDOW_WIDTH) - WINDOW_WIDTH + j;
+            if(position >= buffer.size()) continue;
 
             // Draw pixel at position
             drawPixel(j, i, buffer[position]);
