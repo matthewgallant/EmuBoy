@@ -73,19 +73,17 @@ int main() {
 		}		
 	}, &cpu);
 	
+	// Create virtual ppu
 	PPU ppu(&memory);
+
+	// Create virtual lcd
     LCD lcd;
-	// thread for the graphics, every cycle it redraws with the 
-	// new vram memory... probably kind of slow
-	std::thread graphics([](PPU *ppu, LCD *lcd) {
-		while(true) {
-			lcd->drawFrame(*ppu->debugTiles());
-			lcd->handle_quit();
-		}
 
-	}, &ppu, &lcd);
+	while(true) {
+		lcd.drawFrame(*ppu.debugTiles());
+		lcd.handle_quit();
+	}
 
-	graphics.join();
 	processor.join();
 	printf("%x", OAM_2_VRAM(0x80));
 
