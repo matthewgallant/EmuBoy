@@ -21,16 +21,16 @@
 // Slowtime is 500ms
 #define SLOWTIME 20000
 
-int main() {
+int main(int argc, char **argv) {
 
-	// Get file from environment
-	if (!std::getenv("ROM")) {
-		std::cout << "No ROM found in path. Please set 'ROM' in your path to your ROM file." << std::endl;
-		return -1;
+	// Check if ROM is passed as an argument
+	if (argc != 2) {
+		std::cout << "No ROM passed as an argument" << std::endl;
+		exit(EXIT_FAILURE);
 	}
 
-	//Initialize cartridge
-	Cartridge cartridge;
+	// Initialize cartridge with ROM file from args
+	Cartridge cartridge(argv[1]);
 	std::vector<uint8_t> cartridgeContents = cartridge.getCartridgeContents(0x4000, 0x8000);
 
 	// Print rom hex for debugging
