@@ -9,6 +9,7 @@
 #include "ppu.hpp"
 #include "lcd.hpp"
 #include "cartridge.hpp"
+#include "io.hpp"
 #include "clock.hpp"
 #include "utilities.hpp"
 
@@ -65,6 +66,9 @@ int main(int argc, char **argv) {
 			else if(MODE == DEBUG) getchar();
 		}
 	}, &cpu);
+
+	// Create virtual io
+	IO io(&memory);
 	
 	// Create virtual ppu
 	PPU ppu(&memory);
@@ -74,7 +78,7 @@ int main(int argc, char **argv) {
 
 	while(true) {
 		lcd.drawFrame(*ppu.debugTiles());
-		lcd.handle_quit();
+		io.step();
 	}
 
 	processor.join();
