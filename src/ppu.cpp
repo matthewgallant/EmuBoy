@@ -14,6 +14,10 @@ PPU::PPU(Memory *memory) {
     this->memory = memory;
     this->memory->write(vram, VRAM_OFFSET);
     oam = new std::vector<OamMember>();
+
+    // Initialize global variables
+    scanline = 0;
+    mode = HORIZONTAL_BLANK_MODE;
 }
 
 void PPU::step() {
