@@ -5,10 +5,10 @@
 
 #include "cartridge.hpp"
 
-Cartridge::Cartridge() {
+Cartridge::Cartridge(char *romFile) {
     
 	// Read rom file and create a vector with all of the data
-	std::ifstream romStream(std::getenv("ROM"), std::ios::in | std::ios::binary);
+	std::ifstream romStream(romFile, std::ios::in | std::ios::binary);
 	std::vector<uint8_t> romContents((std::istreambuf_iterator<char>(romStream)), std::istreambuf_iterator<char>());
 
 	// Copy local vector to global vector

@@ -5,12 +5,12 @@
 
 class IO {
     public:
-        IO(Memory memory);
+        IO(Memory *memory);
         void step();
     private:
 
         // Make memory access global
-        Memory memory;
+        Memory *memory;
 
         // Instantiate controls
         Controls controls;

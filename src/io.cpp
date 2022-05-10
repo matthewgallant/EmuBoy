@@ -5,7 +5,7 @@
 #include "controls.hpp"
 #include "memory.hpp"
 
-IO::IO(Memory memory):memory(memory) {}
+IO::IO(Memory *memory):memory(memory) {}
 
 /**
  * @brief Checks for input and updates the appropriate memory register

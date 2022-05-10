@@ -29,7 +29,7 @@ clean:
 	rm -rf bin
 
 run: 
-	bin/emuboy
+	bin/emuboy $(ROM)
 
 analyse:
 		$(ANALYZER) $(SRC)/* -- -I $(IDIR)
