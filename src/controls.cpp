@@ -29,27 +29,29 @@ std::vector<int> Controls::pollEvents() {
                         events.push_back(D_PAD_UP);
                         break;
                     case SDL_SCANCODE_A:
-                    case SDL_SCANCODE_RIGHT:
-                        events.push_back(D_PAD_RIGHT);
+                    case SDL_SCANCODE_LEFT:
+                        events.push_back(D_PAD_LEFT);
                         break;
                     case SDL_SCANCODE_S:
                     case SDL_SCANCODE_DOWN:
                         events.push_back(D_PAD_DOWN);
                         break;
                     case SDL_SCANCODE_D:
-                    case SDL_SCANCODE_LEFT:
-                        events.push_back(D_PAD_LEFT);
+                    case SDL_SCANCODE_RIGHT:
+                        events.push_back(D_PAD_RIGHT);
                         break;
-                    case SDL_SCANCODE_I:
+                    case SDL_SCANCODE_RETURN:
+                    case SDL_SCANCODE_RETURN2:
                         events.push_back(START_BUTTON);
                         break;
-                    case SDL_SCANCODE_O:
+                    case SDL_SCANCODE_LSHIFT:
+                    case SDL_SCANCODE_RSHIFT:
                         events.push_back(SELECT_BUTTON);
                         break;
-                    case SDL_SCANCODE_K:
+                    case SDL_SCANCODE_X:
                         events.push_back(A_BUTTON);
                         break;
-                    case SDL_SCANCODE_L:
+                    case SDL_SCANCODE_Z:
                         events.push_back(B_BUTTON);
                         break;
                 }

@@ -4,9 +4,9 @@
 #include <SDL2/SDL.h>
 
 #define D_PAD_UP 0
-#define D_PAD_RIGHT 1
+#define D_PAD_LEFT 1
 #define D_PAD_DOWN 2
-#define D_PAD_LEFT 3
+#define D_PAD_RIGHT 3
 #define START_BUTTON 4
 #define SELECT_BUTTON 5
 #define A_BUTTON 6
