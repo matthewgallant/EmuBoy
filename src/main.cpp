@@ -69,15 +69,15 @@ int main(int argc, char **argv) {
 
 	// Create virtual io
 	IO io(&memory);
-	
-	// Create virtual ppu
-	PPU ppu(&memory);
 
 	// Create virtual lcd
     LCD lcd;
+	
+	// Create virtual ppu
+	PPU ppu(&memory, &lcd);
 
 	while(true) {
-		lcd.drawFrame(*ppu.debugTiles());
+		ppu.step();
 		io.step();
 	}
 

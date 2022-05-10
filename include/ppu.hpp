@@ -29,10 +29,11 @@
 
 class PPU {
     public:
-        PPU(Memory *memory);
+        PPU(Memory *memory, LCD *lcd);
         void step();
         std::vector<int> *debugTiles();
     private:
+
         // OAM member array
         struct OamMember{
             uint8_t LCD_y_coord;
@@ -52,8 +53,6 @@ class PPU {
         // Calculates and pushes pixels to buffer for a scanline
         void buildScanline();
 
-        // Draws tiles to LCD
-
         // Get pixel color data
         std::vector<int> *getTileLineColors(uint8_t firstByte, uint8_t secondByte);
 
@@ -62,6 +61,9 @@ class PPU {
 
         // Make access to memory class global
         Memory *memory;
+
+        // Make access to lcd class global
+        LCD *lcd;
 
         // Keep track of cycle ticks
         int ticks;
