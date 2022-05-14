@@ -16,6 +16,9 @@
 #define LCD_CONTROL_REGISTER    0xff40
 #define COLOR_PALETTE_REGISTER  0xff47
 
+#define LCD_SCROLL_X_REGISTER   0xff43
+#define LCD_SCROLL_Y_REGISTER   0xff42
+
 #define VRAM_SIZE               6144
 #define VRAM_OFFSET             0x8000
 #define CHARACTER_DATA_BEGIN    VRAM_OFFSET 
@@ -31,7 +34,7 @@ class PPU {
     public:
         PPU(Memory *memory, LCD *lcd);
         void step();
-        std::vector<int> *debugTiles();
+        // std::vector<int> *debugTiles();
     private:
 
         // OAM member array
@@ -54,7 +57,9 @@ class PPU {
         void buildScanline();
 
         // Get pixel color data
-        std::vector<int> *getTileLineColors(uint8_t firstByte, uint8_t secondByte);
+        // std::vector<int> *getTileLineColors(uint8_t firstByte, uint8_t secondByte);
+
+        int getColor(int colorId, uint16_t palette);
 
         // Get LCD power status (on/off)
         bool poweredOn();
@@ -69,7 +74,8 @@ class PPU {
         int ticks;
 
         // Create vector for screen buffer
-        std::vector<int> buffer = std::vector<int>(WINDOW_WIDTH * WINDOW_HEIGHT);
+        // std::vector<int> buffer = std::vector<int>(WINDOW_WIDTH * WINDOW_HEIGHT);
+        int pixels[160][144][3];
 
         // Keep track of the ppu mode
         int mode;

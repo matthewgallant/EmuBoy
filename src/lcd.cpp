@@ -22,8 +22,28 @@ LCD::LCD() {
 
 /**
  * Prepares and renders a frame to the window
- */
-void LCD::drawFrame(std::vector<int> buffer) {
+//  */
+// void LCD::drawFrame(std::vector<int> buffer) {
+//     // Clear render buffer
+//     SDL_RenderClear(renderer);
+
+//     // Loop through each pixel
+//     for (int i = 0; i < WINDOW_HEIGHT; i++) {
+//         for (int j = 0; j < WINDOW_WIDTH; j++) {
+
+//             unsigned int position = (i * WINDOW_WIDTH) - WINDOW_WIDTH + j;
+//             if(position >= buffer.size()) continue;
+
+//             // Draw pixel at position
+//             drawPixel(j, i, buffer[position]);
+//         }
+//     }
+
+//     // Load buffered frame
+//     SDL_RenderPresent(renderer);
+// }
+
+void LCD::drawFrame(int pixels[160][144][3]) {
     // Clear render buffer
     SDL_RenderClear(renderer);
 
@@ -31,17 +51,11 @@ void LCD::drawFrame(std::vector<int> buffer) {
     for (int i = 0; i < WINDOW_HEIGHT; i++) {
         for (int j = 0; j < WINDOW_WIDTH; j++) {
 
-            unsigned int position = (i * WINDOW_WIDTH) - WINDOW_WIDTH + j;
-            if(position >= buffer.size()) continue;
+            uint position = (i * WINDOW_WIDTH) - WINDOW_WIDTH + j;
+            // if(position >= buffer.size()) continue;
 
-            // Draw pixel at position
-            drawPixel(j, i, buffer[position]);
-
-            // if (i % 2 == 0 && j % 2 != 0) {
-            //     drawPixel(j, i, COLOR_WHITE);
-            // } else {
-            //     drawPixel(j, i, COLOR_BLACK);
-            // }
+            int red = pixels[j][i][0], blue = pixels[j][i][1], green = pixels[j][i][2];
+            drawPixel(j, i, red, green, blue);
         }
     }
 
@@ -56,10 +70,26 @@ void LCD::drawFrame(std::vector<int> buffer) {
  * @param pixelPosY vertical position of the pixel
  * @param pixelColor int representation of the pixel color
  */
-void LCD::drawPixel(int pixelPosX, int pixelPosY, int pixelColor) {
+// void LCD::drawPixel(int pixelPosX, int pixelPosY, int pixelColor) {
+
+//     // Set pixel color
+//     setPixelColor(pixelColor);
+
+//     // Create the 'pixel' rect
+//     SDL_Rect pixelRect;
+//     pixelRect.x = pixelPosX * WINDOW_SCALE - WINDOW_SCALE;
+//     pixelRect.y = pixelPosY * WINDOW_SCALE - WINDOW_SCALE;
+//     pixelRect.w = WINDOW_SCALE;
+//     pixelRect.h = WINDOW_SCALE;
+
+//     // Render the 'pixel'
+//     SDL_RenderFillRect(renderer, &pixelRect);
+// }
+
+void LCD::drawPixel(int pixelPosX, int pixelPosY, int red, int green, int blue) {
 
     // Set pixel color
-    setPixelColor(pixelColor);
+    SDL_SetRenderDrawColor(renderer, red, green, blue, 255);
 
     // Create the 'pixel' rect
     SDL_Rect pixelRect;

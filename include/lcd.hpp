@@ -16,8 +16,10 @@
 class LCD {
     public:
         LCD();
-        void drawFrame(std::vector<int> buffer);
-        void drawPixel(int pixelPosX, int pixelPosY, int pixelColor);
+        // void drawFrame(std::vector<int> buffer);
+        void drawFrame(int pixels[160][144][3]);
+        // void drawPixel(int pixelPosX, int pixelPosY, int pixelColor);
+        void drawPixel(int pixelPosX, int pixelPosY, int red, int green, int blue);
         void setPixelColor(int pixelColor);
 
     private:
