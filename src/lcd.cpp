@@ -63,9 +63,9 @@ void LCD::setPixelColor(int pixelColor) {
     if (pixelColor == COLOR_BLACK) {
         r = g = b = 0;
     } else if (pixelColor == COLOR_DARK_GREY) {
-        r = g = b = 119;
+        r = 172, g = 215, b = 148;
     } else if (pixelColor == COLOR_LIGHT_GREY) {
-        r = g = b = 204;
+        r = 82, g = 146, b = 115;
     } else {
         r = g = b = 255;
     }
