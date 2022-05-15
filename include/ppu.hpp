@@ -57,9 +57,7 @@ class PPU {
         void buildScanline();
 
         // Get pixel color data
-        // std::vector<int> *getTileLineColors(uint8_t firstByte, uint8_t secondByte);
-
-        int getColor(int colorId, uint16_t palette);
+        void getTileLineColors(uint8_t firstByte, uint8_t secondByte);
 
         // Get LCD power status (on/off)
         bool poweredOn();
@@ -74,8 +72,10 @@ class PPU {
         int ticks;
 
         // Create vector for screen buffer
-        // std::vector<int> buffer = std::vector<int>(WINDOW_WIDTH * WINDOW_HEIGHT);
-        int pixels[160][144][3];
+        int buffer[160][144];
+
+        // Temporarily store color values for an eight pixel row
+        int colors[8];
 
         // Keep track of the ppu mode
         int mode;

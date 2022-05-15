@@ -48,8 +48,7 @@ void PPU::step() {
             if (scanline == 143) {
                 changeMode(VERTICAL_BLANK_MODE);
                 // TODO: Request interrupts
-                // lcd->drawFrame(*debugTiles());
-                lcd->drawFrame(pixels);
+                lcd->drawFrame(buffer);
             } else {
                 changeMode(SPRITE_SCAN_MODE);
             }
@@ -136,10 +135,10 @@ void PPU::buildScanline() {
     uint16_t tileRow = ((uint8_t)(yPosition / 8));
 
     // Build en entire 160px scanline
-    for (int i = 0; i < 160; i++) {
+    for (int i = 0; i < 20; i++) {
 
         // Calculate starting x position, tile column, and tile memory address
-        uint8_t xPosition = scrollX + i;
+        uint8_t xPosition = scrollX + i * 8;
         uint16_t tileColumn = xPosition / 8;
         uint16_t tileMapAddress = tileMapStart + tileRow * 32 + tileColumn;
         
@@ -166,112 +165,16 @@ void PPU::buildScanline() {
         uint8_t firstByte = memory->read(tileDataAddress + lno * 2);
         uint8_t secondByte = memory->read(tileDataAddress + lno * 2 + 1);
 
-        // Get the two pixel bits from the two bites and ignore the rest
-        uint8_t pixelBit = 7 - (xPosition % 8);
-        uint8_t firstBit = (firstByte >> pixelBit) & 1;
-        uint8_t secondBit = (secondByte >> pixelBit) & 1;
-
-        // Get the pixel color
-        uint8_t colorId = (firstBit << 1) | secondBit;
-        int color = getColor(colorId, 0xff47);
-
-        // Convert the color to an int
-        int red, blue, green;
-        if (color == 0) {
-            red = blue = green = 0xff;
-        } else if (color == 1) {
-            red = 0xcc, blue = 0xcc, green = 0xcc;
-        } else if (color == 2) {
-            red = 0x77, blue = 0x77, green = 0x77;
-        } else {
-            red = blue = green = 0;
+        // Get line colors from bytes
+        getTileLineColors(firstByte, secondByte);
+        
+        // Loop through eight pixel row and load into pixel buffer
+        for (int j = 0; j < 8; j++) {
+            buffer[i * 8 + j][scanline] = colors[j];
         }
-
-        // Push colors to pixel buffer
-        pixels[i][scanline][0] = red;
-        pixels[i][scanline][1] = blue;
-        pixels[i][scanline][2] = green;
     }
     
 }
-
-int PPU::getColor(int colorId, uint16_t palette) {
-
-    // Get palette from memory
-    uint8_t paletteData = memory->read(palette);
-
-    // Get high and low bit
-    int highBit = 2 * colorId + 1, lowBit = 2 * colorId;
-
-    // Calc bits against palette
-    int firstBit = (paletteData >> lowBit) & 1;
-    int secondBit = (paletteData >> highBit) & 1;
-
-    // Return color
-    return (secondBit << 1) | firstBit;
-}
-
-/**
- * @brief Draws VRAM tiles to a new LCD instance
- * 
- * @param vram A pointer to a vector comprised of 8K VRAM
- * @return pointer to the screen buffer;
- */
-// std::vector<int> *PPU::debugTiles() {
-
-//     // local vram 'slice' from memory
-//     std::vector<uint8_t> vram = std::vector<uint8_t>(
-// 		memory->memory.begin() + VRAM_OFFSET, 
-//         memory->memory.begin() + VRAM_OFFSET + VRAM_SIZE
-// 	);
-
-//     int char_ram_end = BG_DISPLAY_DATA_1_BEGIN - CHARACTER_DATA_BEGIN;
-
-//     // Loop through all of the  VRAM
-//     int position_y = 0;
-//     int position_x = 0;
-//     int offset_y = 0;
-
-//     // loop through all tiles in the character/object/tile memory
-//     for (int i = 0; i < char_ram_end; i += 2) {
-
-//         // Get bytes of VRAM
-//         uint8_t firstByte = vram[i];
-//         uint8_t secondByte = vram[i + 1];
-
-//         // Set position if at the bottom the screen
-//         if(position_x == WINDOW_WIDTH){
-//             position_y += 8;
-//             position_x = 0;
-//         }
-
-//         if(position_y == WINDOW_HEIGHT){
-//             position_y = 0;
-//         }
-
-//         if(offset_y > 7){
-//             offset_y = 0;
-//             position_x += 8;
-//         }
-        
-//         // Get pixel values for the specific line of pixel for the current character
-//         std::vector<int> *lineColors = getTileLineColors(firstByte, secondByte);
-        
-//         // Loop through line colors
-//         for (uint j = 0; j < lineColors->size(); j++) {
-
-//             // y * width will give the index of the start of each row,
-//             // j is the current pixel begin drawn and x is the offset from 
-//             // the right
-//             int position = ((offset_y + position_y) * WINDOW_WIDTH) + j + position_x; 
-//             buffer[position] = (*lineColors)[j];
-//         }
-        
-//         offset_y++;
-//     }
-
-//     return &buffer;
-// }
 
 /**
  * @brief Gets the integer representations of a single eight pixel row's colors
@@ -280,28 +183,23 @@ int PPU::getColor(int colorId, uint16_t palette) {
  * @param secondByte The second byte for the eight pixel row
  * @return std::vector<int> The integer representations os a single eight pixel row's colors
  */
-// std::vector<int> *PPU::getTileLineColors(uint8_t firstByte, uint8_t secondByte) {
-
-//     // Initialize line colors vector
-//     std::vector<int> *lineColors = new std::vector<int>();
+void PPU::getTileLineColors(uint8_t firstByte, uint8_t secondByte) {
     
-//     // Loop for all eight bits
-//     for (int j = 0; j < 8; j++) {
+    // Loop for all eight bits
+    for (int j = 0; j < 8; j++) {
         
-//         // Get bits at index of bytes
-//         bool bitOne = firstByte & (1 << j);
-//         bool bitTwo = secondByte & (1 << j);
+        // Get bits at index of bytes
+        bool bitOne = firstByte & (1 << j);
+        bool bitTwo = secondByte & (1 << j);
         
-//         // Push integer of combined bits (0-3)
-//         // See https://gbdev.io/pandocs/Tile_Data.html
-//         lineColors->push_back((bitOne << 1) | bitTwo);
-//     }
+        // Push integer of combined bits (0-3)
+        // See https://gbdev.io/pandocs/Tile_Data.html
+        colors[j] = (bitOne << 1) | bitTwo;
+    }
 
-//     // Reverse vector since these bytes are meant to be read last to first
-//     std::reverse(lineColors->begin(), lineColors->end());
-
-//     return lineColors;
-// }
+    // Reverse vector since these bytes are meant to be read last to first
+    std::reverse(std::begin(colors), std::end(colors));
+}
 
 bool PPU::poweredOn() {
 

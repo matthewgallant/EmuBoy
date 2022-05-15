@@ -16,16 +16,13 @@
 class LCD {
     public:
         LCD();
-        // void drawFrame(std::vector<int> buffer);
-        void drawFrame(int pixels[160][144][3]);
-        // void drawPixel(int pixelPosX, int pixelPosY, int pixelColor);
-        void drawPixel(int pixelPosX, int pixelPosY, int red, int green, int blue);
+        void drawFrame(int pixels[160][144]);
+        void drawPixel(int pixelPosX, int pixelPosY, int pixelColor);
         void setPixelColor(int pixelColor);
-
     private:
         SDL_Window* window;
         SDL_Renderer* renderer;
 
-        // Create RGB variables
+        // Create RGB variables to store pixel color
         int r, g, b;
 };
