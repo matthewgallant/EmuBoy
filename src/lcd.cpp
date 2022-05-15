@@ -43,8 +43,8 @@ void LCD::drawPixel(int pixelPosX, int pixelPosY, int pixelColor) {
 
     // Create the 'pixel' rect
     SDL_Rect pixelRect;
-    pixelRect.x = pixelPosX * WINDOW_SCALE - WINDOW_SCALE;
-    pixelRect.y = pixelPosY * WINDOW_SCALE - WINDOW_SCALE;
+    pixelRect.x = pixelPosX * WINDOW_SCALE;
+    pixelRect.y = pixelPosY * WINDOW_SCALE;
     pixelRect.w = WINDOW_SCALE;
     pixelRect.h = WINDOW_SCALE;
 
