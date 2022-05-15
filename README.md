@@ -2,12 +2,17 @@
 
 WIP GameBoy emulator written in C++ with SDL2.
 
-## Loading a ROM
-
+## Building 
+EmuBoy requires SDL2 and CMake (minimum 3.10) to build. To build EmuBoy run the following commands in the EmuBoy directory:
 ```bash
-make debug ROM=/your/rom/file/here
+mkdir build && cd build
+cmake .. 
+make
 ```
 
+
+## Using EmuBoy
+If you are not in the build directory, navigate to it and then you can run the program using the following command:
 ```bash
-make run ROM=/your/rom/file/here
+./emuboy /path/to/legally/obtained/rom
 ```
