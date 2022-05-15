@@ -110,11 +110,15 @@ void PPU::buildScanline() {
     bool isTileDataSigned;
 
     // Read important register values
-    uint8_t scrollX = memory->read(LCD_SCROLL_X_REGISTER);
-    uint8_t scrollY = memory->read(LCD_SCROLL_Y_REGISTER);
-    uint8_t controlRegVal = memory->read(LCD_LINE_REGISTER);
+    // uint8_t scrollX = memory->read(LCD_SCROLL_X_REGISTER);
+    // uint8_t scrollY = memory->read(LCD_SCROLL_Y_REGISTER);
+    // uint8_t controlRegVal = memory->read(LCD_LINE_REGISTER);
+    uint8_t scrollX = 0b00000000;
+    uint8_t scrollY = 0b00000000;
+    uint8_t controlRegVal = 0b00010000;
 
-    // Determine which tile data block to read from and whether or not it's signed
+    // Read bit 4 to determine which tile data block
+    // to read from and whether or not it's signed
     if ((controlRegVal >> 4) & 1) {
         tileDataStart = 0x8000;
         isTileDataSigned = false;
@@ -123,7 +127,7 @@ void PPU::buildScanline() {
         isTileDataSigned = true;
     }
 
-    // Determine which tile map is being used
+    // Read bit 3 to determine which tile map is being used
     if ((controlRegVal >> 3) & 1) {
         tileMapStart = 0x9c00;
     } else {
@@ -132,9 +136,10 @@ void PPU::buildScanline() {
 
     // Calculate starting y position and tile row
     uint8_t yPosition = scrollY + scanline;
-    uint16_t tileRow = ((uint8_t)(yPosition / 8));
+    uint16_t tileRow = yPosition / 8;
 
     // Build en entire 160px scanline
+    // 8px wide tile * 20 tiles = 160px
     for (int i = 0; i < 20; i++) {
 
         // Calculate starting x position, tile column, and tile memory address
@@ -155,9 +160,9 @@ void PPU::buildScanline() {
 
         // Get current tile data address
         if (isTileDataSigned) {
-            tileDataAddress = tileMapStart + (tileNum * 16);
+            tileDataAddress = tileDataStart + (tileNum * 16);
         } else {
-            tileDataAddress = tileMapStart + ((tileNum + 128) * 16);
+            tileDataAddress = tileDataStart + ((tileNum + 128) * 16);
         }
 
         // Get the two bytes that make a tile
