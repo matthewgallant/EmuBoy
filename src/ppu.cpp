@@ -33,7 +33,7 @@ void PPU::step() {
             changeScanline();
 
             // Check if it's time for a vblank or not
-            if (scanline == 143) {
+            if (scanline == 144) {
                 changeMode(VERTICAL_BLANK_MODE);
                 // TODO: Request interrupts
                 lcd->drawFrame(buffer);
