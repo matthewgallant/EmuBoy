@@ -149,7 +149,6 @@ void PPU::buildScanline() {
         
         // Initialize variables
         int16_t tileNum;
-        uint16_t tileDataAddress;
         
         // Get current tile number
         if (isTileDataSigned) {
@@ -158,17 +157,20 @@ void PPU::buildScanline() {
             tileNum = memory->read(tileMapAddress);
         }
 
-        // Get current tile data address
-        if (isTileDataSigned) {
-            tileDataAddress = tileDataStart + (tileNum * 16);
-        } else {
-            tileDataAddress = tileDataStart + ((tileNum + 128) * 16);
+        // Wrap around tiles if they exceed the 256x256 area
+        if (tileNum <= 127) {
+            tileNum += 256;
         }
 
-        // Get the two bytes that make a tile
-        uint8_t lno = yPosition % 8;
-        uint8_t firstByte = memory->read(tileDataAddress + lno * 2);
-        uint8_t secondByte = memory->read(tileDataAddress + lno * 2 + 1);
+        // Get current tile data address
+        uint16_t tileDataAddress = tileDataStart + tileNum * 16;
+
+        // Calc current line in tile
+        uint8_t lineY = yPosition % 8;
+
+        // Get the two bytes that make up 8 pixels
+        uint8_t firstByte = memory->read(tileDataAddress + lineY * 2);
+        uint8_t secondByte = memory->read(tileDataAddress + lineY * 2 + 1);
 
         // Get line colors from bytes
         getTileLineColors(firstByte, secondByte);
