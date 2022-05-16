@@ -20,6 +20,11 @@ LCD::LCD() {
     if (renderer == NULL) std::cout << "Could not create SDL2 renderer: " << SDL_GetError() << std::endl;
 }
 
+/**
+ * @brief Draws 160x144px buffer to the window
+ * 
+ * @param pixels Buffer of ints representing pixels and their colors
+ */
 void LCD::drawFrame(int pixels[160][144]) {
 
     // Clear render buffer
@@ -36,6 +41,13 @@ void LCD::drawFrame(int pixels[160][144]) {
     SDL_RenderPresent(renderer);
 }
 
+/**
+ * @brief Draws a scaled pixel to the window
+ * 
+ * @param pixelPosX The pixel position on the x-axis
+ * @param pixelPosY The pixel position on the y-axis
+ * @param pixelColor An int representing the pixel color
+ */
 void LCD::drawPixel(int pixelPosX, int pixelPosY, int pixelColor) {
 
     // Set pixel color

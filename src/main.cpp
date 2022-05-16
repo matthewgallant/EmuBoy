@@ -82,7 +82,6 @@ int main(int argc, char **argv) {
 	}
 
 	processor.join();
-	printf("%x", OAM_2_VRAM(0x80));
 
 	// Safely quit program
 	return 0;
