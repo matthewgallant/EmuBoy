@@ -56,10 +56,6 @@ int main(int argc, char **argv) {
 			cpu->debug();
 			cpu->step();
 
-			// write to the first section of memory as indicator 
-			// threads have some shared memory
-			memory->write(i++, VRAM_OFFSET);
-
 			//if(cpu->getInstruction() == 0) continue;
 			if(MODE == SLOW) usleep(SLOWTIME);
 			else if(MODE == RUN) continue;

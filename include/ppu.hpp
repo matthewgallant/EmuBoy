@@ -11,17 +11,23 @@
 #define SPRITE_SCAN_MODE        2
 #define RENDERING_MODE          3
 
-#define LCD_SCROLL_X_REGISTER   0xff43
-#define LCD_SCROLL_Y_REGISTER   0xff42
 #define LCD_CONTROL_REGISTER    0xff40
-
-#define VRAM_OFFSET             0x8000
+#define LCD_STATUS_REGISTER     0xff41
+#define LCD_SCROLL_Y_REGISTER   0xff42
+#define LCD_SCROLL_X_REGISTER   0xff43
+#define LCD_LINE_REGISTER       0xff44
 
 class PPU {
     public:
         PPU(Memory *memory, LCD *lcd);
         void step();
     private:
+
+        // Rendering modes
+        void horizontalBlankMode();
+        void verticalBlankMode();
+        void spriteScanMode();
+        void renderingMode();
 
         // Change ppu mode
         void changeMode(int newMode);
