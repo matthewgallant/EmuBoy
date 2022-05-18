@@ -37,10 +37,12 @@ target_include_directories(emuboy PRIVATE ${EmuBoyIncs})
 target_link_libraries(emuboy ${SDL2_LIBRARIES})
 
 ## Tests
+file(GLOB EmuBoyTests tests/*.cpp)
 add_executable(emuboy_test 
     src/cpu.cpp 
     src/RegisterFile.cpp 
     src/utilities.cpp
+    ${EmuBoyTests}
 )
 target_link_libraries(emuboy_test PRIVATE Catch2::Catch2WithMain)
 target_include_directories(emuboy_test PRIVATE ${EmuBoyIncs})
