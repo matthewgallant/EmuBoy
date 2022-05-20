@@ -14,7 +14,7 @@ project(EmuBoy VERSION 0.1)
 # we want to fail early so we don't waste time compiling
 # things if it doesn't work in the end
 find_package(SDL2 REQUIRED)
-
+find_package(Threads REQUIRED)
 # catch2 version 3
 Include(FetchContent)
 FetchContent_Declare(
@@ -29,7 +29,16 @@ list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
 # get files from src and include directories
 file(GLOB EmuBoySrcs src/*.cpp)
 set(EmuBoyIncs include/)
+set(PLATFORM_SPECIFIC_LIBS "-lpthread")
 
+# pthreads are absolute bitch on githubactions
+set(PLATFORM_SPECIFIC_LIBS "-lpthread")
+set(CMAKE_THREAD_LIBS_INIT "-lpthread")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
+set(CMAKE_HAVE_THREADS_LIBRARY 1)
+set(CMAKE_USE_WIN32_THREADS_INIT 0)
+set(CMAKE_USE_PTHREADS_INIT 1)
+set(THREADS_PREFER_PTHREAD_FLAG ON)
 # set up exectuable for emuboy.
 add_executable(emuboy ${EmuBoySrcs})
 target_include_directories(emuboy PRIVATE ${EmuBoyIncs})

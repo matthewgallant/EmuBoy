@@ -23,6 +23,6 @@ class LCD {
         SDL_Window* window;
         SDL_Renderer* renderer;
 
-        // Create RGB variables to store pixel color
+        // Temporarily store pixel color
         int r, g, b;
 };
