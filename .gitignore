@@ -1,6 +1,7 @@
 # Compiled binaries
 bin/
 obj/
+build/
 
 # VS Code project settings
 .vscode/
