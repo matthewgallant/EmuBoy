@@ -3,7 +3,7 @@
 # Initial Author: Jacob Mealey <jacobmealey.maine@gmail.com>
 
 # arbitray minimum, just seemed like a good one
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.2)
 
 # setting project name and version 
 project(EmuBoy VERSION 0.1)
@@ -15,6 +15,7 @@ project(EmuBoy VERSION 0.1)
 # things if it doesn't work in the end
 find_package(SDL2 REQUIRED)
 find_package(Threads REQUIRED)
+
 # catch2 version 3
 Include(FetchContent)
 FetchContent_Declare(
@@ -35,13 +36,19 @@ set(PLATFORM_SPECIFIC_LIBS "-lpthread")
 set(PLATFORM_SPECIFIC_LIBS "-lpthread")
 set(CMAKE_THREAD_LIBS_INIT "-lpthread")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
+set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_HAVE_THREADS_LIBRARY 1)
 set(CMAKE_USE_WIN32_THREADS_INIT 0)
 set(CMAKE_USE_PTHREADS_INIT 1)
 set(THREADS_PREFER_PTHREAD_FLAG ON)
+
 # set up exectuable for emuboy.
 add_executable(emuboy ${EmuBoySrcs})
+
+# add includes
 target_include_directories(emuboy PRIVATE ${EmuBoyIncs})
+target_include_directories(emuboy PRIVATE ${SDL2_INCLUDE_DIRS})
+
 # link libraries 
 target_link_libraries(emuboy ${SDL2_LIBRARIES})
 

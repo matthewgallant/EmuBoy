@@ -1,7 +1,7 @@
 #pragma once
 
 #include <vector>
-#include <SDL2/SDL.h>
+#include "SDL.h"
 
 #define D_PAD_UP 0
 #define D_PAD_LEFT 1

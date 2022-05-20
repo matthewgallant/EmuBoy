@@ -2,7 +2,7 @@
 
 #include <vector>
 
-#include <SDL2/SDL.h>
+#include "SDL.h"
 
 #define WINDOW_WIDTH 160
 #define WINDOW_HEIGHT 144
