@@ -56,9 +56,7 @@ uint8_t RegisterFile::writeReg(uint8_t sr, uint8_t val) {
             this->HL.r2 = val; 
             break;
         case REG_A:
-            printf("write: %x\n", val);
             this->AF.r1 = val;
-            printf("read: %x\n", this->AF.r1);
             break;
         case REG_F:
             this->AF.r2 = val;
@@ -129,6 +127,8 @@ uint16_t RegisterFile::readReg(uint8_t sr, bool is_16_bit) {
                 return this->HL.r2; 
             case REG_A:
                 return this->AF.r1;
+            case REG_F:
+                return this->AF.r2;
             default:
                 return 0;
         }

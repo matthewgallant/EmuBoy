@@ -20,6 +20,11 @@ int unknownInstruction(int instr);
 #define INS_GET_P(ins) ((ins >> 3) & 0x1)
 #define INS_GET_Q(ins) ((ins >> 3) & 0x3)
 
+// for determining if 8-bit values will either have a full or a half carry
+#define IS_HALF_CARRY_ADD(a, b) ((((a & 0xF) + (b & 0xF)) & 0x10) == 0x10)
+#define IS_FULL_CARRY_ADD(a, b) (((((uint16_t) a_data & 0xFF) + ((uint16_t) z_data & 0xFF)) & 0x100) == 0x100)
+#define IS_HALF_CARRY_SUB(a, b) ((((a & 0xF) - (b & 0xF)) & 0x10) == 0x10)
+#define IS_FULL_CARRY_SUB(a, b) (((((uint16_t) a_data & 0xFF) - ((uint16_t) z_data & 0xFF)) & 0x10) == 0x10)
 
 // Terminal colors oh my god 
 #define KNRM  "\x1B[0m"

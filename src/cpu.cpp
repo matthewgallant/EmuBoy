@@ -60,13 +60,23 @@ Memory *CPU::getMemory() {
     return memory;
 }
 
+// used for setting up initial regsiters, should only 
+// be used in testing
+void CPU::setRegister(RegisterFile *rf) {
+    this->rf = *rf;
+}
+
 /**
  * @param flag Flag value to set 
  */
 void CPU::setFlag(uint8_t flag) { 
-    uint8_t AF = rf.readReg(REG_AF, IS_16_BIT);
-    AF |= 1 << flag;
-    rf.writeReg(REG_AF, AF, false);
+    uint8_t F = rf.readReg(REG_F, IS_8_BIT);
+    F |= 1 << flag;
+    rf.writeReg(REG_F, F);
+}
+
+RegisterFile *CPU::getRegister() {
+    return &(this->rf);
 }
 
 /**
@@ -74,9 +84,9 @@ void CPU::setFlag(uint8_t flag) {
  * @param flag Flag value to clear
  */
 void CPU::clearFlag(uint8_t flag) {
-    uint16_t AF = rf.readReg(REG_AF, IS_16_BIT);
-    AF &= ~(1 << flag);
-    rf.writeReg(REG_AF, AF, false);
+    uint8_t F = rf.readReg(REG_F, IS_8_BIT);
+    F &= ~(1 << flag);
+    rf.writeReg(REG_F, F);
 }
 
 /**
@@ -85,7 +95,8 @@ void CPU::clearFlag(uint8_t flag) {
  * @return The value of the flag which is being probed
  */
 bool CPU::getFlag(uint8_t flag) {
-    return ((rf.readReg(REG_AF, IS_16_BIT) & (1 << flag)) == (1 << flag));
+    uint8_t flg = rf.readReg(REG_F, IS_8_BIT);
+    return ( (flg >> flag) & 0x01 == 1);
 }
 
 /**
@@ -504,13 +515,27 @@ void CPU::execute(uint8_t ins){
         case 0x85:// ADD A, L
         case 0x86:
         case 0x87: { // ADD A, A
+            uint8_t z_data; 
+            uint8_t a_data = rf.readReg(REG_A, IS_8_BIT);
             if(z == 0x6){
-                rf.writeReg(REG_A, rf.readReg(REG_A, IS_8_BIT) + memory->memory[rf.readReg(REG_HL, IS_16_BIT)]);
+                z_data = memory->memory[rf.readReg(REG_HL, IS_16_BIT)];
             }else{
-                rf.writeReg(REG_A, rf.readReg(REG_A, IS_8_BIT) + rf.readReg(z, IS_8_BIT));
+                z_data = rf.readReg(z, IS_8_BIT);
             }
-            if(rf.readReg(REG_A, IS_8_BIT) == 0) 
+
+            rf.writeReg(REG_A, z_data + a_data);
+
+            if(IS_HALF_CARRY_ADD(z_data, a_data)) {
+                setFlag(FLAG_H);
+            }
+
+            if(IS_FULL_CARRY_ADD(z_data, a_data)) {
+                setFlag(FLAG_C);
+            }
+
+            if(rf.readReg(REG_A, IS_8_BIT) == 0) {
                 setFlag(FLAG_Z);
+            }
             clearFlag(FLAG_N);
             isDefined = true;
             break;
@@ -522,16 +547,31 @@ void CPU::execute(uint8_t ins){
         } case 0x8D: { // ADC A, L
         } case 0x8E: { // ADC A, (HL)
         } case 0x8F: { // ADC A, A
+            uint8_t z_data; 
+            uint8_t a_data = rf.readReg(REG_A, IS_8_BIT);
             if(z == 0x6){
-                rf.writeReg(REG_A, rf.readReg(REG_A, IS_8_BIT) + memory->memory[rf.readReg(REG_HL, IS_16_BIT) + getFlag(FLAG_C)]);
+                z_data = memory->memory[rf.readReg(REG_HL, IS_16_BIT)] + getFlag(FLAG_C);
             }else{
-                rf.writeReg(REG_A, rf.readReg(REG_A, IS_8_BIT) + rf.readReg(z, IS_8_BIT) + getFlag(FLAG_C));
+                z_data = rf.readReg(z, IS_8_BIT) + getFlag(FLAG_C);
             }
-            if(rf.readReg(REG_A, IS_8_BIT) == 0) 
+
+            rf.writeReg(REG_A, z_data + a_data);
+
+            if(IS_HALF_CARRY_ADD(z_data, a_data)) {
+                setFlag(FLAG_H);
+            }
+
+            if(IS_FULL_CARRY_ADD(z_data, a_data)) {
+                setFlag(FLAG_C);
+            }
+
+            if(rf.readReg(REG_A, IS_8_BIT) == 0) {
                 setFlag(FLAG_Z);
+            }
             clearFlag(FLAG_N);
             isDefined = true;
             break;
+        }
         case 0x90: // SUB A, B
         case 0x91: // SUB A, C
         case 0x92: // SUB A, D
@@ -540,10 +580,23 @@ void CPU::execute(uint8_t ins){
         case 0x95: // SUB A, L
         case 0x96: // SUB A, (HL)
         case 0x97:{ // SUB A, A
-            if(z == 0x6)
-                rf.writeReg(REG_A, rf.readReg(REG_A, IS_8_BIT) - memory->memory[rf.readReg(REG_HL, IS_8_BIT)]);
-            else
-                rf.writeReg(REG_A, rf.readReg(REG_A, IS_8_BIT) - rf.readReg(z, IS_8_BIT));
+            uint8_t z_data; 
+            uint8_t a_data = rf.readReg(REG_A, IS_8_BIT);
+            if(z == 0x6){
+                z_data = memory->memory[rf.readReg(REG_HL, IS_16_BIT)];
+            }else{
+                z_data = rf.readReg(z, IS_8_BIT);
+            }
+            printf("AHHH %x\n", a_data - z_data);
+            rf.writeReg(REG_A, a_data - z_data);
+
+            if(IS_HALF_CARRY_SUB(a_data, z_data)) {
+                setFlag(FLAG_H);
+            }
+
+            if(IS_FULL_CARRY_SUB(a_data, z_data)) {
+                setFlag(FLAG_C);
+            }
 
             if(rf.readReg(REG_A, IS_8_BIT) == 0) 
                 setFlag(FLAG_Z);
@@ -574,7 +627,7 @@ void CPU::execute(uint8_t ins){
         case 0xA4: // AND A, H
         case 0xA5: // AND A, L
         case 0xA6: // AND A, (HL)
-        case 0xA7: // AND A, A
+        case 0xA7:{ // AND A, A
             if(z == 0x6){
                 rf.writeReg(REG_A, rf.readReg(REG_A, IS_8_BIT) & memory->memory[rf.readReg(REG_HL, IS_16_BIT)]);
             }else{

@@ -23,6 +23,8 @@ class CPU {
         bool getFlag(uint8_t flag);
         void cbPrefixExecute(uint8_t ins);
         uint8_t getInstruction();
+        void setRegister(RegisterFile *rs);
+        RegisterFile *getRegister();
     private:
         RegisterFile rf;
         Memory *memory;
