@@ -67,7 +67,7 @@ int main(int argc, char **argv) {
 	IO io(&memory);
 
 	// Create virtual lcd
-    LCD lcd;
+    LCD lcd(cartridge.getHeaderTitle());
 	
 	// Create virtual ppu
 	PPU ppu(&memory, &lcd);

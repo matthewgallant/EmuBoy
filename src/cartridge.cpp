@@ -32,3 +32,22 @@ std::vector<uint8_t> Cartridge::getCartridgeContents(uint16_t switchableBankStar
 
 	return readableCartridgeContents;
 }
+
+/**
+ * @brief Returns the title from the cartridge header
+ * 
+ * @return std::string cartridge title read from the header
+ */
+std::string Cartridge::getHeaderTitle() {
+	std::vector<uint8_t> headerTitleBytes = {fullCartridgeContents.begin() + 0x134, fullCartridgeContents.begin() + 0x143};
+	std::string headerTitle;
+
+	// Read the 16 byte title from the cartridge
+	for (int i = 0; i < 16; i++) {
+		char c = (char) headerTitleBytes[i];
+		if (c == 0) break;
+		headerTitle.push_back(c);
+	}
+
+	return headerTitle;
+}

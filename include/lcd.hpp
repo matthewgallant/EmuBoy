@@ -15,7 +15,7 @@
 
 class LCD {
     public:
-        LCD();
+        LCD(std::string gameTitle);
         void drawFrame(int pixels[160][144]);
         void drawPixel(int pixelPosX, int pixelPosY, int pixelColor);
         void setPixelColor(int pixelColor);

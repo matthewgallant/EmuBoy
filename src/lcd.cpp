@@ -6,13 +6,17 @@
 #include "memory.hpp"
 #include "utilities.hpp"
 
-LCD::LCD() {
+LCD::LCD(std::string gameTitle) {
+
+    // Convert game title to char array
+    gameTitle = "EmuBoy - " + gameTitle;
+    char *windowTitle = &gameTitle[0];
 
     // Could not initialize SDL2
     if (SDL_Init(SDL_INIT_VIDEO) < 0) std::cout << "Could not initialize SDL2: " << SDL_GetError() << std::endl;
 
     // Initialize window
-    window = SDL_CreateWindow("EmuBoy", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WINDOW_WIDTH * WINDOW_SCALE, WINDOW_HEIGHT * WINDOW_SCALE, SDL_WINDOW_SHOWN);
+    window = SDL_CreateWindow(windowTitle, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WINDOW_WIDTH * WINDOW_SCALE, WINDOW_HEIGHT * WINDOW_SCALE, SDL_WINDOW_SHOWN);
     if (window == NULL) std::cout << "Could not create SDL2 window: " << SDL_GetError() << std::endl;
 
     // Initialize renderer
