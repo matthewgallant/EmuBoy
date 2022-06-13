@@ -3,7 +3,7 @@
 WIP GameBoy emulator written in C++ with SDL2.
 
 ## Building 
-EmuBoy requires SDL2 and CMake (minimum 3.10) to build. To build EmuBoy run the following commands in the EmuBoy directory:
+EmuBoy requires SDL2 and CMake (minimum 3.20) to build. To build EmuBoy run the following commands in the EmuBoy directory:
 ```bash
 mkdir build && cd build
 cmake .. 
