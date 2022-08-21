@@ -8,3 +8,8 @@ build/
 
 # macOS folder metadata
 .DS_Store
+
+
+# Added by cargo
+
+/target
