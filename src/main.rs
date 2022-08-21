@@ -1,3 +1,5 @@
+mod cpu;
+
 extern crate sdl2;
 
 use sdl2::pixels::Color;
@@ -22,13 +24,15 @@ fn main() {
     canvas.clear();
     canvas.present();
 
+    let _processor = cpu::cpu_builder();
+
     let mut event_pump = sdl_context.event_pump().unwrap();
     let mut i = 0;
     'running: loop {
         canvas.clear();
         i = (i + 1) % 255;
         canvas.set_draw_color(Color::RGB(i, 64, 255 -i));
-        canvas.fill_rect(Rect::new(50, 50, 700, 500));
+        canvas.fill_rect(Rect::new(50, 50, 700, 500)).ok();
         canvas.set_draw_color(Color::RGB(255 - i, 64, i));
         for event in event_pump.poll_iter() {
             match event {
