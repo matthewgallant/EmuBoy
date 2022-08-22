@@ -11,6 +11,87 @@ pub struct Cpu {
     pub l: u8
 }
 
+impl Cpu {
+    pub fn execute(&mut self, memory: &[u8]) {
+        println!("Op Code: {} and pc: {}", memory[self.pc as usize], self.pc);
+        let opcode = memory[self.pc as usize];
+        let z = opcode & 0x7;
+        let y = (opcode >> 3) & 0x7;
+        let x = (opcode >> 6) & 0x7;
+        let p = (opcode >> 3) & 0x1;
+        let q = (opcode >> 4) & 0x3; // double check p & q
+
+        // UN prefixed opcdes
+        if x == 0 {
+            match z {
+                0 => {
+                    if q == 0 { // LD rp[p] nn
+
+                    } else if q == 1 { // ADD HL rp[p]
+
+                    }
+                } 
+                1 => {} 
+                2 => {}
+                3 => {}
+                4 => {}
+                5 => {}
+                6 => {}
+                7 => {}
+                _ => {}
+            }
+
+        } else if x == 1 {
+            if (z == 6) && (y == 6) {
+                // HALT
+                return;
+            } 
+            // LD 
+        } else if x == 2 {
+            // ALU operations with y and z 
+            self.alu(y, z);
+        } else if x == 3 {
+            match z {
+                0 => {}
+                1 => {}
+                2 => {}
+                3 => {}
+                4 => {}
+                5 => {}
+                6 => {}
+                7 => {}
+                _ => {}
+            }
+        }
+    }
+
+    pub fn alu(&mut self, y: u8, z: u8) {
+        let val = match z {
+            0 => {self.b}
+            1 => {self.c}
+            2 => {self.d}
+            3 => {self.e}
+            4 => {self.h}
+            5 => {self.l}
+            6 => {0} // memory[self.hl]
+            7 => {self.a}
+            _ => {0}
+        };
+
+        match y {
+            0 => {self.a += val} // ADD A
+            1 => {} // ADC A
+            2 => {} // SUB 
+            3 => {} // SBC A
+            4 => {} // AND 
+            5 => {} // XOR 
+            6 => {} // OR 
+            7 => {} // CP
+            _ => {}
+        }
+    }
+}
+
 pub fn cpu_builder() -> Cpu {
     Cpu {
         pc: 0x0000,
