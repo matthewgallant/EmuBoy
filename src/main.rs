@@ -1,7 +1,9 @@
 mod cpu;
 mod memory;
+mod cartridge;
 
 use memory::Memory;
+use cartridge::Cartridge;
 
 extern crate sdl2;
 
@@ -37,6 +39,11 @@ fn main() {
     mem.set_bytes(vec![0x00, 0x01, 0x02, 0x03], 0x00);
     let bytes = mem.bytes(0x00, 0x04);
     println!("Bytes: {:?}", bytes);
+
+    // Load cartridge from file and get first 32k of contents
+    let cart = Cartridge::new(args[1].to_string());
+    let cart_contents = cart.cartridge(0x4000, 0x8000);
+    println!("Cart contents: {:?}", cart_contents);
 
     // right now this is directly execeuting on whatever is in the 2048gb binary 
     // THIS ISN'T CORRECT lol
