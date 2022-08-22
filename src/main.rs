@@ -2,10 +2,12 @@ mod cpu;
 mod memory;
 mod cartridge;
 mod lcd;
+mod ppu;
 
 use memory::Memory;
 use cartridge::Cartridge;
 use lcd::Lcd;
+use ppu::Ppu;
 
 use std::env;
 use std::process;
@@ -21,25 +23,32 @@ fn main() {
     }
 
     // Create memory
-    let mut mem = Memory::new();
+    let mut memory = Memory::new();
 
     // Test setting and reading a single byte
-    mem.set_byte(0x01, 0x00);
-    let byte = mem.byte(0x00);
-    println!("Byte: {:?}", byte);
+    // memory.set_byte(0x01, 0x00);
+    // let byte = memory.byte(0x00);
+    // println!("Byte: {:?}", byte);
 
     // Test setting and reading multiple bytes
-    mem.set_bytes(vec![0x00, 0x01, 0x02, 0x03], 0x00);
-    let bytes = mem.bytes(0x00, 0x04);
-    println!("Bytes: {:?}", bytes);
+    // memory.set_bytes(vec![0x00, 0x01, 0x02, 0x03], 0x00);
+    // let bytes = memory.bytes(0x00, 0x04);
+    // println!("Bytes: {:?}", bytes);
 
     // Load cartridge from file and get first 32k of contents
-    let cart = Cartridge::new(args[1].to_string());
-    let cart_contents = cart.cartridge(0x4000, 0x8000);
-    println!("Cart contents: {:?}", cart_contents);
+    // let cart = Cartridge::new(args[1].to_string());
+    // let cart_contents = cart.cartridge(0x4000, 0x8000);
+    // println!("Cart contents: {:?}", cart_contents);
 
     // Create LCD
     let lcd = Lcd::new();
+
+    // Create PPU
+    let mut ppu = Ppu::new(memory, lcd);
+
+    loop {
+        ppu.step();
+    }
 
     // right now this is directly execeuting on whatever is in the 2048gb binary 
     // THIS ISN'T CORRECT lol

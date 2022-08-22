@@ -52,4 +52,8 @@ impl Lcd {
 
         }
     }
+
+    pub fn draw_frame(&self, buffer: [i32; 160 * 144]) {
+
+    }
 }
