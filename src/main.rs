@@ -1,4 +1,7 @@
 mod cpu;
+mod memory;
+
+use memory::Memory;
 
 extern crate sdl2;
 
@@ -22,13 +25,25 @@ fn main() {
         process::exit(1);
     }
 
+    // Create memory
+    let mut mem = Memory{ ..Default::default() };
+
+    // Test setting and reading a single byte
+    mem.set_byte(0x01, 0x00);
+    let byte = mem.byte(0x00);
+    println!("Byte: {:?}", byte);
+
+    // Test setting and reading multiple bytes
+    mem.set_bytes(vec![0x00, 0x01, 0x02, 0x03], 0x00);
+    let bytes = mem.bytes(0x00, 0x04);
+    println!("Bytes: {:?}", bytes);
+
     // right now this is directly execeuting on whatever is in the 2048gb binary 
     // THIS ISN'T CORRECT lol
     let mut processor = cpu::cpu_builder();
     let data = fs::read(&args[1]).unwrap();
     processor.execute(&data.into_boxed_slice());
     
-
     let window = video_subsystem.window("EmuBoy", 800, 600)
         .position_centered()
         .build()
@@ -39,7 +54,6 @@ fn main() {
     canvas.set_draw_color(Color::RGB(0, 255, 255));
     canvas.clear();
     canvas.present();
-
 
     let mut event_pump = sdl_context.event_pump().unwrap();
     let mut i = 0;
@@ -59,8 +73,8 @@ fn main() {
             }
         }
 
-    canvas.present();
-    ::std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 60));
+        canvas.present();
+        ::std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 60));
     }
 
     println!("Hello, world!");
