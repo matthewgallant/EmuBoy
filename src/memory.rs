@@ -2,9 +2,11 @@ pub struct Memory {
     pub memory: Vec<u8>
 }
 
-impl Default for Memory {
-    fn default() -> Memory {
-        let mut memory = Memory { memory: vec![0; 65536] };
+impl Memory {
+    pub fn new() -> Self {
+        let mut memory = Memory {
+            memory: vec![0; 65536]
+        };
 
         // Initialize I/O register memory addresses on start
         // Below excludes addresses that are set to 0x00 since that's already done up above.
@@ -31,9 +33,7 @@ impl Default for Memory {
 
         return memory;
     }
-}
 
-impl Memory {
     pub fn byte(&self, address: u16) -> &u8 {
         return &self.memory[address as usize];
     }
