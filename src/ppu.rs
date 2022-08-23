@@ -12,9 +12,9 @@ const LCD_SCROLL_Y_REGISTER: u16 = 0xFF42;
 const LCD_SCROLL_X_REGISTER: u16 = 0xFF43;
 const LCD_LINE_REGISTER: u16 = 0xFF44;
 
-pub struct Ppu {
-    memory: Memory,
-    lcd: Lcd,
+pub struct Ppu<'a> {
+    memory: &'a mut Memory,
+    lcd: &'a mut Lcd,
     ticks: i32,
     buffer: [i32; 160 * 144],
     colors: [i32; 8],
@@ -22,9 +22,9 @@ pub struct Ppu {
     scanline: i32
 }
 
-impl Ppu {
-    pub fn new(memory: Memory, lcd: Lcd) -> Self {
-        Self {
+impl<'a> Ppu<'a> {
+    pub fn new<'b>(memory: &'b mut Memory, lcd: &'b mut Lcd) -> Ppu<'b> {
+        Ppu {
             memory: memory,
             lcd: lcd,
             ticks: 0,
