@@ -16,8 +16,8 @@ pub struct Ppu<'a> {
     memory: &'a mut Memory,
     lcd: &'a mut Lcd,
     ticks: i32,
-    buffer: [i32; 160 * 144],
-    colors: [i32; 8],
+    buffer: [[u8; 144]; 160],
+    colors: [u8; 8],
     mode: i32,
     scanline: i32
 }
@@ -28,7 +28,7 @@ impl<'a> Ppu<'a> {
             memory: memory,
             lcd: lcd,
             ticks: 0,
-            buffer: [0; 160 * 144],
+            buffer: [[0; 144]; 160],
             colors: [0; 8],
             mode: HORIZONTAL_BLANK_MODE,
             scanline: 0
@@ -100,8 +100,8 @@ impl<'a> Ppu<'a> {
         self.mode = new_mode;
 
         // Get bits to check
-        let first_bit = new_mode & 1;
-        let second_bit = (new_mode >> 1) & 1;
+        let first_bit: i32 = new_mode & 1;
+        let second_bit: i32 = (new_mode >> 1) & 1;
 
         // Get LCD status register value to modify
         let mut lcd_stat = *self.memory.byte(LCD_STATUS_REGISTER);
@@ -146,9 +146,9 @@ impl<'a> Ppu<'a> {
         }
 
         // Read important register values
-        let scroll_x = *self.memory.byte(LCD_SCROLL_X_REGISTER);
-        let scroll_y = *self.memory.byte(LCD_SCROLL_Y_REGISTER);
-        let control_reg_val = self.memory.byte(LCD_CONTROL_REGISTER);
+        let scroll_x: u8 = *self.memory.byte(LCD_SCROLL_X_REGISTER);
+        let scroll_y: u8 = *self.memory.byte(LCD_SCROLL_Y_REGISTER);
+        let control_reg_val: u8 = *self.memory.byte(LCD_CONTROL_REGISTER);
 
         // Read bit 4 to determine which tile data block
         // to read from and whether or not it's signed
@@ -173,12 +173,12 @@ impl<'a> Ppu<'a> {
         }
 
         // Calculate starting y position and tile row
-        let y_position = scroll_y + self.scanline as u8;
-        let tile_row = y_position / 8;
+        let y_position: u8 = scroll_y + self.scanline as u8;
+        let tile_row: u16 = y_position as u16 / 8;
 
         // Build en entire 160px scanline
         // 8px wide tile * 20 tiles = 160px
-        for i in 0..19 {
+        for i in 0..20 {
             
             // Calculate starting x position, tile column, and tile memory address
             let x_position: u8 = scroll_x + i * 8;
@@ -206,35 +206,25 @@ impl<'a> Ppu<'a> {
             let line_y: u8 = y_position % 8;
 
             // Get the two bytes that make up 8 pixels
-            let first_byte: u8 = *self.memory.byte(tile_data_address + line_y as u16 * 2);
-            let second_byte: u8 = *self.memory.byte(tile_data_address + line_y as u16 * 2 + 1);
+            let low_byte: u8 = *self.memory.byte(tile_data_address + line_y as u16 * 2);
+            let high_byte: u8 = *self.memory.byte(tile_data_address + line_y as u16 * 2 + 1);
 
             // Get line colors from bytes
-            self.get_tile_line_colors(first_byte, second_byte);
+            self.get_tile_line_colors(low_byte, high_byte);
             
             // Loop through eight pixel row and load into pixel buffer
-            for j in 0..7 {
-                self.buffer[(i as usize * 8 + j as usize) * self.scanline as usize] = self.colors[j];
+            for j in 0..8 {
+                self.buffer[i as usize * 8 + j as usize][self.scanline as usize] = self.colors[j];
             }
         }
     }
 
-    fn get_tile_line_colors(&mut self, first_byte: u8, second_byte: u8) {
-
-        // Loop for all eight bits
-        for j in 0..7 {
-            
-            // Get bits at index of bytes
-            let bit_one = first_byte & (1 << j);
-            let bit_two = second_byte & (1 << j);
-
-            // Push integer of combined bits (0-3)
-            // See https://gbdev.io/pandocs/Tile_Data.html
-            self.colors[j] = ((bit_one << 1) | bit_two) as i32;
+    fn get_tile_line_colors(&mut self, low_byte: u8, high_byte: u8) {
+        for i in 0..8 {
+            let low_bit: u8 = (low_byte >> (7 - i)) & 0x01;
+            let high_bit: u8 = (high_byte >> (7 - i)) & 0x01;
+            self.colors[i] = (high_bit << 1) | low_bit;
         }
-
-        // Reverse array since these bytes are meant to be read last to first
-        self.colors.reverse();
     }
 
     fn powered_on(&self) -> bool {

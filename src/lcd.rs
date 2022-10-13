@@ -6,9 +6,9 @@ const WINDOW_WIDTH: u32 = 160;
 const WINDOW_HEIGHT: u32 = 144;
 const WINDOW_SCALE: u32 = 3;
 
-const COLOR_LIGHT_GREY: i32 = 1;
-const COLOR_DARK_GREY: i32 = 2;
-const COLOR_BLACK: i32 = 3;
+const COLOR_DARK_GREY: u8 = 1;
+const COLOR_LIGHT_GREY: u8 = 2;
+const COLOR_BLACK: u8 = 3;
 
 pub struct Lcd {
     pub context: sdl2::Sdl,
@@ -33,15 +33,15 @@ impl Lcd {
         }
     }
 
-    pub fn draw_frame(&mut self, buffer: [i32; 160 * 144]) {
+    pub fn draw_frame(&mut self, buffer: [[u8; 144]; 160]) {
 
         // Clear render buffer
         self.canvas.clear();
 
         // Loop through each pixel and draw it
-        for i in 1..WINDOW_HEIGHT {
-            for j in 1..WINDOW_WIDTH {
-                self.draw_pixel(j as i32, i as i32, buffer[j as usize * i as usize]);
+        for i in 0..WINDOW_HEIGHT {
+            for j in 0..WINDOW_WIDTH {
+                self.draw_pixel(j as i32, i as i32, buffer[j as usize][i as usize]);
             }
         }
 
@@ -49,7 +49,7 @@ impl Lcd {
         self.canvas.present();
     }
 
-    fn draw_pixel(&mut self, pixel_pos_x: i32, pixel_pos_y: i32, pixel_color: i32) {
+    fn draw_pixel(&mut self, pixel_pos_x: i32, pixel_pos_y: i32, pixel_color: u8) {
 
         // Set pixel color
         self.set_pixel_color(pixel_color);
@@ -61,7 +61,7 @@ impl Lcd {
         self.canvas.fill_rect(pixel_rect).expect("Could not draw pixel.");
     }
 
-    fn set_pixel_color(&mut self, pixel_color: i32) {
+    fn set_pixel_color(&mut self, pixel_color: u8) {
         let (r, g, b): (u8, u8, u8);
 
         // Define color for pixel
