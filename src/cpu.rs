@@ -1,3 +1,5 @@
+use crate::memory::Memory;
+
 pub struct Cpu {
     pub pc: u16,
     pub sp: u16,
@@ -12,6 +14,20 @@ pub struct Cpu {
 }
 
 impl Cpu {
+    pub fn new() -> Self {
+        Cpu {
+            pc: 0x0000,
+            sp: 0xFFFE,
+            a: 0x01,
+            f: 0xB0,
+            b: 0x00,
+            c: 0x13,
+            d: 0x00,
+            e: 0xD8,
+            h: 0x01,
+            l: 0x4D,
+        }
+    }
     pub fn execute(&mut self, memory: &[u8]) {
         println!("Op Code: {} and pc: {}", memory[self.pc as usize], self.pc);
         let opcode = memory[self.pc as usize];
@@ -89,20 +105,5 @@ impl Cpu {
             7 => {} // CP
             _ => {}
         }
-    }
-}
-
-pub fn cpu_builder() -> Cpu {
-    Cpu {
-        pc: 0x0000,
-        sp: 0xFFFE,
-        a: 0x01,
-        f: 0xB0,
-        b: 0x00,
-        c: 0x13,
-        d: 0x00,
-        e: 0xD8,
-        h: 0x01,
-        l: 0x4D,
     }
 }

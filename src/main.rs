@@ -4,6 +4,7 @@ mod cartridge;
 mod lcd;
 mod ppu;
 
+use cpu::Cpu;
 use memory::Memory;
 use cartridge::Cartridge;
 use lcd::Lcd;
@@ -14,7 +15,6 @@ use sdl2::keyboard::Keycode;
 
 use std::env;
 use std::process;
-use std::fs;
 
 fn main() {
 
@@ -51,6 +51,8 @@ fn main() {
 
     // Create PPU
     let mut ppu = Ppu::new(&mut memory, &mut lcd);
+    // Lastly create the CPU
+    let cpu = Cpu::new();
 
     'running: loop {
         ppu.step();
@@ -65,12 +67,4 @@ fn main() {
             }
         }
     }
-
-    // right now this is directly execeuting on whatever is in the 2048gb binary 
-    // THIS ISN'T CORRECT lol
-    let mut processor = cpu::cpu_builder();
-    let data = fs::read(&args[1]).unwrap();
-    processor.execute(&data.into_boxed_slice());
-
-    println!("Hello, world!");
 }
