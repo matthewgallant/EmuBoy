@@ -28,6 +28,11 @@ impl Cpu {
             l: 0x4D,
         }
     }
+
+    pub fn step<'b>(&self, memory: &'b mut Memory) {
+        println!("Stepping CPU...");
+    }
+
     pub fn execute(&mut self, memory: &[u8]) {
         println!("Op Code: {} and pc: {}", memory[self.pc as usize], self.pc);
         let opcode = memory[self.pc as usize];

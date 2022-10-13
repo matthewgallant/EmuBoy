@@ -13,7 +13,6 @@ const LCD_SCROLL_X_REGISTER: u16 = 0xFF43;
 const LCD_LINE_REGISTER: u16 = 0xFF44;
 
 pub struct Ppu<'a> {
-    memory: &'a mut Memory,
     lcd: &'a mut Lcd,
     ticks: i32,
     buffer: [[u8; 144]; 160],
@@ -23,22 +22,22 @@ pub struct Ppu<'a> {
 }
 
 impl<'a> Ppu<'a> {
-    pub fn new<'b>(memory: &'b mut Memory, lcd: &'b mut Lcd) -> Ppu<'b> {
+    pub fn new<'b>(lcd: &'b mut Lcd) -> Ppu<'b> {
         Ppu {
-            memory: memory,
             lcd: lcd,
             ticks: 0,
             buffer: [[0; 144]; 160],
             colors: [0; 8],
             mode: HORIZONTAL_BLANK_MODE,
             scanline: 0
+            // TODO: Somehow assign Memory here so that it doesn't have to be passed to all functions dues to ownership conflicts with the CPU.
         }
     }
 
-    pub fn step(&mut self) {
+    pub fn step<'b>(&mut self, memory: &'b mut Memory) {
 
         // Check if PPU is powered off
-        if !self.powered_on() {
+        if !self.powered_on(memory) {
             return;
         }
 
@@ -48,53 +47,53 @@ impl<'a> Ppu<'a> {
 
         // Execute functions based on current PPU mode
         if self.mode == HORIZONTAL_BLANK_MODE && self.ticks >= 102 {
-            self.horizontal_blank_mode();
+            self.horizontal_blank_mode(memory);
         } else if self.mode == VERTICAL_BLANK_MODE && self.ticks >= 228 {
-            self.vertical_blank_mode();
+            self.vertical_blank_mode(memory);
         } else if self.mode == SPRITE_SCAN_MODE && self.ticks >= 40 {
-            self.sprite_scan_mode();
+            self.sprite_scan_mode(memory);
         } else if self.mode == RENDERING_MODE && self.ticks >= 86 {
-            self.rendering_mode();
+            self.rendering_mode(memory);
         }
     }
 
-    fn horizontal_blank_mode(&mut self) {
+    fn horizontal_blank_mode<'b>(&mut self, memory: &'b mut Memory) {
         self.ticks = 0;
-        self.change_scanline();
+        self.change_scanline(memory);
 
         // Check if it's time for a vblank or not
         if self.scanline == 144 {
-            self.change_mode(VERTICAL_BLANK_MODE);
+            self.change_mode(memory, VERTICAL_BLANK_MODE);
             // TODO: Request interrupts from CPU
             self.lcd.draw_frame(self.buffer);
         } else {
-            self.change_mode(SPRITE_SCAN_MODE);
+            self.change_mode(memory, SPRITE_SCAN_MODE);
         }
     }
 
-    fn vertical_blank_mode(&mut self) {
+    fn vertical_blank_mode<'b>(&mut self, memory: &'b mut Memory) {
         self.ticks = 0;
 
         // Don't change the scanline on the first one
         if self.scanline != 0 {
-            self.change_scanline();
+            self.change_scanline(memory);
         }
 
-        self.change_mode(SPRITE_SCAN_MODE);
+        self.change_mode(memory, SPRITE_SCAN_MODE);
     }
 
-    fn sprite_scan_mode(&mut self) {
+    fn sprite_scan_mode<'b>(&mut self, memory: &'b mut Memory) {
         self.ticks = 0;
-        self.change_mode(RENDERING_MODE);
+        self.change_mode(memory, RENDERING_MODE);
     }
 
-    fn rendering_mode(&mut self) {
+    fn rendering_mode<'b>(&mut self, memory: &'b mut Memory) {
         self.ticks = 0;
-        self.change_mode(HORIZONTAL_BLANK_MODE);
-        self.build_scanline();
+        self.change_mode(memory, HORIZONTAL_BLANK_MODE);
+        self.build_scanline(memory);
     }
 
-    fn change_mode(&mut self, new_mode: i32) {
+    fn change_mode<'b>(&mut self, memory: &'b mut Memory, new_mode: i32) {
         
         // Set new mode
         self.mode = new_mode;
@@ -104,7 +103,7 @@ impl<'a> Ppu<'a> {
         let second_bit: i32 = (new_mode >> 1) & 1;
 
         // Get LCD status register value to modify
-        let mut lcd_stat = *self.memory.byte(LCD_STATUS_REGISTER);
+        let mut lcd_stat = *memory.byte(LCD_STATUS_REGISTER);
 
         // Modify register based on first bit
         if first_bit == 1 {
@@ -121,24 +120,24 @@ impl<'a> Ppu<'a> {
         }
 
         // Write new value to LCD status register
-        self.memory.set_byte(lcd_stat, LCD_STATUS_REGISTER);
+        memory.set_byte(lcd_stat, LCD_STATUS_REGISTER);
     }
 
-    fn change_scanline(&mut self) {
+    fn change_scanline<'b>(&mut self, memory: &'b mut Memory) {
         self.scanline += 1;
 
         // Update line register with current scanline
-        let current_line_reg_val = *self.memory.byte(LCD_LINE_REGISTER);
-        self.memory.set_byte(current_line_reg_val + 1, LCD_LINE_REGISTER);
+        let current_line_reg_val = *memory.byte(LCD_LINE_REGISTER);
+        memory.set_byte(current_line_reg_val + 1, LCD_LINE_REGISTER);
 
         // Check to wrap scanline around to zero
         if self.scanline > 153 {
             self.scanline = 0;
-            self.memory.set_byte(0, LCD_LINE_REGISTER);
+            memory.set_byte(0, LCD_LINE_REGISTER);
         }
     }
 
-    fn build_scanline(&mut self) {
+    fn build_scanline<'b>(&mut self, memory: &'b mut Memory) {
 
         // Don't build more than 144 scanlines
         if self.scanline >= 144 {
@@ -146,9 +145,9 @@ impl<'a> Ppu<'a> {
         }
 
         // Read important register values
-        let scroll_x: u8 = *self.memory.byte(LCD_SCROLL_X_REGISTER);
-        let scroll_y: u8 = *self.memory.byte(LCD_SCROLL_Y_REGISTER);
-        let control_reg_val: u8 = *self.memory.byte(LCD_CONTROL_REGISTER);
+        let scroll_x: u8 = *memory.byte(LCD_SCROLL_X_REGISTER);
+        let scroll_y: u8 = *memory.byte(LCD_SCROLL_Y_REGISTER);
+        let control_reg_val: u8 = *memory.byte(LCD_CONTROL_REGISTER);
 
         // Read bit 4 to determine which tile data block
         // to read from and whether or not it's signed
@@ -189,9 +188,9 @@ impl<'a> Ppu<'a> {
             let mut tile_num: u16;
 
             if is_tile_data_signed {
-                tile_num = (*self.memory.byte(tile_map_address) as u8) as u16;
+                tile_num = (*memory.byte(tile_map_address) as u8) as u16;
             } else {
-                tile_num = *self.memory.byte(tile_map_address) as u16;
+                tile_num = *memory.byte(tile_map_address) as u16;
             }
 
             // Wrap around tiles if they exceed the 256x256 area
@@ -206,8 +205,8 @@ impl<'a> Ppu<'a> {
             let line_y: u8 = y_position % 8;
 
             // Get the two bytes that make up 8 pixels
-            let low_byte: u8 = *self.memory.byte(tile_data_address + line_y as u16 * 2);
-            let high_byte: u8 = *self.memory.byte(tile_data_address + line_y as u16 * 2 + 1);
+            let low_byte: u8 = *memory.byte(tile_data_address + line_y as u16 * 2);
+            let high_byte: u8 = *memory.byte(tile_data_address + line_y as u16 * 2 + 1);
 
             // Get line colors from bytes
             self.get_tile_line_colors(low_byte, high_byte);
@@ -227,8 +226,8 @@ impl<'a> Ppu<'a> {
         }
     }
 
-    fn powered_on(&self) -> bool {
-        let lcd_cont = self.memory.byte(LCD_CONTROL_REGISTER);
+    fn powered_on<'b>(&self, memory: &'b mut Memory) -> bool {
+        let lcd_cont = memory.byte(LCD_CONTROL_REGISTER);
         
         if (lcd_cont >> 7) & 1 != 0 {
             return true;

@@ -50,12 +50,14 @@ fn main() {
     let mut event_pump = lcd.context.event_pump().unwrap();
 
     // Create PPU
-    let mut ppu = Ppu::new(&mut memory, &mut lcd);
+    let mut ppu = Ppu::new(&mut lcd);
+
     // Lastly create the CPU
     let cpu = Cpu::new();
 
     'running: loop {
-        ppu.step();
+        cpu.step(&mut memory);
+        ppu.step(&mut memory);
 
         for event in event_pump.poll_iter() {
             match event {
