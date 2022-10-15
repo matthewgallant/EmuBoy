@@ -6,6 +6,16 @@ const FLAG_N: u8 = 6;
 const FLAG_H: u8 = 5;
 const FLAG_C: u8 = 4;
 
+const RP_BC: u8 = 0;
+const RP_DE: u8 = 1;
+const RP_HL: u8 = 2;
+const RP_SP: u8 = 3;
+
+const RP2_BC: u8 = 0;
+const RP2_DE: u8 = 1;
+const RP2_HL: u8 = 2;
+const RP2_AF: u8 = 3;
+
 pub struct Cpu {
     pub pc: u16,
     pub sp: u16,
@@ -35,13 +45,14 @@ impl Cpu {
         }
     }
 
-    pub fn step<'b>(&self, memory: &'b mut Memory) {
+    pub fn step<'b>(&mut self, memory: &'b mut Memory) {
         println!("Stepping CPU...");
+        self.execute(memory);
     }
 
-    pub fn execute(&mut self, memory: &[u8]) {
-        println!("Op Code: {} and pc: {}", memory[self.pc as usize], self.pc);
-        let opcode = memory[self.pc as usize];
+    pub fn execute<'b>(&mut self, memory: &'b mut Memory) {
+        println!("Op Code: {} and pc: {}", memory.memory[self.pc as usize], self.pc);
+        let opcode = memory.memory[self.pc as usize];
         let z = opcode & 0x7;
         let y = (opcode >> 3) & 0x7;
         let x = (opcode >> 6) & 0x7;
@@ -52,11 +63,15 @@ impl Cpu {
         if x == 0 {
             match z {
                 0 => {
-                    if q == 0 { // LD rp[p] nn
-
-                    } else if q == 1 { // ADD HL rp[p]
-
-                    }
+                   if y == 0 { // NOP 
+                        return;
+                   } else if y == 1 { // LD(nn), SP
+                        let mut nn = memory.memory[(self.pc + 1) as usize] as u16;
+                        nn = (nn << 8) | (memory.memory[(self.pc + 2) as usize] as u16);
+                        memory.memory[nn as usize] = (self.sp & 0xFF) as u8;
+                        memory.memory[(nn + 1) as usize] = ((self.sp >> 8) & 0xFF) as u8;
+                        self.pc += 2;
+                   }
                 } 
                 1 => {} 
                 2 => {}
@@ -76,7 +91,7 @@ impl Cpu {
             // LD 
         } else if x == 2 {
             // ALU operations with y and z 
-            self.alu(y, z);
+            self.alu(y, z, memory.memory[self.get_rp(RP_HL) as usize]);
         } else if x == 3 {
             match z {
                 0 => {}
@@ -92,7 +107,7 @@ impl Cpu {
         }
     }
 
-    pub fn alu(&mut self, y: u8, z: u8) {
+    pub fn alu(&mut self, y: u8, z: u8, mem_hl: u8) {
         let mut val = match z {
             0 => {self.b}
             1 => {self.c}
@@ -100,7 +115,7 @@ impl Cpu {
             3 => {self.e}
             4 => {self.h}
             5 => {self.l}
-            6 => {0} // memory[self.hl]
+            6 => {mem_hl} // memory[self.hl]
             7 => {self.a}
             _ => {0}
         };
@@ -109,7 +124,8 @@ impl Cpu {
             0 => { // ADD A
                 self.set_flag(FLAG_N, false);
                 self.set_flag(FLAG_H, (((self.a & 0xF) + (val & 0xF)) & 0x10) == 0x10);
-                self.set_flag(FLAG_C, ((((self.a as u16) & 0xFF) + ((val as u16) & 0xFF)) & 0x100) == 0x100);
+                self.set_flag(FLAG_C, ((((self.a as u16) & 0xFF) + 
+                                        ((val as u16) & 0xFF)) & 0x100) == 0x100);
                 self.a += val;
                 self.set_flag(FLAG_Z, self.a == 0);
             } 
@@ -117,14 +133,16 @@ impl Cpu {
                 val += if self.get_flag(FLAG_C) {1} else {0};
                 self.set_flag(FLAG_N, false);
                 self.set_flag(FLAG_H, (((self.a & 0xF) + (val & 0xF)) & 0x10) == 0x10);
-                self.set_flag(FLAG_C, ((((self.a as u16) & 0xFF) + ((val as u16) & 0xFF)) & 0x100) == 0x100);
+                self.set_flag(FLAG_C, ((((self.a as u16) & 0xFF) + 
+                                        ((val as u16) & 0xFF)) & 0x100) == 0x100);
                 self.a += val;
                 self.set_flag(FLAG_Z, self.a == 0);
             } 
             2 => { // SUB
                 self.set_flag(FLAG_N, true);
                 self.set_flag(FLAG_H, (((self.a & 0xF) - (val & 0xF)) & 0x10) == 0x10);
-                self.set_flag(FLAG_C, ((((self.a as u16) & 0xFF) - ((val as u16) & 0xFF)) & 0x100) == 0x100);
+                self.set_flag(FLAG_C, ((((self.a as u16) & 0xFF) - 
+                                        ((val as u16) & 0xFF)) & 0x100) == 0x100);
                 self.a -= val;
                 self.set_flag(FLAG_Z, self.a == 0);
             }  
@@ -132,7 +150,8 @@ impl Cpu {
                 val += if self.get_flag(FLAG_C) {1} else {0};
                 self.set_flag(FLAG_N, true);
                 self.set_flag(FLAG_H, (((self.a & 0xF) - (val & 0xF)) & 0x10) == 0x10);
-                self.set_flag(FLAG_C, ((((self.a as u16) & 0xFF) - ((val as u16) & 0xFF)) & 0x100) == 0x100);
+                self.set_flag(FLAG_C, ((((self.a as u16) & 0xFF) - 
+                                        ((val as u16) & 0xFF)) & 0x100) == 0x100);
                 self.a -= val;
                 self.set_flag(FLAG_Z, self.a == 0);
             }
@@ -163,7 +182,7 @@ impl Cpu {
                 self.set_flag(FLAG_C, ((((self.a as u16) & 0xFF) - ((val as u16) & 0xFF)) & 0x100) == 0x100);
                 self.set_flag(FLAG_Z, self.a == 0);
             } 
-            _ => {}
+            _ => {eprintln!("Unknown ALU instruction...")}
             
         }
     }
@@ -186,5 +205,27 @@ impl Cpu {
         } else {
             eprintln!("Invalid flag passed to cpu::set_flag");
         }
+    }
+
+    pub fn get_rp(&self, rp: u8) -> u16 {
+        if rp == RP_BC {
+           return ((self.b as u16) << 8 ) | (self.c as u16);
+        } else if rp == RP_DE {
+           return ((self.d as u16) << 8 ) | (self.e as u16);
+        } else if rp == RP_HL {
+           return ((self.h as u16) << 8 ) | (self.l as u16);
+        } else if rp == RP_SP {
+           return self.sp;
+        }
+        0
+    }
+
+    pub fn get_rp2(&self, rp: u8) -> u16 {
+        if rp == RP2_BC || rp == RP2_DE || rp == RP2_HL {
+           return self.get_rp(rp);
+        } else if rp == RP2_AF{
+           return ((self.a as u16) << 8 ) | (self.f as u16);
+        }
+        0
     }
 }

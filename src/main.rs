@@ -45,7 +45,7 @@ fn main() {
     let mut ppu = Ppu::new(&mut lcd);
 
     // Lastly create the CPU
-    let cpu = Cpu::new();
+    let mut cpu = Cpu::new();
 
     'running: loop {
         cpu.step(&mut memory);
