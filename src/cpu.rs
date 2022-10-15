@@ -157,7 +157,12 @@ impl Cpu {
                 self.set_flag(FLAG_N, false);
                 self.set_flag(FLAG_Z, self.a == 0);
             } 
-            7 => {} // CP
+            7 => { // CP
+                self.set_flag(FLAG_N, true);
+                self.set_flag(FLAG_H, (((self.a & 0xF) - (val & 0xF)) & 0x10) == 0x10);
+                self.set_flag(FLAG_C, ((((self.a as u16) & 0xFF) - ((val as u16) & 0xFF)) & 0x100) == 0x100);
+                self.set_flag(FLAG_Z, self.a == 0);
+            } 
             _ => {}
             
         }
