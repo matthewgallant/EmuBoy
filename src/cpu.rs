@@ -1,5 +1,11 @@
 use crate::memory::Memory;
 
+
+const FLAG_Z: u8 = 7;
+const FLAG_N: u8 = 6;
+const FLAG_H: u8 = 5;
+const FLAG_C: u8 = 4;
+
 pub struct Cpu {
     pub pc: u16,
     pub sp: u16,
@@ -87,7 +93,7 @@ impl Cpu {
     }
 
     pub fn alu(&mut self, y: u8, z: u8) {
-        let val = match z {
+        let mut val = match z {
             0 => {self.b}
             1 => {self.c}
             2 => {self.d}
@@ -100,15 +106,80 @@ impl Cpu {
         };
 
         match y {
-            0 => {self.a += val} // ADD A
-            1 => {} // ADC A
-            2 => {} // SUB 
-            3 => {} // SBC A
-            4 => {} // AND 
-            5 => {} // XOR 
-            6 => {} // OR 
+            0 => { // ADD A
+                self.set_flag(FLAG_N, false);
+                self.set_flag(FLAG_H, (((self.a & 0xF) + (val & 0xF)) & 0x10) == 0x10);
+                self.set_flag(FLAG_C, ((((self.a as u16) & 0xFF) + ((val as u16) & 0xFF)) & 0x100) == 0x100);
+                self.a += val;
+                self.set_flag(FLAG_Z, self.a == 0);
+            } 
+            1 => { // ADC A
+                val += if self.get_flag(FLAG_C) {1} else {0};
+                self.set_flag(FLAG_N, false);
+                self.set_flag(FLAG_H, (((self.a & 0xF) + (val & 0xF)) & 0x10) == 0x10);
+                self.set_flag(FLAG_C, ((((self.a as u16) & 0xFF) + ((val as u16) & 0xFF)) & 0x100) == 0x100);
+                self.a += val;
+                self.set_flag(FLAG_Z, self.a == 0);
+            } 
+            2 => { // SUB
+                self.set_flag(FLAG_N, true);
+                self.set_flag(FLAG_H, (((self.a & 0xF) - (val & 0xF)) & 0x10) == 0x10);
+                self.set_flag(FLAG_C, ((((self.a as u16) & 0xFF) - ((val as u16) & 0xFF)) & 0x100) == 0x100);
+                self.a -= val;
+                self.set_flag(FLAG_Z, self.a == 0);
+            }  
+            3 => { // SBC
+                val += if self.get_flag(FLAG_C) {1} else {0};
+                self.set_flag(FLAG_N, true);
+                self.set_flag(FLAG_H, (((self.a & 0xF) - (val & 0xF)) & 0x10) == 0x10);
+                self.set_flag(FLAG_C, ((((self.a as u16) & 0xFF) - ((val as u16) & 0xFF)) & 0x100) == 0x100);
+                self.a -= val;
+                self.set_flag(FLAG_Z, self.a == 0);
+            }
+            4 => { // AND
+                self.a &= val;
+                self.set_flag(FLAG_C, false);
+                self.set_flag(FLAG_H, false);
+                self.set_flag(FLAG_N, true);
+                self.set_flag(FLAG_Z, self.a == 0);
+            } 
+            5 => { // XOR
+                self.a ^= val;
+                self.set_flag(FLAG_C, false);
+                self.set_flag(FLAG_H, false);
+                self.set_flag(FLAG_N, false);
+                self.set_flag(FLAG_Z, self.a == 0);
+            }  
+            6 => { // OR
+                self.a |= val;
+                self.set_flag(FLAG_C, false);
+                self.set_flag(FLAG_H, false);
+                self.set_flag(FLAG_N, false);
+                self.set_flag(FLAG_Z, self.a == 0);
+            } 
             7 => {} // CP
             _ => {}
+            
+        }
+    }
+
+    pub fn get_flag(&mut self, flag: u8) -> bool{
+        if flag == FLAG_C || flag == FLAG_H || flag == FLAG_N || flag == FLAG_Z {
+            return self.f >> flag == 0x01;
+        }
+        eprintln!("Invalid flag passed to cpu::get_flag");
+        return self.f > 0;
+    } 
+    
+    pub fn set_flag(&mut self, flag: u8, val: bool) {
+        if flag == FLAG_C || flag == FLAG_H || flag == FLAG_N || flag == FLAG_Z {
+            if val  {
+                self.f |= 1 << flag; //set flag 
+            } else {
+                self.f &= 1 << flag; // clear flag
+            }
+        } else {
+            eprintln!("Invalid flag passed to cpu::set_flag");
         }
     }
 }
