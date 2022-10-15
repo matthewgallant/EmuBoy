@@ -66,12 +66,21 @@ impl Cpu {
                    if y == 0 { // NOP 
                         return;
                    } else if y == 1 { // LD(nn), SP
-                        let mut nn = memory.memory[(self.pc + 1) as usize] as u16;
-                        nn = (nn << 8) | (memory.memory[(self.pc + 2) as usize] as u16);
-                        memory.memory[nn as usize] = (self.sp & 0xFF) as u8;
-                        memory.memory[(nn + 1) as usize] = ((self.sp >> 8) & 0xFF) as u8;
+                        let addr = memory.read16(self.pc + 1);
+                        memory.write16(self.sp, addr);
                         self.pc += 2;
+                   } else if y == 2 {  // STOP
+                        return;
+                   } else if y == 3 { // JR d // THIS NEEDS TESTING
+                       let d = memory.byte(self.pc + 1).to_owned() as i16;
+                       self.pc = ((self.pc as i16) + d) as u16;
+                   } else if y >= 4 && y < 8 {
+                       if self.get_flag(y - 4) {
+                           let d = memory.byte(self.pc + 1).to_owned() as i16;
+                           self.pc = ((self.pc as i16) + d) as u16;
+                       }
                    }
+
                 } 
                 1 => {} 
                 2 => {}
@@ -91,7 +100,7 @@ impl Cpu {
             // LD 
         } else if x == 2 {
             // ALU operations with y and z 
-            self.alu(y, z, memory.memory[self.get_rp(RP_HL) as usize]);
+            self.alu(y, z, memory.byte(self.get_rp(RP_HL)).to_owned());
         } else if x == 3 {
             match z {
                 0 => {}

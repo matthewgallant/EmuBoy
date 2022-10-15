@@ -52,4 +52,13 @@ impl Memory {
     pub fn set_bytes(&mut self, data: Vec<u8>, address: u16) {
         self.memory.splice(address as usize..address as usize + data.len(), data);
     }
+
+    pub fn read16(&self, address: u16) -> u16 {
+        (self.memory[address as usize] as u16) | ((self.memory[(address + 1) as usize] as u16) << 8)
+    }
+
+    pub fn write16(&mut self, data: u16, address: u16) {
+        self.set_byte((data & 0xFF) as u8, address);
+        self.set_byte((data >> 8) as u8, address + 1);
+    }
 }
