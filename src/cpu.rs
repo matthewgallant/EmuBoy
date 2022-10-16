@@ -83,11 +83,71 @@ impl Cpu {
 
                 } 
                 1 => {} 
-                2 => {}
-                3 => {}
-                4 => {}
-                5 => {}
-                6 => {}
+                2 => {
+                    if q == 0 {
+                        if p == 0{ // LD (BC), A
+                            memory.set_byte(self.a, self.get_rp(RP_BC));
+                        } else if p == 1 { // LD (DE), A
+                            memory.set_byte(self.a, self.get_rp(RP_DE));
+                        } else if p == 2 { // LD (HL+), A
+                            memory.set_byte(self.a, self.get_rp(RP_HL));
+                            self.set_rp(self.get_rp(RP_HL) + 1, RP_HL);
+                        } else if p == 3 { // LD (HL-), A
+                            memory.set_byte(self.a, self.get_rp(RP_HL));
+                            self.set_rp(self.get_rp(RP_HL) - 1, RP_HL);
+                        }
+                    
+                    }
+                    if q == 1 {
+                        if p == 0 { // LD A, (BC)
+                            self.a = memory.byte(self.get_rp(RP_BC)).to_owned();
+                        } else if p == 1 { // LD A, (DE) 
+                            self.a = memory.byte(self.get_rp(RP_DE)).to_owned();
+                        } else if p == 2 { // LD A, (HL+)
+                            self.a = memory.byte(self.get_rp(RP_HL)).to_owned();
+                            self.set_rp(self.get_rp(RP_HL) + 1, RP_HL);
+                        } else if p == 3 { // LD A, (HL-)
+                            self.a = memory.byte(self.get_rp(RP_HL)).to_owned();
+                            self.set_rp(self.get_rp(RP_HL) - 1, RP_HL);
+                        }
+                    }
+                }
+                // OKAY all of these flags need to be checked because this is so 
+                // beyong fuking curseed.
+                3 => {
+                    if q == 0 {
+                        self.set_flag(FLAG_N, false);
+                        self.set_flag(FLAG_H, (((self.get_rp(p)) + 1) & 0x10) == 0x10);
+                        self.set_flag(FLAG_C, (((self.get_rp(p)) + 1) & 0x10) == 0x10);
+                        self.set_rp(self.get_rp(p) + 1, p);
+                        self.set_flag(FLAG_Z, self.get_rp(p) == 0);       
+
+                    } else if q == 1 {
+                        self.set_flag(FLAG_N, true);
+                        self.set_flag(FLAG_H, (((self.get_rp(p)) - 1) & 0x10) == 0x10);
+                        self.set_flag(FLAG_C, (((self.get_rp(p)) - 1) & 0x10) == 0x10);
+                        self.set_rp(self.get_rp(p) - 1, p);
+                        self.set_flag(FLAG_Z, self.get_rp(p) == 0);
+                    }
+                }
+                4 => {
+                    self.set_flag(FLAG_N, false);
+                    self.set_flag(FLAG_H, (((self.get_r(y)) + 1) & 0x10) == 0x10);
+                    self.set_flag(FLAG_C, (((self.get_r(y)) + 1) & 0x10) == 0x10);
+                    self.set_r(y, self.get_r(y) + 1);
+                    self.set_flag(FLAG_Z, self.get_rp(y) == 0);
+                }
+                5 => {
+                    self.set_flag(FLAG_N, true);
+                    self.set_flag(FLAG_H, (((self.get_r(y)) - 1) & 0x10) == 0x10);
+                    self.set_flag(FLAG_C, (((self.get_rp(y)) - 1) & 0x10) == 0x10);
+                    self.set_rp(self.get_rp(y) - 1, y);
+                    self.set_flag(FLAG_Z, self.get_rp(y) == 0);
+                }
+                6 => {  
+                    self.set_r(memory.byte(self.pc + 1).to_owned(), y);
+                    self.pc += 1;
+                }
                 7 => {}
                 _ => {}
             }
@@ -229,6 +289,22 @@ impl Cpu {
         0
     }
 
+    pub fn set_rp(&mut self, val: u16, rp: u8) {
+        if rp == RP_BC {
+           self.b = (val & 0xFF) as u8;
+           self.c = (val >> 8) as u8;
+        } else if rp == RP_DE {
+           self.d = (val & 0xFF) as u8;
+           self.e = (val >> 8) as u8;
+        } else if rp == RP_HL {
+           self.h = (val & 0xFF) as u8;
+           self.l = (val >> 8) as u8;
+        } else if rp == RP_SP {
+           self.sp = val;
+        }
+    }
+
+
     pub fn get_rp2(&self, rp: u8) -> u16 {
         if rp == RP2_BC || rp == RP2_DE || rp == RP2_HL {
            return self.get_rp(rp);
@@ -236,5 +312,33 @@ impl Cpu {
            return ((self.a as u16) << 8 ) | (self.f as u16);
         }
         0
+    }
+    
+    pub fn get_r(&self, r: u8) -> u8 {
+        match r {
+            0 => {self.b}
+            1 => {self.c}
+            2 => {self.d}
+            3 => {self.e}
+            4 => {self.h}
+            5 => {self.l}
+            6 => {0} // memory[self.hl]
+            7 => {self.a}
+            _ => {0}
+        }
+    }
+
+    pub fn set_r(&mut self, d: u8, r: u8) {
+        match r {
+            0 => {self.b = d}
+            1 => {self.c = d}
+            2 => {self.d = d}
+            3 => {self.e = d}
+            4 => {self.h = d}
+            5 => {self.l = d}
+            6 => {} // memory[self.hl]
+            7 => {self.a = d}
+            _ => {}
+        }
     }
 }
