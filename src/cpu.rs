@@ -72,11 +72,11 @@ impl Cpu {
                    } else if y == 2 {  // STOP
 
                    } else if y == 3 { // JR d // THIS NEEDS TESTING
-                       let d = memory.byte(self.pc + 1).to_owned() as i16;
+                       let d = memory.byte(self.pc + 1) as i16;
                        self.pc = ((self.pc as i16) + d) as u16;
                    } else if y >= 4 && y < 8 {
                        if self.get_flag(y - 4) {
-                           let d = memory.byte(self.pc + 1).to_owned() as i16;
+                           let d = memory.byte(self.pc + 1) as i16;
                            self.pc = ((self.pc as i16) + d) as u16;
                        }
                    }
@@ -100,14 +100,14 @@ impl Cpu {
                     }
                     if q == 1 {
                         if p == 0 { // LD A, (BC)
-                            self.a = memory.byte(self.get_rp(RP_BC)).to_owned();
+                            self.a = memory.byte(self.get_rp(RP_BC));
                         } else if p == 1 { // LD A, (DE) 
-                            self.a = memory.byte(self.get_rp(RP_DE)).to_owned();
+                            self.a = memory.byte(self.get_rp(RP_DE));
                         } else if p == 2 { // LD A, (HL+)
-                            self.a = memory.byte(self.get_rp(RP_HL)).to_owned();
+                            self.a = memory.byte(self.get_rp(RP_HL));
                             self.set_rp(self.get_rp(RP_HL) + 1, RP_HL);
                         } else if p == 3 { // LD A, (HL-)
-                            self.a = memory.byte(self.get_rp(RP_HL)).to_owned();
+                            self.a = memory.byte(self.get_rp(RP_HL));
                             self.set_rp(self.get_rp(RP_HL) - 1, RP_HL);
                         }
                     }
@@ -158,7 +158,7 @@ impl Cpu {
                     }
                 }
                 6 => {  
-                    self.set_r(memory.byte(self.pc + 1).to_owned(), y);
+                    self.set_r(memory.byte(self.pc + 1), y);
                     self.pc += 1;
                 }
                 7 => {}
@@ -173,10 +173,46 @@ impl Cpu {
             // LD 
         } else if x == 2 {
             // ALU operations with y and z 
-            self.alu(y, z, memory.byte(self.get_rp(RP_HL)).to_owned());
+            self.alu(y, z, memory.byte(self.get_rp(RP_HL)));
         } else if x == 3 {
             match z {
-                0 => {}
+                0 => {
+                    match y {
+                        0 => { // RET NZ
+                            if !self.get_flag(FLAG_Z) {
+                                self.pc = self.pop(memory);
+                            }
+                        }
+                        1 => { // RET Z
+                            if self.get_flag(FLAG_Z) {
+                                self.pc = self.pop(memory);
+                            }
+                        }
+                        2 => { // RET NC
+                            if !self.get_flag(FLAG_C) {
+                                self.pc = self.pop(memory);
+                            }
+                        }
+                        3 => { // RET C
+                            if self.get_flag(FLAG_C) {
+                                self.pc = self.pop(memory);
+                            }
+                        }
+                        4 => { // LD (0xFF00 + n), A
+                            memory.set_byte(self.a, 0xFF00 + self.c as u16);
+                        }
+                        5 => { // ADD SP, d
+                            self.set_rp(memory.byte(self.pc + 1) as u16, RP_SP);
+                        }
+                        6 => { // LD A, (0xFF00 + n)
+                            self.set_r(memory.byte(0xFF00 + self.c as u16), self.a);
+                        }
+                        7 => { // LD HL, SP+ d
+                            self.set_rp(self.sp + memory.byte(self.pc + 1) as u16, RP_HL);
+                        }
+                        _ => {}
+                    }
+                }
                 1 => {}
                 2 => {}
                 3 => {}
@@ -268,6 +304,18 @@ impl Cpu {
             _ => {eprintln!("Unknown ALU instruction...")}
             
         }
+    }
+
+    fn push<'b>(&mut self, val: u16, memory: &'b mut Memory) {
+        memory.set_byte((((val & 0xFF00) >> 8) & 0xFF) as u8, self.sp - 1);
+        memory.set_byte((val & 0xFF) as u8, self.sp - 2);
+        self.sp -= 2;
+    }
+
+    fn pop<'b>(&mut self, memory: &'b mut Memory) -> u16 {
+        let val = ((memory.byte(self.sp + 1) as u16) << 8) | memory.byte(self.sp) as u16;
+        self.sp += 2;
+        return val;
     }
 
     pub fn get_flag(&mut self, flag: u8) -> bool{

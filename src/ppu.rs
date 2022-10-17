@@ -103,7 +103,7 @@ impl<'a> Ppu<'a> {
         let second_bit: i32 = (new_mode >> 1) & 1;
 
         // Get LCD status register value to modify
-        let mut lcd_stat = *memory.byte(LCD_STATUS_REGISTER);
+        let mut lcd_stat = memory.byte(LCD_STATUS_REGISTER);
 
         // Modify register based on first bit
         if first_bit == 1 {
@@ -127,7 +127,7 @@ impl<'a> Ppu<'a> {
         self.scanline += 1;
 
         // Update line register with current scanline
-        let current_line_reg_val = *memory.byte(LCD_LINE_REGISTER);
+        let current_line_reg_val = memory.byte(LCD_LINE_REGISTER);
         memory.set_byte(current_line_reg_val + 1, LCD_LINE_REGISTER);
 
         // Check to wrap scanline around to zero
@@ -145,9 +145,9 @@ impl<'a> Ppu<'a> {
         }
 
         // Read important register values
-        let scroll_x: u8 = *memory.byte(LCD_SCROLL_X_REGISTER);
-        let scroll_y: u8 = *memory.byte(LCD_SCROLL_Y_REGISTER);
-        let control_reg_val: u8 = *memory.byte(LCD_CONTROL_REGISTER);
+        let scroll_x: u8 = memory.byte(LCD_SCROLL_X_REGISTER);
+        let scroll_y: u8 = memory.byte(LCD_SCROLL_Y_REGISTER);
+        let control_reg_val: u8 = memory.byte(LCD_CONTROL_REGISTER);
 
         // Read bit 4 to determine which tile data block
         // to read from and whether or not it's signed
@@ -188,9 +188,9 @@ impl<'a> Ppu<'a> {
             let mut tile_num: u16;
 
             if is_tile_data_signed {
-                tile_num = (*memory.byte(tile_map_address) as u8) as u16;
+                tile_num = (memory.byte(tile_map_address) as u8) as u16;
             } else {
-                tile_num = *memory.byte(tile_map_address) as u16;
+                tile_num = memory.byte(tile_map_address) as u16;
             }
 
             // Wrap around tiles if they exceed the 256x256 area
@@ -205,8 +205,8 @@ impl<'a> Ppu<'a> {
             let line_y: u8 = y_position % 8;
 
             // Get the two bytes that make up 8 pixels
-            let low_byte: u8 = *memory.byte(tile_data_address + line_y as u16 * 2);
-            let high_byte: u8 = *memory.byte(tile_data_address + line_y as u16 * 2 + 1);
+            let low_byte: u8 = memory.byte(tile_data_address + line_y as u16 * 2);
+            let high_byte: u8 = memory.byte(tile_data_address + line_y as u16 * 2 + 1);
 
             // Get line colors from bytes
             self.get_tile_line_colors(low_byte, high_byte);
