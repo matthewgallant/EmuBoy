@@ -1,10 +1,10 @@
 use crate::memory::Memory;
 
 
-const FLAG_Z: u8 = 7;
-const FLAG_N: u8 = 6;
-const FLAG_H: u8 = 5;
-const FLAG_C: u8 = 4;
+const FLAG_Z: u8 = 3;
+const FLAG_N: u8 = 2;
+const FLAG_H: u8 = 1;
+const FLAG_C: u8 = 0;
 
 const RP_BC: u8 = 0;
 const RP_DE: u8 = 1;
@@ -51,11 +51,11 @@ impl Cpu {
     }
 
     pub fn execute<'b>(&mut self, memory: &'b mut Memory) {
-        println!("Op Code: {} and pc: {}", memory.memory[self.pc as usize], self.pc);
+        println!("Op Code: 0x{:02X} and pc: {}", memory.memory[self.pc as usize], self.pc);
         let opcode = memory.memory[self.pc as usize];
         let z = opcode & 0x7;
         let y = (opcode >> 3) & 0x7;
-        let x = (opcode >> 6) & 0x7;
+        let x = (opcode >> 6) & 0x3;
         let p = (opcode >> 3) & 0x1;
         let q = (opcode >> 4) & 0x3; // double check p & q
 
@@ -64,13 +64,13 @@ impl Cpu {
             match z {
                 0 => {
                    if y == 0 { // NOP 
-                        return;
+                       
                    } else if y == 1 { // LD(nn), SP
                         let addr = memory.read16(self.pc + 1);
                         memory.write16(self.sp, addr);
                         self.pc += 2;
                    } else if y == 2 {  // STOP
-                        return;
+
                    } else if y == 3 { // JR d // THIS NEEDS TESTING
                        let d = memory.byte(self.pc + 1).to_owned() as i16;
                        self.pc = ((self.pc as i16) + d) as u16;
@@ -115,19 +115,28 @@ impl Cpu {
                 // OKAY all of these flags need to be checked because this is so 
                 // beyong fuking curseed.
                 3 => {
-                    if q == 0 {
-                        self.set_flag(FLAG_N, false);
-                        self.set_flag(FLAG_H, (((self.get_rp(p)) + 1) & 0x10) == 0x10);
-                        self.set_flag(FLAG_C, (((self.get_rp(p)) + 1) & 0x10) == 0x10);
-                        self.set_rp(self.get_rp(p) + 1, p);
-                        self.set_flag(FLAG_Z, self.get_rp(p) == 0);       
+                    if q == 0 { // INC rp[p]
+                        if self.get_rp(p) == std::u16::MAX {
+                            self.set_rp(0, p);
+                            self.set_flag(FLAG_C, true);
+                        } else {
+                            self.set_flag(FLAG_C, (((self.get_rp(p)) + 1) & 0x10) == 0x10);
+                            self.set_flag(FLAG_N, false);
+                            self.set_flag(FLAG_H, (((self.get_rp(p)) + 1) & 0x10) == 0x10);
+                            self.set_rp(self.get_rp(p) + 1, p);
+                            self.set_flag(FLAG_Z, self.get_rp(p) == 0);       
+                        }
 
-                    } else if q == 1 {
-                        self.set_flag(FLAG_N, true);
-                        self.set_flag(FLAG_H, (((self.get_rp(p)) - 1) & 0x10) == 0x10);
-                        self.set_flag(FLAG_C, (((self.get_rp(p)) - 1) & 0x10) == 0x10);
-                        self.set_rp(self.get_rp(p) - 1, p);
-                        self.set_flag(FLAG_Z, self.get_rp(p) == 0);
+                    } else if q == 1 { // DEC rp[p] 
+                        if self.get_rp(p) == 1 {
+                            self.set_flag(FLAG_Z, true);
+                            self.set_flag(FLAG_C, true);
+                            self.set_rp(0, p);
+                        } else if self.get_rp(p) != 0 {
+                            self.set_rp(self.get_rp(p) - 1, p);
+                            self.set_flag(FLAG_N, true);
+                            self.set_flag(FLAG_H, (((self.get_rp(p)) - 1) & 0x10) == 0x10);
+                        }
                     }
                 }
                 4 => {
@@ -138,11 +147,15 @@ impl Cpu {
                     self.set_flag(FLAG_Z, self.get_rp(y) == 0);
                 }
                 5 => {
-                    self.set_flag(FLAG_N, true);
-                    self.set_flag(FLAG_H, (((self.get_r(y)) - 1) & 0x10) == 0x10);
-                    self.set_flag(FLAG_C, (((self.get_rp(y)) - 1) & 0x10) == 0x10);
-                    self.set_rp(self.get_rp(y) - 1, y);
-                    self.set_flag(FLAG_Z, self.get_rp(y) == 0);
+                    if self.get_r(y) == 1 {
+                        self.set_flag(FLAG_Z, true);
+                        self.set_r(0, y);
+                    } else if self.get_r(y) != 0 {
+                        self.set_r(self.get_r(y) - 1, y);
+                        self.set_flag(FLAG_N, true);
+                        self.set_flag(FLAG_H, (((self.get_r(y)) - 1) & 0x10) == 0x10);
+                        self.set_flag(FLAG_C, (((self.get_r(y)) - 1) & 0x10) == 0x10);
+                    }
                 }
                 6 => {  
                     self.set_r(memory.byte(self.pc + 1).to_owned(), y);
@@ -174,6 +187,7 @@ impl Cpu {
                 _ => {}
             }
         }
+        self.pc += 1;
     }
 
     pub fn alu(&mut self, y: u8, z: u8, mem_hl: u8) {
