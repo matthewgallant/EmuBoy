@@ -16,6 +16,12 @@ const RP2_DE: u8 = 1;
 const RP2_HL: u8 = 2;
 const RP2_AF: u8 = 3;
 
+pub enum CpuMode {
+    RUN,
+    HALT,
+    STOP,
+}
+
 pub struct Cpu {
     pub pc: u16,
     pub sp: u16,
@@ -26,7 +32,8 @@ pub struct Cpu {
     pub d: u8,
     pub e: u8,
     pub h: u8,
-    pub l: u8
+    pub l: u8,
+    pub mode: CpuMode
 }
 
 impl Cpu {
@@ -42,6 +49,7 @@ impl Cpu {
             e: 0xD8,
             h: 0x01,
             l: 0x4D,
+            mode: CpuMode::RUN
         }
     }
 
@@ -72,7 +80,8 @@ impl Cpu {
                         memory.write16(self.sp, addr);
                         self.pc += 2;
                    } else if y == 2 {  // STOP
-
+                       // not sure what else needs to happen but  ¯\_(ツ)_/¯
+                       self.mode = CpuMode::STOP; 
                    } else if y == 3 { // JR d // THIS NEEDS TESTING
                        let d = memory.byte(self.pc + 1) as i16;
                        self.pc = ((self.pc as i16) + d) as u16;
@@ -84,7 +93,16 @@ impl Cpu {
                    }
 
                 } 
-                1 => {} 
+                1 => {
+                    if q == 0 { // LD rp[p], nn
+                        let nn = memory.read16(self.pc + 1);
+                        self.set_rp(nn, p);
+                        self.pc += 2; //offset pc by 2 bytes
+                    } else if q == 1 { // ADD HL, rp[p]
+                        let hl = self.get_rp(RP_HL) + self.get_rp(p);
+                        self.set_rp(hl, RP_HL);
+                    }
+                } 
                 2 => {
                     if q == 0 {
                         if p == 0{ // LD (BC), A
@@ -205,12 +223,14 @@ impl Cpu {
                         }
                         5 => { // ADD SP, d
                             self.set_rp(memory.byte(self.pc + 1) as u16, RP_SP);
+                            self.pc += 1;
                         }
                         6 => { // LD A, (0xFF00 + n)
                             self.set_r(memory.byte(0xFF00 + self.c as u16), self.a);
                         }
                         7 => { // LD HL, SP+ d
                             self.set_rp(self.sp + memory.byte(self.pc + 1) as u16, RP_HL);
+                            self.pc += 1;
                         }
                         _ => {}
                     }
