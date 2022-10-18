@@ -70,8 +70,8 @@ impl Cpu {
         let z = opcode & 0x7;
         let y = (opcode >> 3) & 0x7;
         let x = (opcode >> 6) & 0x3;
-        let p = (opcode >> 3) & 0x1;
-        let q = (opcode >> 4) & 0x3; // double check p & q
+        let p = y >> 1;
+        let q = y & 0x1;
 
         // UN prefixed opcdes
         if x == 0 {
@@ -252,6 +252,9 @@ impl Cpu {
                 7 => {println!("Opcode: 0x{:2X} not yet implemented", opcode);}
                 _ => {println!("Opcode: 0x{:2X} not yet implemented", opcode);}
             }
+        }
+        if opcode == 0xCB { // remove after implementing cb prefix proper
+            self.pc += 1;
         }
         self.pc += 1;
     }
