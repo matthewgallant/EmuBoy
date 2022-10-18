@@ -50,6 +50,8 @@ impl Cpu {
         self.execute(memory);
     }
 
+
+
     pub fn execute<'b>(&mut self, memory: &'b mut Memory) {
         println!("Op Code: 0x{:02X} and pc: {}", memory.memory[self.pc as usize], self.pc);
         let opcode = memory.memory[self.pc as usize];

@@ -8,3 +8,5 @@ edition = "2021"
 [dependencies]
 sdl2 = "0.35"
 
+[profile.dev]
+overflow-checks = false
