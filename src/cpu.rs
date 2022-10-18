@@ -34,7 +34,9 @@ pub struct Cpu {
     pub e: u8,
     pub h: u8,
     pub l: u8,
-    pub mode: CpuMode
+    pub mode: CpuMode,
+    pub interrupts: bool
+
 }
 
 impl Cpu {
@@ -50,7 +52,8 @@ impl Cpu {
             e: 0xD8,
             h: 0x01,
             l: 0x4D,
-            mode: CpuMode::RUN
+            mode: CpuMode::RUN,
+            interrupts: true
         }
     }
 
@@ -243,11 +246,65 @@ impl Cpu {
                         _ => {}
                     }
                 }
-                1 => {println!("Opcode: 0x{:2X} not yet implemented", opcode);}
-                2 => {println!("Opcode: 0x{:2X} not yet implemented", opcode);}
-                3 => {println!("Opcode: 0x{:2X} not yet implemented", opcode);}
-                4 => {println!("Opcode: 0x{:2X} not yet implemented", opcode);}
-                5 => {println!("Opcode: 0x{:2X} not yet implemented", opcode);}
+                1 => {
+                    if q == 0 { // POP
+                        let pop = self.pop(memory);
+                        self.set_rp(pop, RP_HL);
+                    } else {
+                        if p == 0 { // RET
+                            self.pc = self.pop(memory);
+                        } else if p == 1 { // RETI
+                            self.pc = self.pop(memory);
+                        } else if p == 2 { // JP HL
+                            self.pc = self.get_rp(RP_HL);
+                        } else if p == 3 { // LD SP, HL
+                            self.sp = self.get_rp(RP_HL);
+                        }
+                    }
+                }
+                2 => {
+                    if y < 4 { // JP cc[y], nn
+                        if self.get_flag(y) {
+                            self.pc = memory.read16(self.pc + 1);
+                        }
+                    } else if y == 4 { // LD (0xFF00 + C), A
+                        memory.set_byte(self.a, 0xFF00 + self.c as u16);
+                    } else if y == 5 { // LD (nn), A
+                        memory.set_byte(self.a, memory.read16(self.pc + 1));
+                        self.pc += 2;
+                    } else if y == 6 { // LD A, (0xFF00 + C)
+                        self.a = memory.byte(0xFF00 + self.c as u16);
+                    } else if y == 7 { //LD _A, (nn)
+                        self.a = memory.byte(memory.read16(self.pc+1));
+                        self.pc += 2;
+                    }
+                }
+                3 => {
+                    if y == 0 { // JP nn
+                        self.pc = memory.read16(self.pc + 1);
+                    } else if y == 1 { // CB prefix 
+                        println!("Opcode: 0x{:2X} not yet implemented", opcode);
+
+                    } else if y == 6 { // DI
+                        self.interrupts = false
+                    } else if y == 7 { // EI
+                        self.interrupts = true
+                    }
+                }
+                4 => { // Call cc[y]
+                    if self.get_flag(y) {
+                        self.push(self.pc, memory);
+                        self.pc = memory.read16(self.pc + 1);
+                    }
+                }
+                5 => {
+                    if q == 0 {
+                        self.push(self.get_rp(p), memory);
+                    } else if p == 0 {
+                        self.push(self.pc, memory);
+                        self.pc = memory.read16(self.pc + 1);
+                    }
+                }
                 6 => {println!("Opcode: 0x{:2X} not yet implemented", opcode);}
                 7 => {println!("Opcode: 0x{:2X} not yet implemented", opcode);}
                 _ => {println!("Opcode: 0x{:2X} not yet implemented", opcode);}
