@@ -283,24 +283,24 @@ impl Cpu {
                     if y == 0 { // JP nn
                         self.pc = memory.read16(self.pc + 1);
                     } else if y == 1 { // CB prefix 
-                        println!("Opcode: 0x{:2X} not yet implemented", opcode);
-
+                        self.pc += 1;
+                        self.cb_prefix(memory.byte(self.pc));
                     } else if y == 6 { // DI
                         self.interrupts = false
                     } else if y == 7 { // EI
                         self.interrupts = true
                     }
                 }
-                4 => { // Call cc[y]
+                4 => { // Call cc[y], nn
                     if self.get_flag(y) {
                         self.push(self.pc, memory);
                         self.pc = memory.read16(self.pc + 1);
                     }
                 }
                 5 => {
-                    if q == 0 {
-                        self.push(self.get_rp(p), memory);
-                    } else if p == 0 {
+                    if q == 0 { // PUSH rp2[2]
+                        self.push(self.get_rp2(p), memory);
+                    } else if p == 0 { // CALL nn
                         self.push(self.pc, memory);
                         self.pc = memory.read16(self.pc + 1);
                     }
@@ -310,9 +310,7 @@ impl Cpu {
                 _ => {println!("Opcode: 0x{:2X} not yet implemented", opcode);}
             }
         }
-        if opcode == 0xCB { // remove after implementing cb prefix proper
-            self.pc += 1;
-        }
+
         self.pc += 1;
     }
 
@@ -394,6 +392,24 @@ impl Cpu {
             _ => {eprintln!("Unknown ALU instruction...")}
             
         }
+    }
+
+    fn cb_prefix(&mut self, prefix_op: u8) {
+        let x = prefix_op >> 6;
+        let y = (prefix_op >> 3) & 0x3;
+        let z = prefix_op & 0x3;
+        if x == 0 { // rot[y] r[z]
+            println!("Prefix Opcode: 0x{:2X} not yet implemented", prefix_op);
+        } else if x == 1 { // BIT y, r[z]
+            self.set_flag(FLAG_H, true);
+            self.set_flag(FLAG_N, false);
+            self.set_flag(FLAG_Z, (self.get_r(z) & (1 << y)) == 0);
+        } else if x == 2 {
+            println!("Prefix Opcode: 0x{:2X} not yet implemented", prefix_op);
+        } else if x == 3 {
+            println!("Prefix Opcode: 0x{:2X} not yet implemented", prefix_op);
+        }
+
     }
 
     fn push<'b>(&mut self, val: u16, memory: &'b mut Memory) {
