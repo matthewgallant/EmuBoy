@@ -163,14 +163,14 @@ impl Cpu {
                         }
                     }
                 }
-                4 => {
+                4 => { // INC r[y]
                     self.set_flag(FLAG_N, false);
                     self.set_flag(FLAG_H, (((self.get_r(y)) + 1) & 0x10) == 0x10);
                     self.set_flag(FLAG_C, (((self.get_r(y)) + 1) & 0x10) == 0x10);
                     self.set_r(y, self.get_r(y) + 1);
                     self.set_flag(FLAG_Z, self.get_rp(y) == 0);
                 }
-                5 => {
+                5 => { // DEC r[y]
                     if self.get_r(y) == 1 {
                         self.set_flag(FLAG_Z, true);
                         self.set_r(0, y);
@@ -181,20 +181,24 @@ impl Cpu {
                         self.set_flag(FLAG_C, (((self.get_r(y)) - 1) & 0x10) == 0x10);
                     }
                 }
-                6 => {  
+                6 => { // LD r[y], n 
                     self.set_r(memory.byte(self.pc + 1), y);
                     self.pc += 1;
                 }
-                7 => {}
+                7 => {
+                    println!("Opcode: {:4x} not yet implemented", opcode);
+                }
                 _ => {}
             }
 
         } else if x == 1 {
             if (z == 6) && (y == 6) {
                 // HALT
+                self.mode = CpuMode::HALT;
                 return;
             } 
             // LD 
+            self.set_r(self.get_r(z), y);
         } else if x == 2 {
             // ALU operations with y and z 
             self.alu(y, z, memory.byte(self.get_rp(RP_HL)));
@@ -239,14 +243,14 @@ impl Cpu {
                         _ => {}
                     }
                 }
-                1 => {}
-                2 => {}
-                3 => {}
-                4 => {}
-                5 => {}
-                6 => {}
-                7 => {}
-                _ => {}
+                1 => {println!("Opcode: 0x{:2X} not yet implemented", opcode);}
+                2 => {println!("Opcode: 0x{:2X} not yet implemented", opcode);}
+                3 => {println!("Opcode: 0x{:2X} not yet implemented", opcode);}
+                4 => {println!("Opcode: 0x{:2X} not yet implemented", opcode);}
+                5 => {println!("Opcode: 0x{:2X} not yet implemented", opcode);}
+                6 => {println!("Opcode: 0x{:2X} not yet implemented", opcode);}
+                7 => {println!("Opcode: 0x{:2X} not yet implemented", opcode);}
+                _ => {println!("Opcode: 0x{:2X} not yet implemented", opcode);}
             }
         }
         self.pc += 1;
