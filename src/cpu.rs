@@ -16,6 +16,7 @@ const RP2_DE: u8 = 1;
 const RP2_HL: u8 = 2;
 const RP2_AF: u8 = 3;
 
+#[derive(PartialEq)]
 pub enum CpuMode {
     RUN,
     HALT,
@@ -54,8 +55,11 @@ impl Cpu {
     }
 
     pub fn step<'b>(&mut self, memory: &'b mut Memory) {
-        println!("Stepping CPU...");
-        self.execute(memory);
+        if self.mode == CpuMode::RUN {
+            println!("Stepping CPU...");
+            self.execute(memory);
+
+        }
     }
 
 
