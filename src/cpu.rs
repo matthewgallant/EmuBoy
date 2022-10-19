@@ -69,6 +69,7 @@ impl Cpu {
 
     pub fn execute<'b>(&mut self, memory: &'b mut Memory) {
         println!("Op Code: 0x{:02X} and pc: {}", memory.memory[self.pc as usize], self.pc);
+        self.print();
         let opcode = memory.memory[self.pc as usize];
         let z = opcode & 0x7;
         let y = (opcode >> 3) & 0x7;
@@ -93,10 +94,8 @@ impl Cpu {
                        let d = memory.byte(self.pc + 1) as i8;
                        self.pc = ((self.pc as i16) + d as i16) as u16;
                    } else if y >= 4 && y < 8 { 
-                       println!("flag z: {}", self.get_flag(FLAG_Z));
                        if self.get_cc(y-4) {
                            let d = memory.byte(self.pc + 1) as i8;
-                           println!("d: {}", d as i16);
                            self.pc = ((self.pc as i16) + d as i16) as u16;
                            self.pc = self.pc + 1;
                        }
@@ -401,14 +400,11 @@ impl Cpu {
         let x = prefix_op >> 6;
         let y = (prefix_op >> 3) & 0x7;
         let z = prefix_op & 0x7;
-        println!("running cb prefix: {:2x}", prefix_op);
+        //println!("running cb prefix: {:2x}", prefix_op);
         if x == 0 { // rot[y] r[z]
             println!("Prefix Opcode: 0x{:2X} not yet implemented", prefix_op);
         } else if x == 1 { // BIT y, r[z]
-            println!("BIT {}, r[{}]", y, z);
-            println!("r[{}] = 0x{:2X}", z, self.get_r(z));
             let res = (self.get_r(z) & (1 << y)) == 0;
-            println!("Result: {}", res);
             self.set_flag(FLAG_H, true);
             self.set_flag(FLAG_N, false);
             self.set_flag(FLAG_Z, res);
@@ -447,7 +443,6 @@ impl Cpu {
             } else {
                 self.f &= 1 << flag; // clear flag
             }
-            println!("setting flags: 0x{:2X}", self.f);
         } else {
             eprintln!("Invalid flag passed to cpu::set_flag");
         }
@@ -532,4 +527,14 @@ impl Cpu {
         eprintln!("Invalid value passed to cpu::get_cc, value={}", cc);
         return false;
     } 
+
+    pub fn print(&mut self) {
+        println!("A: {:2x} \t F: {:2x}", self.a, self.f);
+        println!("B: {:2x} \t C: {:2x}", self.b, self.c);
+        println!("D: {:2x} \t E: {:2x}", self.d, self.e);
+        println!("H: {:2x} \t L: {:2x}", self.h, self.l);
+        println!("AF: {:4x}, BC: {:4x}", self.get_rp2(RP2_AF), self.get_rp(RP_BC));
+        println!("DE: {:4x}, HL: {:4x}", self.get_rp(RP_DE), self.get_rp(RP_HL));
+        println!("sp: {:4x}, pc: {:4x}", self.sp, self.pc);
+    }
 }
