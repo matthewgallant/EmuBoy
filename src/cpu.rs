@@ -98,6 +98,7 @@ impl Cpu {
                            let d = memory.byte(self.pc + 1) as i8;
                            println!("d: {}", d as i16);
                            self.pc = ((self.pc as i16) + d as i16) as u16;
+                           self.pc = self.pc + 1;
                        }
                    }
 
