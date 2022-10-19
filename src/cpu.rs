@@ -463,14 +463,14 @@ impl Cpu {
 
     pub fn set_rp(&mut self, val: u16, rp: u8) {
         if rp == RP_BC {
-           self.b = (val & 0xFF) as u8;
-           self.c = (val >> 8) as u8;
+           self.c = (val & 0xFF) as u8;
+           self.b = (val >> 8) as u8;
         } else if rp == RP_DE {
-           self.d = (val & 0xFF) as u8;
-           self.e = (val >> 8) as u8;
+           self.e = (val & 0xFF) as u8;
+           self.d = (val >> 8) as u8;
         } else if rp == RP_HL {
-           self.h = (val & 0xFF) as u8;
-           self.l = (val >> 8) as u8;
+           self.l = (val & 0xFF) as u8;
+           self.h = (val >> 8) as u8;
         } else if rp == RP_SP {
            self.sp = val;
         }
