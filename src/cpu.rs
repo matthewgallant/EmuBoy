@@ -90,12 +90,14 @@ impl Cpu {
                        // not sure what else needs to happen but  ¯\_(ツ)_/¯
                        self.mode = CpuMode::STOP; 
                    } else if y == 3 { // JR d // THIS NEEDS TESTING
-                       let d = memory.byte(self.pc + 1) as i16;
-                       self.pc = ((self.pc as i16) + d) as u16;
-                   } else if y >= 4 && y < 8 {
-                       if self.get_flag(y - 4) {
-                           let d = memory.byte(self.pc + 1) as i16;
-                           self.pc = ((self.pc as i16) + d) as u16;
+                       let d = memory.byte(self.pc + 1) as i8;
+                       self.pc = ((self.pc as i16) + d as i16) as u16;
+                   } else if y >= 4 && y < 8 { 
+                       println!("flag z: {}", self.get_flag(FLAG_Z));
+                       if self.get_cc(y-4) {
+                           let d = memory.byte(self.pc + 1) as i8;
+                           println!("d: {}", d as i16);
+                           self.pc = ((self.pc as i16) + d as i16) as u16;
                        }
                    }
 
@@ -264,7 +266,7 @@ impl Cpu {
                 }
                 2 => {
                     if y < 4 { // JP cc[y], nn
-                        if self.get_flag(y) {
+                        if self.get_cc(y) {
                             self.pc = memory.read16(self.pc + 1);
                         }
                     } else if y == 4 { // LD (0xFF00 + C), A
@@ -283,8 +285,8 @@ impl Cpu {
                     if y == 0 { // JP nn
                         self.pc = memory.read16(self.pc + 1);
                     } else if y == 1 { // CB prefix 
+                        self.cb_prefix(memory.byte(self.pc + 1));
                         self.pc += 1;
-                        self.cb_prefix(memory.byte(self.pc));
                     } else if y == 6 { // DI
                         self.interrupts = false
                     } else if y == 7 { // EI
@@ -292,7 +294,7 @@ impl Cpu {
                     }
                 }
                 4 => { // Call cc[y], nn
-                    if self.get_flag(y) {
+                    if self.get_cc(y) {
                         self.push(self.pc, memory);
                         self.pc = memory.read16(self.pc + 1);
                     }
@@ -396,14 +398,19 @@ impl Cpu {
 
     fn cb_prefix(&mut self, prefix_op: u8) {
         let x = prefix_op >> 6;
-        let y = (prefix_op >> 3) & 0x3;
-        let z = prefix_op & 0x3;
+        let y = (prefix_op >> 3) & 0x7;
+        let z = prefix_op & 0x7;
+        println!("running cb prefix: {:2x}", prefix_op);
         if x == 0 { // rot[y] r[z]
             println!("Prefix Opcode: 0x{:2X} not yet implemented", prefix_op);
         } else if x == 1 { // BIT y, r[z]
+            println!("BIT {}, r[{}]", y, z);
+            println!("r[{}] = 0x{:2X}", z, self.get_r(z));
+            let res = (self.get_r(z) & (1 << y)) == 0;
+            println!("Result: {}", res);
             self.set_flag(FLAG_H, true);
             self.set_flag(FLAG_N, false);
-            self.set_flag(FLAG_Z, (self.get_r(z) & (1 << y)) == 0);
+            self.set_flag(FLAG_Z, res);
         } else if x == 2 {
             println!("Prefix Opcode: 0x{:2X} not yet implemented", prefix_op);
         } else if x == 3 {
@@ -426,7 +433,7 @@ impl Cpu {
 
     pub fn get_flag(&mut self, flag: u8) -> bool{
         if flag == FLAG_C || flag == FLAG_H || flag == FLAG_N || flag == FLAG_Z {
-            return self.f >> flag == 0x01;
+            return (self.f & (1 << flag)) != 0;
         }
         eprintln!("Invalid flag passed to cpu::get_flag");
         return self.f > 0;
@@ -435,10 +442,11 @@ impl Cpu {
     pub fn set_flag(&mut self, flag: u8, val: bool) {
         if flag == FLAG_C || flag == FLAG_H || flag == FLAG_N || flag == FLAG_Z {
             if val  {
-                self.f |= 1 << flag; //set flag 
+                self.f = self.f | (1 << flag); //set flag 
             } else {
                 self.f &= 1 << flag; // clear flag
             }
+            println!("setting flags: 0x{:2X}", self.f);
         } else {
             eprintln!("Invalid flag passed to cpu::set_flag");
         }
@@ -509,4 +517,18 @@ impl Cpu {
             _ => {}
         }
     }
+
+    pub fn get_cc(&mut self, cc: u8) -> bool {
+        if cc == 0 {
+            return !self.get_flag(FLAG_Z);
+        } else if cc == 1 {
+            return self.get_flag(FLAG_Z);
+        } else if cc == 2 {
+            return !self.get_flag(FLAG_C);
+        } else if cc == 3 {
+            return self.get_flag(FLAG_C);
+        } 
+        eprintln!("Invalid value passed to cpu::get_cc, value={}", cc);
+        return false;
+    } 
 }
