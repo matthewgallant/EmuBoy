@@ -69,7 +69,7 @@ impl Cpu {
 
     pub fn execute<'b>(&mut self, memory: &'b mut Memory) {
         println!("Op Code: 0x{:02X} and pc: {}", memory.memory[self.pc as usize], self.pc);
-        self.print();
+        self.print(memory);
         let opcode = memory.memory[self.pc as usize];
         let z = opcode & 0x7;
         let y = (opcode >> 3) & 0x7;
@@ -251,8 +251,8 @@ impl Cpu {
                 1 => {
                     if q == 0 { // POP
                         let pop = self.pop(memory);
-                        self.set_rp(pop, RP_HL);
-                    } else {
+                        self.set_rp2(pop, p);
+                    } else if q == 1 {
                         if p == 0 { // RET
                             self.pc = self.pop(memory);
                         } else if p == 1 { // RETI
@@ -476,6 +476,23 @@ impl Cpu {
         }
     }
 
+    pub fn set_rp2(&mut self, val: u16, rp: u8) {
+        if rp == RP_BC {
+           self.c = (val & 0xFF) as u8;
+           self.b = (val >> 8) as u8;
+        } else if rp == RP_DE {
+           self.e = (val & 0xFF) as u8;
+           self.d = (val >> 8) as u8;
+        } else if rp == RP_HL {
+           self.l = (val & 0xFF) as u8;
+           self.h = (val >> 8) as u8;
+        } else if rp == RP2_AF{
+           self.a = (val & 0xFF) as u8;
+           self.f = (val >> 8) as u8;
+        }
+    }
+
+
 
     pub fn get_rp2(&self, rp: u8) -> u16 {
         if rp == RP2_BC || rp == RP2_DE || rp == RP2_HL {
@@ -528,13 +545,14 @@ impl Cpu {
         return false;
     } 
 
-    pub fn print(&mut self) {
-        println!("A: {:2x} \t F: {:2x}", self.a, self.f);
-        println!("B: {:2x} \t C: {:2x}", self.b, self.c);
-        println!("D: {:2x} \t E: {:2x}", self.d, self.e);
-        println!("H: {:2x} \t L: {:2x}", self.h, self.l);
-        println!("AF: {:4x}, BC: {:4x}", self.get_rp2(RP2_AF), self.get_rp(RP_BC));
-        println!("DE: {:4x}, HL: {:4x}", self.get_rp(RP_DE), self.get_rp(RP_HL));
-        println!("sp: {:4x}, pc: {:4x}", self.sp, self.pc);
+    pub fn print(&mut self, memory: &Memory) {
+        let stack = self.sp;
+        println!("A: {:2x} \t F: {:2x}\t\t{:2x}", self.a, self.f, memory.byte(self.sp));
+        println!("B: {:2x} \t C: {:2x}\t\t{:2x}", self.b, self.c, memory.byte(self.sp + 1));
+        println!("D: {:2x} \t E: {:2x}\t\t{:2x}", self.d, self.e, memory.byte(self.sp + 2));
+        println!("H: {:2x} \t L: {:2x}\t\t{:2x}", self.h, self.l, memory.byte(self.sp + 3));
+        println!("AF: {:4x}, BC: {:4x}\t{:2x}", self.get_rp2(RP2_AF), self.get_rp(RP_BC), memory.byte(self.sp + 4));
+        println!("DE: {:4x}, HL: {:4x}\t{:2x}", self.get_rp(RP_DE), self.get_rp(RP_HL), memory.byte(self.sp + 5));
+        println!("sp: {:4x}, pc: {:4x}\t{:2x}", self.sp, self.pc, memory.byte(self.sp + 6));
     }
 }
