@@ -402,7 +402,19 @@ impl Cpu {
         let z = prefix_op & 0x7;
         //println!("running cb prefix: {:2x}", prefix_op);
         if x == 0 { // rot[y] r[z]
-            println!("Prefix Opcode: 0x{:2X} not yet implemented", prefix_op);
+            if(y == 2) { // rl x
+                let r = self.get_r(z);
+                self.set_flag(FLAG_C, (r & (1 << 7)) != 0);
+                self.set_flag(FLAG_H, false);
+                self.set_flag(FLAG_N, false);
+                r <<= 1;
+                self.set_flag(FLAG_Z, r == 0);
+                self.set_r(r, z);
+            } else {
+                println!("Prefix Opcode: 0x{:2X} not yet implemented", prefix_op);
+            }
+
+
         } else if x == 1 { // BIT y, r[z]
             let res = (self.get_r(z) & (1 << y)) == 0;
             self.set_flag(FLAG_H, true);
