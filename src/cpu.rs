@@ -93,12 +93,12 @@ impl Cpu {
                    } else if y == 3 { // JR d // THIS NEEDS TESTING
                        let d = memory.byte(self.pc + 1) as i8;
                        self.pc = ((self.pc as i16) + d as i16) as u16;
-                   } else if y >= 4 && y < 8 { 
+                   } else if y >= 4 && y < 8 {  // JR cc[y-4, d
                        if self.get_cc(y-4) {
                            let d = memory.byte(self.pc + 1) as i8;
                            self.pc = ((self.pc as i16) + d as i16) as u16;
-                           self.pc = self.pc + 1;
                        }
+                       self.pc = self.pc + 1;
                    }
 
                 } 
