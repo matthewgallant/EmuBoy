@@ -285,7 +285,7 @@ impl Cpu {
                     if y == 0 { // JP nn
                         self.pc = memory.read16(self.pc + 1);
                     } else if y == 1 { // CB prefix 
-                        self.cb_prefix(memory.byte(self.pc + 1));
+                        self.cb_prefix(memory.byte(self.pc + 1), memory);
                         self.pc += 1;
                     } else if y == 6 { // DI
                         self.interrupts = false
@@ -396,32 +396,49 @@ impl Cpu {
         }
     }
 
-    fn cb_prefix(&mut self, prefix_op: u8) {
+    fn cb_prefix(&mut self, prefix_op: u8, memory: &mut Memory) {
         let x = prefix_op >> 6;
         let y = (prefix_op >> 3) & 0x7;
         let z = prefix_op & 0x7;
         //println!("running cb prefix: {:2x}", prefix_op);
         if x == 0 { // rot[y] r[z]
-            if(y == 2) { // rl x
-                let r = self.get_r(z);
-                self.set_flag(FLAG_C, (r & (1 << 7)) != 0);
+            if y == 2 { // rl z
+                let mut r = self.get_r(z);
+                let oc = if self.get_flag(FLAG_C) {1} else {0};
+                self.set_flag(FLAG_C, (r & (0x80)) != 0);
                 self.set_flag(FLAG_H, false);
                 self.set_flag(FLAG_N, false);
-                r <<= 1;
+                r = r << 1;
+                r += oc;
                 self.set_flag(FLAG_Z, r == 0);
                 self.set_r(r, z);
-            } else {
+            } else if y == 4 { // sla y
+                let mut r = self.get_r(z);
+                self.set_flag(FLAG_C, (r & (0x80)) != 0);
+                self.set_flag(FLAG_H, false);
+                self.set_flag(FLAG_N, false);
+                r = r << 1;
+                self.set_flag(FLAG_Z, r == 0);
+                self.set_r(r, z);
+            } else  { // sla y
                 println!("Prefix Opcode: 0x{:2X} not yet implemented", prefix_op);
             }
 
 
         } else if x == 1 { // BIT y, r[z]
-            let res = (self.get_r(z) & (1 << y)) == 0;
+            let val = if z == 6 {memory.byte(self.get_rp(RP_HL))} else {self.get_r(z)};
+            let res = (val & (1 << y)) == 0;
             self.set_flag(FLAG_H, true);
             self.set_flag(FLAG_N, false);
             self.set_flag(FLAG_Z, res);
         } else if x == 2 {
-            println!("Prefix Opcode: 0x{:2X} not yet implemented", prefix_op);
+            let mut val = if z == 6 {memory.byte(self.get_rp(RP_HL))} else {self.get_r(z)};
+            val = val & !(1 << y);
+            if z == 6 {
+                memory.set_byte(val, self.get_rp(RP_HL));
+            } else {
+                self.set_r(val, z);
+            }
         } else if x == 3 {
             println!("Prefix Opcode: 0x{:2X} not yet implemented", prefix_op);
         }
@@ -429,7 +446,7 @@ impl Cpu {
     }
 
     fn push<'b>(&mut self, val: u16, memory: &'b mut Memory) {
-        memory.set_byte((((val & 0xFF00) >> 8) & 0xFF) as u8, self.sp - 1);
+        memory.set_byte(((val >> 8) & 0xFF) as u8, self.sp - 1);
         memory.set_byte((val & 0xFF) as u8, self.sp - 2);
         self.sp -= 2;
     }
@@ -499,8 +516,8 @@ impl Cpu {
            self.l = (val & 0xFF) as u8;
            self.h = (val >> 8) as u8;
         } else if rp == RP2_AF{
-           self.a = (val & 0xFF) as u8;
-           self.f = (val >> 8) as u8;
+           self.f = (val & 0xFF) as u8;
+           self.a = (val >> 8) as u8;
         }
     }
 

@@ -50,6 +50,9 @@ impl<'a> Ppu<'a> {
             self.horizontal_blank_mode(memory);
         } else if self.mode == VERTICAL_BLANK_MODE && self.ticks >= 228 {
             self.vertical_blank_mode(memory);
+            let mut interupt = memory.byte(0xFF0F);
+            interupt = interupt | 0x01;
+            memory.set_byte(interupt, 0xFF0F);
         } else if self.mode == SPRITE_SCAN_MODE && self.ticks >= 40 {
             self.sprite_scan_mode(memory);
         } else if self.mode == RENDERING_MODE && self.ticks >= 86 {

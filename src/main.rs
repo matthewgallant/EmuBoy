@@ -50,8 +50,8 @@ fn main() {
     'running: loop {
         cpu.step(&mut memory);
         ppu.step(&mut memory);
-        if(cpu.pc > 10){
-            std::thread::sleep(std::time::Duration::from_millis(500));
+        if(cpu.pc > 180){
+            //std::thread::sleep(std::time::Duration::from_millis(500));
         }
 
         // TODO: Move event loop to new IO struct
