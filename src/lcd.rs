@@ -29,7 +29,7 @@ impl Lcd {
 
         Self {
             context: sdl_context,
-            canvas: canvas
+            canvas
         }
     }
 

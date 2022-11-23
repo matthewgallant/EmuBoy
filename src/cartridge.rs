@@ -18,6 +18,6 @@ impl Cartridge {
     }
 
     pub fn cartridge(&self, bank_start: u16, bank_end: u16) -> Vec<u8> {
-        return vec![&self.cartridge[0..0x4000], &self.cartridge[bank_start as usize..bank_end as usize]].concat();
+        vec![&self.cartridge[0..0x4000], &self.cartridge[bank_start as usize..bank_end as usize]].concat()
     }
 }

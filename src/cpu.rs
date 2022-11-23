@@ -95,12 +95,12 @@ impl Cpu {
                    } else if y == 3 { // JR d // THIS NEEDS TESTING
                        let d = memory.byte(self.pc + 1) as i8;
                        self.pc = ((self.pc as i16) + d as i16) as u16 - 1;
-                   } else if y >= 4 && y < 8 {  // JR cc[y-4, d
+                   } else if (4..8).contains(&y) {  // JR cc[y-4, d
                        if self.get_cc(y-4) {
                            let d = memory.byte(self.pc + 1) as i8;
                            self.pc = ((self.pc as i16) + d as i16) as u16 - 1;
                        }
-                       self.pc = self.pc + 1;
+                       self.pc += 1;
                    }
 
                 } 
@@ -419,7 +419,7 @@ impl Cpu {
                 self.set_flag(FLAG_C, (r & (0x80)) != 0);
                 self.set_flag(FLAG_H, false);
                 self.set_flag(FLAG_N, false);
-                r = r << 1;
+                r <<= 1;
                 r += oc;
                 self.set_flag(FLAG_Z, r == 0);
                 self.set_r(r, z);
@@ -428,7 +428,7 @@ impl Cpu {
                 self.set_flag(FLAG_C, (r & (0x80)) != 0);
                 self.set_flag(FLAG_H, false);
                 self.set_flag(FLAG_N, false);
-                r = r << 1;
+                r <<= 1;
                 self.set_flag(FLAG_Z, r == 0);
                 self.set_r(r, z);
             } else  { // set y
@@ -446,7 +446,7 @@ impl Cpu {
             self.set_flag(FLAG_Z, res);
         } else if x == 2 {
             let mut val = if z == 6 {memory.byte(self.get_rp(RP_HL))} else {self.get_r(z)};
-            val = val & !(1 << y);
+            val &= !(1 << y);
             if z == 6 {
                 memory.set_byte(val, self.get_rp(RP_HL));
             } else {
@@ -467,7 +467,7 @@ impl Cpu {
     fn pop<'b>(&mut self, memory: &'b mut Memory) -> u16 {
         let val = ((memory.byte(self.sp + 1) as u16) << 8) | memory.byte(self.sp) as u16;
         self.sp += 2;
-        return val;
+        val
     }
 
     pub fn get_flag(&mut self, flag: u8) -> bool{
@@ -475,13 +475,13 @@ impl Cpu {
             return (self.f & (1 << flag)) != 0;
         }
         eprintln!("Invalid flag passed to cpu::get_flag");
-        return self.f > 0;
+        self.f > 0
     } 
     
     pub fn set_flag(&mut self, flag: u8, val: bool) {
         if flag == FLAG_C || flag == FLAG_H || flag == FLAG_N || flag == FLAG_Z {
             if val  {
-                self.f = self.f | (1 << flag); //set flag 
+                self.f |= 1 << flag; //set flag 
             } else {
                 self.f &= 1 << flag; // clear flag
             }
@@ -584,11 +584,11 @@ impl Cpu {
             return self.get_flag(FLAG_C);
         } 
         eprintln!("PC: {} Invalid value passed to cpu::get_cc, value={}", self.pc, cc);
-        return false;
+        false
     } 
 
     pub fn print(&mut self, memory: &Memory) {
-        let stack = self.sp;
+        let _stack = self.sp;
         println!("A: {:2x} \t F: {:2x}\t\t{:2x}", self.a, self.f, memory.byte(self.sp));
         println!("B: {:2x} \t C: {:2x}\t\t{:2x}", self.b, self.c, memory.byte(self.sp + 1));
         println!("D: {:2x} \t E: {:2x}\t\t{:2x}", self.d, self.e, memory.byte(self.sp + 2));

@@ -24,7 +24,7 @@ pub struct Ppu<'a> {
 impl<'a> Ppu<'a> {
     pub fn new<'b>(lcd: &'b mut Lcd) -> Ppu<'b> {
         Ppu {
-            lcd: lcd,
+            lcd,
             ticks: 0,
             buffer: [[0; 144]; 160],
             colors: [0; 8],
@@ -51,7 +51,7 @@ impl<'a> Ppu<'a> {
         } else if self.mode == VERTICAL_BLANK_MODE && self.ticks >= 228 {
             self.vertical_blank_mode(memory);
             let mut interupt = memory.byte(0xFF0F);
-            interupt = interupt | 0x01;
+            interupt |= 0x01;
             memory.set_byte(interupt, 0xFF0F);
         } else if self.mode == SPRITE_SCAN_MODE && self.ticks >= 40 {
             self.sprite_scan_mode(memory);
@@ -112,7 +112,7 @@ impl<'a> Ppu<'a> {
         if first_bit == 1 {
             lcd_stat |= 1;
         } else {
-            lcd_stat &= !(1 as u8);
+            lcd_stat &= !1_u8;
         }
 
         // Modify register based on second bit
@@ -185,13 +185,13 @@ impl<'a> Ppu<'a> {
             // Calculate starting x position, tile column, and tile memory address
             let x_position: u8 = scroll_x + i * 8;
             let tile_column: u16 = x_position as u16 / 8;
-            let tile_map_address: u16 = tile_map_start + tile_row as u16 * 32 + tile_column;
+            let tile_map_address: u16 = tile_map_start + tile_row * 32 + tile_column;
             
             // Get current tile number
             let mut tile_num: u16;
 
             if is_tile_data_signed {
-                tile_num = (memory.byte(tile_map_address) as u8) as u16;
+                tile_num = memory.byte(tile_map_address) as u16;
             } else {
                 tile_num = memory.byte(tile_map_address) as u16;
             }
@@ -216,7 +216,7 @@ impl<'a> Ppu<'a> {
             
             // Loop through eight pixel row and load into pixel buffer
             for j in 0..8 {
-                self.buffer[i as usize * 8 + j as usize][self.scanline as usize] = self.colors[j];
+                self.buffer[i as usize * 8 + j][self.scanline as usize] = self.colors[j];
             }
         }
     }
@@ -232,10 +232,6 @@ impl<'a> Ppu<'a> {
     fn powered_on<'b>(&self, memory: &'b mut Memory) -> bool {
         let lcd_cont = memory.byte(LCD_CONTROL_REGISTER);
         
-        if (lcd_cont >> 7) & 1 != 0 {
-            return true;
-        } else {
-            return false;
-        }
+        (lcd_cont >> 7) & 1 != 0
     }
 }

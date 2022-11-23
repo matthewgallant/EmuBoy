@@ -33,7 +33,7 @@ fn main() {
     let cart = Cartridge::new(args[1].to_string());
 
     // Only ask for the second 16k as the first 16k isn't able to be banked and is returned automatically
-    let cart_contents = cart.cartridge(0x4000, 0x8000);
+    let _cart_contents = cart.cartridge(0x4000, 0x8000);
 
     // Create LCD
     let mut lcd = Lcd::new();
@@ -50,7 +50,7 @@ fn main() {
     'running: loop {
         cpu.step(&mut memory);
         ppu.step(&mut memory);
-        if(cpu.pc > 180){
+        if cpu.pc > 180 {
             //std::thread::sleep(std::time::Duration::from_millis(500));
         }
 

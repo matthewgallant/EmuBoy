@@ -65,15 +65,15 @@ impl Memory {
             0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
             0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xE0, 0x50], 0x0000);
 
-        return memory;
+        memory
     }
 
     pub fn byte(&self, address: u16) -> u8 {
-        return self.memory[address as usize];
+        self.memory[address as usize]
     }
 
     pub fn bytes(&self, start_address: u16, end_address: u16) -> Vec<u8> {
-        return self.memory[start_address as usize..end_address as usize].to_vec();
+        self.memory[start_address as usize..end_address as usize].to_vec()
     }
 
     pub fn set_byte(&mut self, data: u8, address: u16) {
