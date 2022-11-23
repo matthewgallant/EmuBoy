@@ -59,7 +59,7 @@ impl Cpu {
 
     pub fn step<'b>(&mut self, memory: &'b mut Memory) {
         if self.mode == CpuMode::RUN {
-            println!("Stepping CPU...");
+            //println!("Stepping CPU...");
             self.execute(memory);
 
         }
@@ -68,8 +68,10 @@ impl Cpu {
 
 
     pub fn execute<'b>(&mut self, memory: &'b mut Memory) {
-        println!("Op Code: 0x{:02X} and pc: {}", memory.memory[self.pc as usize], self.pc);
-        self.print(memory);
+        if self.pc != 189 && self.pc != 191 {
+            //println!("Op Code: 0x{:02X} and pc: {}", memory.memory[self.pc as usize], self.pc);
+            //self.print(memory);
+        }
         let opcode = memory.memory[self.pc as usize];
         let z = opcode & 0x7;
         let y = (opcode >> 3) & 0x7;
@@ -92,11 +94,11 @@ impl Cpu {
                        self.mode = CpuMode::STOP; 
                    } else if y == 3 { // JR d // THIS NEEDS TESTING
                        let d = memory.byte(self.pc + 1) as i8;
-                       self.pc = ((self.pc as i16) + d as i16) as u16;
+                       self.pc = ((self.pc as i16) + d as i16) as u16 - 1;
                    } else if y >= 4 && y < 8 {  // JR cc[y-4, d
                        if self.get_cc(y-4) {
                            let d = memory.byte(self.pc + 1) as i8;
-                           self.pc = ((self.pc as i16) + d as i16) as u16;
+                           self.pc = ((self.pc as i16) + d as i16) as u16 - 1;
                        }
                        self.pc = self.pc + 1;
                    }
@@ -191,7 +193,7 @@ impl Cpu {
                     self.pc += 1;
                 }
                 7 => {
-                    println!("Opcode: {:4x} not yet implemented", opcode);
+                    println!("PC: 0x{:x} Opcode: 0x{:4x} not yet implemented", self.pc, opcode);
                 }
                 _ => {}
             }
@@ -206,29 +208,29 @@ impl Cpu {
             self.set_r(self.get_r(z), y);
         } else if x == 2 {
             // ALU operations with y and z 
-            self.alu(y, z, memory.byte(self.get_rp(RP_HL)));
+            self.alu(y, z, memory.byte(self.get_rp(RP_HL)), None);
         } else if x == 3 {
             match z {
                 0 => {
                     match y {
                         0 => { // RET NZ
                             if !self.get_flag(FLAG_Z) {
-                                self.pc = self.pop(memory);
+                                self.pc = self.pop(memory) - 1;
                             }
                         }
                         1 => { // RET Z
                             if self.get_flag(FLAG_Z) {
-                                self.pc = self.pop(memory);
+                                self.pc = self.pop(memory) - 1;
                             }
                         }
                         2 => { // RET NC
                             if !self.get_flag(FLAG_C) {
-                                self.pc = self.pop(memory);
+                                self.pc = self.pop(memory) - 1;
                             }
                         }
                         3 => { // RET C
                             if self.get_flag(FLAG_C) {
-                                self.pc = self.pop(memory);
+                                self.pc = self.pop(memory) - 1;
                             }
                         }
                         4 => { // LD (0xFF00 + n), A
@@ -254,11 +256,11 @@ impl Cpu {
                         self.set_rp2(pop, p);
                     } else if q == 1 {
                         if p == 0 { // RET
-                            self.pc = self.pop(memory);
+                            self.pc = self.pop(memory) - 1;
                         } else if p == 1 { // RETI
-                            self.pc = self.pop(memory);
+                            self.pc = self.pop(memory) - 1;
                         } else if p == 2 { // JP HL
-                            self.pc = self.get_rp(RP_HL);
+                            self.pc = self.get_rp(RP_HL) - 1;
                         } else if p == 3 { // LD SP, HL
                             self.sp = self.get_rp(RP_HL);
                         }
@@ -267,7 +269,7 @@ impl Cpu {
                 2 => {
                     if y < 4 { // JP cc[y], nn
                         if self.get_cc(y) {
-                            self.pc = memory.read16(self.pc + 1);
+                            self.pc = memory.read16(self.pc + 1) - 1;
                         }
                     } else if y == 4 { // LD (0xFF00 + C), A
                         memory.set_byte(self.a, 0xFF00 + self.c as u16);
@@ -283,7 +285,7 @@ impl Cpu {
                 }
                 3 => {
                     if y == 0 { // JP nn
-                        self.pc = memory.read16(self.pc + 1);
+                        self.pc = memory.read16(self.pc + 1) - 1;
                     } else if y == 1 { // CB prefix 
                         self.cb_prefix(memory.byte(self.pc + 1), memory);
                         self.pc += 1;
@@ -296,7 +298,7 @@ impl Cpu {
                 4 => { // Call cc[y], nn
                     if self.get_cc(y) {
                         self.push(self.pc, memory);
-                        self.pc = memory.read16(self.pc + 1);
+                        self.pc = memory.read16(self.pc + 1) - 1;
                     }
                 }
                 5 => {
@@ -304,19 +306,23 @@ impl Cpu {
                         self.push(self.get_rp2(p), memory);
                     } else if p == 0 { // CALL nn
                         self.push(self.pc, memory);
-                        self.pc = memory.read16(self.pc + 1);
+                        self.pc = memory.read16(self.pc + 1) - 1;
                     }
                 }
-                6 => {println!("Opcode: 0x{:2X} not yet implemented", opcode);}
-                7 => {println!("Opcode: 0x{:2X} not yet implemented", opcode);}
-                _ => {println!("Opcode: 0x{:2X} not yet implemented", opcode);}
+                6 => {
+                    let n = memory.byte(self.pc + 1);
+                    self.alu(y, z, memory.byte(self.get_rp(RP_HL)), Some(n));
+                    self.pc += 1;
+                }
+                7 => {println!("PC: 0x{:x} Opcode: 0x{:2X} not yet implemented", self.pc, opcode);}
+                _ => {println!("PC: 0x{:x} Opcode: 0x{:2X} not yet implemented", self.pc, opcode);}
             }
         }
 
         self.pc += 1;
     }
 
-    pub fn alu(&mut self, y: u8, z: u8, mem_hl: u8) {
+    pub fn alu(&mut self, y: u8, z: u8, mem_hl: u8, n: Option<u8>) {
         let mut val = match z {
             0 => {self.b}
             1 => {self.c}
@@ -327,6 +333,11 @@ impl Cpu {
             6 => {mem_hl} // memory[self.hl]
             7 => {self.a}
             _ => {0}
+        };
+
+        val = match n {
+            Some(a) =>  a,
+            None => val
         };
 
         match y {
@@ -420,8 +431,10 @@ impl Cpu {
                 r = r << 1;
                 self.set_flag(FLAG_Z, r == 0);
                 self.set_r(r, z);
-            } else  { // sla y
-                println!("Prefix Opcode: 0x{:2X} not yet implemented", prefix_op);
+            } else  { // set y
+                //println!("PC: 0x{:x} Prefix Opcode: 0x{:2X} not yet implemented", self.pc, prefix_op);
+                let new_r = self.get_r(z) | (0x01 << y);
+                self.set_r(new_r, z);
             }
 
 
@@ -570,7 +583,7 @@ impl Cpu {
         } else if cc == 3 {
             return self.get_flag(FLAG_C);
         } 
-        eprintln!("Invalid value passed to cpu::get_cc, value={}", cc);
+        eprintln!("PC: {} Invalid value passed to cpu::get_cc, value={}", self.pc, cc);
         return false;
     } 
 
