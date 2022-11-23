@@ -166,13 +166,11 @@ impl<'a> Ppu<'a> {
         }
 
         // Read bit 3 to determine which tile map is being used
-        let tile_map_start: u16;
-
-        if ((control_reg_val >> 3) & 1) != 0 {
-            tile_map_start = 0x9C00;
+        let tile_map_start: u16 = if ((control_reg_val >> 3) & 1) != 0 {
+            0x9C00
         } else {
-            tile_map_start = 0x9800;
-        }
+            0x9800
+        };
 
         // Calculate starting y position and tile row
         let y_position: u8 = scroll_y + self.scanline as u8;
@@ -190,6 +188,7 @@ impl<'a> Ppu<'a> {
             // Get current tile number
             let mut tile_num: u16;
 
+            // @MatthewGallant - these are the same ?
             if is_tile_data_signed {
                 tile_num = memory.byte(tile_map_address) as u16;
             } else {

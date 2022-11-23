@@ -18,9 +18,9 @@ const RP2_AF: u8 = 3;
 
 #[derive(PartialEq)]
 pub enum CpuMode {
-    RUN,
-    HALT,
-    STOP,
+    Run,
+    Halt,
+    Stop,
 }
 
 pub struct Cpu {
@@ -52,13 +52,13 @@ impl Cpu {
             e: 0xD8,
             h: 0x01,
             l: 0x4D,
-            mode: CpuMode::RUN,
+            mode: CpuMode::Run,
             interrupts: true
         }
     }
 
     pub fn step<'b>(&mut self, memory: &'b mut Memory) {
-        if self.mode == CpuMode::RUN {
+        if self.mode == CpuMode::Run {
             //println!("Stepping CPU...");
             self.execute(memory);
 
@@ -91,7 +91,7 @@ impl Cpu {
                         self.pc += 2;
                    } else if y == 2 {  // STOP
                        // not sure what else needs to happen but  ¯\_(ツ)_/¯
-                       self.mode = CpuMode::STOP; 
+                       self.mode = CpuMode::Stop; 
                    } else if y == 3 { // JR d // THIS NEEDS TESTING
                        let d = memory.byte(self.pc + 1) as i8;
                        self.pc = ((self.pc as i16) + d as i16) as u16 - 1;
@@ -201,7 +201,7 @@ impl Cpu {
         } else if x == 1 {
             if (z == 6) && (y == 6) {
                 // HALT
-                self.mode = CpuMode::HALT;
+                self.mode = CpuMode::Halt;
                 return;
             } 
             // LD 
@@ -255,9 +255,7 @@ impl Cpu {
                         let pop = self.pop(memory);
                         self.set_rp2(pop, p);
                     } else if q == 1 {
-                        if p == 0 { // RET
-                            self.pc = self.pop(memory) - 1;
-                        } else if p == 1 { // RETI
+                        if p == 0 || p == 1{ // RET & RETI
                             self.pc = self.pop(memory) - 1;
                         } else if p == 2 { // JP HL
                             self.pc = self.get_rp(RP_HL) - 1;
@@ -350,7 +348,7 @@ impl Cpu {
                 self.set_flag(FLAG_Z, self.a == 0);
             } 
             1 => { // ADC A
-                val += if self.get_flag(FLAG_C) {1} else {0};
+                val += u8::from(self.get_flag(FLAG_C)); 
                 self.set_flag(FLAG_N, false);
                 self.set_flag(FLAG_H, (((self.a & 0xF) + (val & 0xF)) & 0x10) == 0x10);
                 self.set_flag(FLAG_C, ((((self.a as u16) & 0xFF) + 
@@ -367,7 +365,7 @@ impl Cpu {
                 self.set_flag(FLAG_Z, self.a == 0);
             }  
             3 => { // SBC
-                val += if self.get_flag(FLAG_C) {1} else {0};
+                val += u8::from(self.get_flag(FLAG_C));
                 self.set_flag(FLAG_N, true);
                 self.set_flag(FLAG_H, (((self.a & 0xF) - (val & 0xF)) & 0x10) == 0x10);
                 self.set_flag(FLAG_C, ((((self.a as u16) & 0xFF) - 
@@ -415,7 +413,7 @@ impl Cpu {
         if x == 0 { // rot[y] r[z]
             if y == 2 { // rl z
                 let mut r = self.get_r(z);
-                let oc = if self.get_flag(FLAG_C) {1} else {0};
+                let oc = u8::from(self.get_flag(FLAG_C));
                 self.set_flag(FLAG_C, (r & (0x80)) != 0);
                 self.set_flag(FLAG_H, false);
                 self.set_flag(FLAG_N, false);
