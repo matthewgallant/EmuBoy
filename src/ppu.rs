@@ -49,6 +49,7 @@ impl<'a> Ppu<'a> {
         if self.mode == HORIZONTAL_BLANK_MODE && self.ticks >= 102 {
             self.horizontal_blank_mode(memory);
         } else if self.mode == VERTICAL_BLANK_MODE && self.ticks >= 228 {
+            println!("Vertical Blank");
             self.vertical_blank_mode(memory);
             let mut interupt = memory.byte(0xFF0F);
             interupt |= 0x01;

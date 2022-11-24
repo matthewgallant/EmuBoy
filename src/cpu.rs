@@ -68,10 +68,8 @@ impl Cpu {
 
 
     pub fn execute<'b>(&mut self, memory: &'b mut Memory) {
-        if self.pc != 189 && self.pc != 191 {
-            //println!("Op Code: 0x{:02X} and pc: {}", memory.memory[self.pc as usize], self.pc);
-            //self.print(memory);
-        }
+        println!("Op Code: 0x{:02X} and pc: {}", memory.memory[self.pc as usize], self.pc);
+        self.print(memory);
         let opcode = memory.memory[self.pc as usize];
         let z = opcode & 0x7;
         let y = (opcode >> 3) & 0x7;
@@ -107,6 +105,7 @@ impl Cpu {
                 1 => {
                     if q == 0 { // LD rp[p], nn
                         let nn = memory.read16(self.pc + 1);
+                        println!("16 bit load on {}: {}", p, nn);
                         self.set_rp(nn, p);
                         self.pc += 2; //offset pc by 2 bytes
                     } else if q == 1 { // ADD HL, rp[p]
@@ -234,7 +233,8 @@ impl Cpu {
                             }
                         }
                         4 => { // LD (0xFF00 + n), A
-                            memory.set_byte(self.a, 0xFF00 + self.c as u16);
+                            memory.set_byte(self.a, 0xFF00 + memory.byte(self.pc +1) as u16);
+                            self.pc += 1;
                         }
                         5 => { // ADD SP, d
                             self.set_rp(memory.byte(self.pc + 1) as u16, RP_SP);
@@ -256,7 +256,7 @@ impl Cpu {
                         self.set_rp2(pop, p);
                     } else if q == 1 {
                         if p == 0 || p == 1{ // RET & RETI
-                            self.pc = self.pop(memory) - 1;
+                            self.pc = self.pop(memory);
                         } else if p == 2 { // JP HL
                             self.pc = self.get_rp(RP_HL) - 1;
                         } else if p == 3 { // LD SP, HL
@@ -272,6 +272,7 @@ impl Cpu {
                     } else if y == 4 { // LD (0xFF00 + C), A
                         memory.set_byte(self.a, 0xFF00 + self.c as u16);
                     } else if y == 5 { // LD (nn), A
+                        println!("LOADING FROM A to {}", self.pc + 1);
                         memory.set_byte(self.a, memory.read16(self.pc + 1));
                         self.pc += 2;
                     } else if y == 6 { // LD A, (0xFF00 + C)
@@ -303,11 +304,11 @@ impl Cpu {
                     if q == 0 { // PUSH rp2[2]
                         self.push(self.get_rp2(p), memory);
                     } else if p == 0 { // CALL nn
-                        self.push(self.pc, memory);
+                        self.push(self.pc + 2, memory);
                         self.pc = memory.read16(self.pc + 1) - 1;
                     }
                 }
-                6 => {
+                6 => { // Alu with immediate offset
                     let n = memory.byte(self.pc + 1);
                     self.alu(y, z, memory.byte(self.get_rp(RP_HL)), Some(n));
                     self.pc += 1;
@@ -334,7 +335,10 @@ impl Cpu {
         };
 
         val = match n {
-            Some(a) =>  a,
+            Some(a) =>  {
+                println!("{}", a);
+                a
+            },
             None => val
         };
 
@@ -464,6 +468,7 @@ impl Cpu {
 
     fn pop<'b>(&mut self, memory: &'b mut Memory) -> u16 {
         let val = ((memory.byte(self.sp + 1) as u16) << 8) | memory.byte(self.sp) as u16;
+        println!("popping: {}", val);
         self.sp += 2;
         val
     }
@@ -617,9 +622,6 @@ mod cpu_tests {
         assert_eq!(c.get_flag(FLAG_N), false);
         assert_eq!(c.get_flag(FLAG_C), true);
 
-
-
-
         // ADC A, B
         c.set_flag(FLAG_C, true);
         c.a = 0xE1;
@@ -666,7 +668,6 @@ mod cpu_tests {
         c.alu(5, 7, 0, None);
         assert_eq!(c.a, 0);
         assert_eq!(c.get_flag(FLAG_Z), true);
-
 
         // OR A
         c.a  = 0x5A;
