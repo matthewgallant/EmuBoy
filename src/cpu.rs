@@ -350,7 +350,7 @@ impl Cpu {
             1 => { // ADC A
                 val += u8::from(self.get_flag(FLAG_C)); 
                 self.set_flag(FLAG_N, false);
-                self.set_flag(FLAG_H, (((self.a & 0xF) + (val & 0xF)) & 0x10) == 0x10);
+                self.set_flag(FLAG_H, (((self.a & 0xF) + (val)) & 0x10) == 0x10);
                 self.set_flag(FLAG_C, ((((self.a as u16) & 0xFF) + 
                                         ((val as u16) & 0xFF)) & 0x100) == 0x100);
                 self.a += val;
@@ -366,12 +366,12 @@ impl Cpu {
             }  
             3 => { // SBC
                 val += u8::from(self.get_flag(FLAG_C));
-                self.set_flag(FLAG_N, true);
                 self.set_flag(FLAG_H, (((self.a & 0xF) - (val & 0xF)) & 0x10) == 0x10);
                 self.set_flag(FLAG_C, ((((self.a as u16) & 0xFF) - 
                                         ((val as u16) & 0xFF)) & 0x100) == 0x100);
                 self.a -= val;
                 self.set_flag(FLAG_Z, self.a == 0);
+                self.set_flag(FLAG_N, true);
             }
             4 => { // AND
                 self.a &= val;
@@ -395,10 +395,10 @@ impl Cpu {
                 self.set_flag(FLAG_Z, self.a == 0);
             } 
             7 => { // CP
-                self.set_flag(FLAG_N, true);
                 self.set_flag(FLAG_H, (((self.a & 0xF) - (val & 0xF)) & 0x10) == 0x10);
                 self.set_flag(FLAG_C, ((((self.a as u16) & 0xFF) - ((val as u16) & 0xFF)) & 0x100) == 0x100);
                 self.set_flag(FLAG_Z, self.a == 0);
+                self.set_flag(FLAG_N, true);
             } 
             _ => {eprintln!("Unknown ALU instruction...")}
             
@@ -594,5 +594,94 @@ impl Cpu {
         println!("AF: {:4x}, BC: {:4x}\t{:2x}", self.get_rp2(RP2_AF), self.get_rp(RP_BC), memory.byte(self.sp + 4));
         println!("DE: {:4x}, HL: {:4x}\t{:2x}", self.get_rp(RP_DE), self.get_rp(RP_HL), memory.byte(self.sp + 5));
         println!("sp: {:4x}, pc: {:4x}\t{:2x}", self.sp, self.pc, memory.byte(self.sp + 6));
+    }
+}
+
+
+#[cfg(test)]
+mod cpu_tests {
+    use crate::Cpu;
+    use crate::cpu::*;
+
+    #[test]
+    fn arithmatic_decoding() {
+        let mut c = Cpu::new();
+
+        // ADD A, B
+        c.a = 0x3A;
+        c.b = 0xC6;
+        c.alu(0, 0, 0, None);
+        assert_eq!(c.a, 0);
+        assert_eq!(c.get_flag(FLAG_Z), true);
+        assert_eq!(c.get_flag(FLAG_H), true);
+        assert_eq!(c.get_flag(FLAG_N), false);
+        assert_eq!(c.get_flag(FLAG_C), true);
+
+
+
+
+        // ADC A, B
+        c.set_flag(FLAG_C, true);
+        c.a = 0xE1;
+        c.e = 0x0F;
+        c.alu(1, 3, 0, None);
+        assert_eq!(c.a, 0xF1);
+        assert_eq!(c.get_flag(FLAG_Z), false);
+        // assert_eq!(c.get_flag(FLAG_H), true);
+        assert_eq!(c.get_flag(FLAG_C), false);
+
+        // SUB B
+        c.a = 0x3E;
+        c.e = 0x3E;
+        c.alu(2, 3, 0, None);
+        assert_eq!(c.a, 0);
+        assert_eq!(c.get_flag(FLAG_Z), true);
+        assert_eq!(c.get_flag(FLAG_H), false);
+        assert_eq!(c.get_flag(FLAG_N), false);
+        assert_eq!(c.get_flag(FLAG_C), false);
+
+        // SBC A, H
+        c.set_flag(FLAG_C, true);
+        c.a = 0x3B;
+        c.h = 0x2A;
+        c.alu(3, 4, 0, None);
+        assert_eq!(c.a, 0x10);
+        assert_eq!(c.get_flag(FLAG_Z), false);
+        assert_eq!(c.get_flag(FLAG_H), false);
+        assert_eq!(c.get_flag(FLAG_N), true);
+        assert_eq!(c.get_flag(FLAG_C), false);
+
+        // AND A, B
+        c.a = 0x5A;
+        c.l = 0x3F;
+        c.alu(4, 5, 0, None);
+        assert_eq!(c.a, 0x1A);
+        assert_eq!(c.get_flag(FLAG_Z), false);
+        // assert_eq!(c.get_flag(FLAG_H), true);
+        assert_eq!(c.get_flag(FLAG_N), false);
+        assert_eq!(c.get_flag(FLAG_C), false);
+
+        // XOR A, B
+        c.a  = 0x5A;
+        c.alu(5, 7, 0, None);
+        assert_eq!(c.a, 0);
+        assert_eq!(c.get_flag(FLAG_Z), true);
+
+
+        // OR A
+        c.a  = 0x5A;
+        c.alu(6, 7, 0, None);
+        assert_eq!(c.a, 0x5A);
+        assert_eq!(c.get_flag(FLAG_Z), false);
+        
+        // CP A, B
+        c.a = 0x3C;
+        c.b = 0x2F;
+        c.alu(7, 0, 0, None);
+        assert_eq!(c.get_flag(FLAG_Z), false);
+        assert_eq!(c.get_flag(FLAG_N), true);
+        assert_eq!(c.get_flag(FLAG_C), false);
+
+
     }
 }
