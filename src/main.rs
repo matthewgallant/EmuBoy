@@ -33,7 +33,8 @@ fn main() {
     let cart = Cartridge::new(args[1].to_string());
 
     // Only ask for the second 16k as the first 16k isn't able to be banked and is returned automatically
-    let _cart_contents = cart.cartridge(0x4000, 0x8000);
+    let cart_contents = cart.cartridge(0x4000, 0x8000);
+    memory.set_bytes(cart_contents, 0x0000);
 
     // Create LCD
     let mut lcd = Lcd::new();
