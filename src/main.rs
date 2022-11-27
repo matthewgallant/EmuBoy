@@ -50,10 +50,8 @@ fn main() {
 
     'running: loop {
         cpu.step(&mut memory);
-        ppu.step(&mut memory);
-       // if(cpu.pc > 180){
-       //     std::thread::sleep(std::time::Duration::from_millis(500));
-       // }
+        let ticks = cpu.ticks(&mut memory);
+        ppu.step(&mut memory, ticks);
 
         // TODO: Move event loop to new IO struct
         for event in event_pump.poll_iter() {

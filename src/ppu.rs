@@ -34,7 +34,7 @@ impl<'a> Ppu<'a> {
         }
     }
 
-    pub fn step<'b>(&mut self, memory: &'b mut Memory) {
+    pub fn step<'b>(&mut self, memory: &'b mut Memory, ticks: i32) {
 
         // Check if PPU is powered off
         if !self.powered_on(memory) {
@@ -42,8 +42,7 @@ impl<'a> Ppu<'a> {
         }
 
         // Increment PPU cycle ticks
-        // TODO: Increment by previously executed CPU instruction ticks instead
-        self.ticks += 1;
+        self.ticks += ticks;
 
         // Execute functions based on current PPU mode
         if self.mode == HORIZONTAL_BLANK_MODE && self.ticks >= 102 {
